@@ -1,0 +1,31 @@
+{
+  "name": "bitte-cli",
+  "type": "module",
+  "version": "0.0.2",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "ai-agent-cli": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "prepublishOnly": "bun run build",
+    "build-binary": "bun build ./src/index.ts --compile --outfile bitte-cli"
+  },
+  "keywords": ["ai", "agent", "cli"],
+  "author": "Micro",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/localtunnel": "^2.0.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "localtunnel": "^2.0.2",
+    "open": "^10.1.0"
+  }
+}
