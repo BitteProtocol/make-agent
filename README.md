@@ -1,4 +1,6 @@
-# bitte-cli
+# Make Agent CLI
+
+**The swiss army knife for multi-chain AI agents**
 
 To install dependencies:
 

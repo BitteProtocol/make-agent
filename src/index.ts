@@ -7,7 +7,10 @@ import localtunnel from 'localtunnel';
 import os from 'os';
 import { join, relative } from 'path';
 import open from 'open';
+import { Hono } from 'hono';
+import { serve } from '@hono/node-server';
 
+const LOCAL_SERVER_PORT = 6666;
 const BASE_URL = "https://wallet.bitte.ai/api/ai-plugins";
 const CONFIG_DIR = join(os.homedir(), '.ai-agent-cli');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
@@ -43,17 +46,23 @@ function setApiKey(pluginId: string, apiKey: string): void {
     saveConfig(config);
 }
 
-async function registerPlugin(pluginId: string): Promise<string> {
-    const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST' });
-    if (response.ok) {
-        const data = await response.json();
-        console.log(`Plugin registered successfully. API Key: ${data.apiKey}`);
-        setApiKey(pluginId, data.apiKey);
-        console.log(`API key has been stored locally.`);
-        return pluginId; 
-    } else {
-        console.error(`Error registering plugin: ${await response.text()}`);
-        throw new Error('Plugin registration failed');
+async function registerPlugin(pluginId: string): Promise<string | null> {
+    try {
+        const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST' });
+        if (response.ok) {
+            const data = await response.json();
+            console.log(`Plugin registered successfully. API Key: ${data.apiKey}`);
+            setApiKey(pluginId, data.apiKey);
+            console.log(`API key has been stored locally.`);
+            return pluginId;
+        } else {
+            const errorText = await response.text();
+            console.error(`Error registering plugin: ${errorText}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Network error during plugin registration: ${error}`);
+        return null;
     }
 }
 
@@ -108,26 +117,42 @@ async function validateOpenApiSpec(url: string | URL): Promise<boolean> {
     return true;
 }
 
-async function watchForChanges(pluginId: string): Promise<void> {
+async function watchForChanges(pluginId: string, tunnel: any): Promise<void> {
     const projectDir = process.cwd();
     console.log(`Watching for changes in ${projectDir}`);
+    console.log('Any file changes will trigger a plugin update attempt.');
 
     const watcher = watch(projectDir, { recursive: true });
 
     for await (const event of watcher) {
-        const relativePath = relative(projectDir, event.filename! || '');
+        const relativePath = relative(projectDir, event.filename || '');
         // Ignore hidden files and directories
         if (!relativePath.startsWith('.') && !relativePath.includes('node_modules')) {
-            console.log(`Change detected in ${relativePath}. Updating plugin...`);
-            await updatePlugin(pluginId);
+            console.log(`Change detected in ${relativePath}. Attempting to update or register the plugin...`);
+            const apiKey = getApiKey(pluginId);
+            if (apiKey) {
+                await updatePlugin(pluginId);
+            } else {
+                const result = await registerPlugin(pluginId);
+                if (result) {
+                    await openPlayground(result);
+                } else {
+                    console.log('Registration failed. Waiting for next file change to retry...');
+                }
+            }
         }
     }
 }
 
-async function openPlayground(agentId: string): Promise<void> {
+
+async function openPlayground(agentId: string): Promise<string> {
     const playgroundUrl = `${PLAYGROUND_URL}${agentId}`;
     console.log(`Opening playground: ${playgroundUrl}`);
     await open(playgroundUrl);
+
+    console.log('Waiting for the ID from the playground...');
+    const receivedId = await startLocalServer();
+    return receivedId;
 }
 
 async function startLocalTunnelAndRegister(port: number): Promise<void> {
@@ -137,13 +162,22 @@ async function startLocalTunnelAndRegister(port: number): Promise<void> {
     const pluginId = new URL(tunnel.url).hostname;
 
     if (await validateOpenApiSpec(new URL(`${tunnel.url}/${AI_PLUGIN_PATH}`))) {
-        const agentId = await registerPlugin(pluginId);
-        await openPlayground(agentId);
+        const result = await registerPlugin(pluginId);
+        if (result) {
+            const receivedId = await openPlayground(result);
+            console.log(`Received ID from playground: ${receivedId}`);
+            // You can use this ID for further operations if needed
+        } else {
+            console.log('Initial registration failed. Waiting for file changes to retry...');
+        }
 
         // Set up cleanup on process termination
         const cleanup = async () => {
             console.log('Terminating. Cleaning up...');
-            await deletePlugin(pluginId);
+            const apiKey = getApiKey(pluginId);
+            if (apiKey) {
+                await deletePlugin(pluginId);
+            }
             tunnel.close();
             process.exit(0);
         };
@@ -154,20 +188,44 @@ async function startLocalTunnelAndRegister(port: number): Promise<void> {
         console.log('Tunnel is running. Watching for changes. Press Ctrl+C to stop.');
         
         // Start watching for changes
-        await watchForChanges(pluginId);
+        await watchForChanges(pluginId, tunnel);
     } else {
         console.error("OpenAPI specification validation failed. Please check your specification and try again.");
         tunnel.close();
     }
 }
 
+async function startLocalServer(): Promise<string> {
+    return new Promise((resolve) => {
+        const app = new Hono();
+
+        app.get('/receive-id', (c) => {
+            const id = c.req.query('id');
+            if (id) {
+                console.log(`Received ID from playground: ${id}`);
+                resolve(id);
+                return c.text('ID received. You can close this tab.', 200);
+            }
+            return c.text('ID not provided', 400);
+        });
+
+        serve({
+            fetch: app.fetch,
+            port: LOCAL_SERVER_PORT
+        });
+
+        console.log(`Local server started on http://localhost:${LOCAL_SERVER_PORT}`);
+    });
+}
+
+
 program
-    .name('ai-agent-cli')
+    .name('make-agent')
     .description('CLI tool for managing AI agents')
     .version('0.0.2');
 
 program
-    .command('start')
+    .command('dev')
     .description('Make your AI agent discoverable and register the plugin')
     .requiredOption('-p, --port <number>', 'Local port to expose', parseInt)
     .action(async (options) => {

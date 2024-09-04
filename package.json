@@ -1,5 +1,5 @@
 {
-  "name": "bitte-cli",
+  "name": "make-agent",
   "type": "module",
   "version": "0.0.2",
   "main": "dist/index.js",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist --target node",
     "prepublishOnly": "bun run build",
-    "build-binary": "bun build ./src/index.ts --compile --outfile bitte-cli"
+    "build-binary": "bun build ./src/index.ts --compile --outfile make-agent"
   },
   "keywords": ["ai", "agent", "cli"],
   "author": "Micro",
@@ -24,7 +24,9 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@hono/node-server": "^1.12.2",
     "commander": "^12.1.0",
+    "hono": "^4.5.11",
     "localtunnel": "^2.0.2",
     "open": "^10.1.0"
   }
