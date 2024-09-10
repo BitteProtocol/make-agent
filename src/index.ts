@@ -8,20 +8,15 @@ program
     .description('CLI tool for managing AI agents')
     .version(packageJson.version);
 
-program
-    .command('dev')
-    .addCommand(devCommand);
+program.addCommand(devCommand);
 
 // program
-//     .command('register')
 //     .addCommand(registerCommand);
 
 // program
-//     .command('update')
 //     .addCommand(updateCommand);
 
 // program
-//     .command('delete')
 //     .addCommand(deleteCommand);
 
 program.parse();
