@@ -1,7 +1,7 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
-    "@hono/node-server": "^1.12.2",
     "commander": "^12.1.0",
     "hono": "^4.5.11",
     "localtunnel": "^2.0.2",
