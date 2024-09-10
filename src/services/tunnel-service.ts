@@ -1,11 +1,12 @@
-import { watch } from 'fs/promises';
+import { watch, writeFile, unlink } from 'fs/promises';
 import localtunnel from 'localtunnel';
 import open from 'open';
-import { relative } from 'path';
+import { join, relative } from 'path';
 import { getApiKey } from '../config/config';
 import { AI_PLUGIN_PATH, PLAYGROUND_URL } from '../config/constants';
 import { validateOpenApiSpec } from './openapi-service';
 import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
+
 
 export async function watchForChanges(pluginId: string, tunnel: any): Promise<void> {
     const projectDir = process.cwd();
@@ -34,7 +35,6 @@ export async function watchForChanges(pluginId: string, tunnel: any): Promise<vo
     }
 }
 
-
 export async function openPlayground(agentId: string): Promise<string> {
     const playgroundUrl = `${PLAYGROUND_URL}${agentId}`;
     console.log(`Opening playground: ${playgroundUrl}`);
@@ -55,6 +55,19 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
         if (result) {
             const receivedId = await openPlayground(result);
             console.log(`Received ID from playground: ${receivedId}`);
+
+            // Create bitte.dev.json file
+            const bitteConfig = {
+                pluginId,
+                url: tunnel.url,
+                receivedId,
+                // Add any other relevant information here
+            };
+
+            const bitteConfigPath = join(process.cwd(), 'bitte.dev.json');
+            await writeFile(bitteConfigPath, JSON.stringify(bitteConfig, null, 2));
+            console.log('bitte.dev.json file created successfully.');
+
             // You can use this ID for further operations if needed
         } else {
             console.log('Initial registration failed. Waiting for file changes to retry...');
@@ -68,6 +81,16 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
                 await deletePlugin(pluginId);
             }
             tunnel.close();
+
+            const bitteConfigPath = join(process.cwd(), 'bitte.dev.json');
+            const emptyConfig = {
+                pluginId: '',
+                url: '',
+                receivedId: '',
+            };
+            await writeFile(bitteConfigPath, JSON.stringify(emptyConfig, null, 2));
+            console.log('bitte.dev.json file values replaced with empty strings.');
+
             process.exit(0);
         };
 
