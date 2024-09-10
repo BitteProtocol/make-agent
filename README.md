@@ -23,7 +23,7 @@ Currently, the CLI supports the following command:
    
    Usage:
    ```bash
-   bun run index.ts dev -p <port_number>
+   npx make-agent dev -p <port_number>
    ```
    
    Options:
