@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { program } from 'commander';
 import { devCommand } from './commands/dev';
 import packageJson from "../package.json"
