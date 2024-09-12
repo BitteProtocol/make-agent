@@ -1,20 +1,32 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "bin": {
     "make-agent": "./dist/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mintbase/make-agent"
+  },
+  "bugs": {
+    "url": "https://github.com/mintbase/make-agent/issues"
+  },
+  "homepage": "https://github.com/mintbase/make-agent/repo#readme",
   "scripts": {
     "dev": "bun run src/index.ts",
     "build": "bun build ./src/index.ts --outdir ./dist --target node",
     "prepublishOnly": "bun run build",
     "build-binary": "bun build ./src/index.ts --compile --outfile make-agent"
   },
-  "keywords": ["ai", "agent", "cli"],
+  "keywords": [
+    "ai",
+    "agent",
+    "cli"
+  ],
   "author": "Micro",
   "license": "MIT",
   "devDependencies": {
