@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'fs';
 
 export function readFile(filePath: string): string {
     return readFileSync(filePath, 'utf-8');
@@ -10,4 +10,15 @@ export function writeFile(filePath: string, content: string): void {
         mkdirSync(dirPath, { recursive: true });
     }
     writeFileSync(filePath, content);
+}
+
+export async function appendToEnv(key: string, value: string): Promise<void> {
+    const envPath = '.env';
+    const envEntry = `${key}=${value}`;
+    
+    if (existsSync(envPath)) {
+        appendFileSync(envPath, `\n${envEntry}`);
+    } else {
+        appendFileSync(envPath, envEntry);
+    }
 }

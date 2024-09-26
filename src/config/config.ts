@@ -19,11 +19,12 @@ export function saveConfig(config: Config): void {
     writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
 }
 
+//deprecate?
 export function getApiKey(pluginId: string): string | undefined {
     const config = loadConfig();
     return config.apiKeys[pluginId];
 }
-
+//deprecate?
 export function setApiKey(pluginId: string, apiKey: string): void {
     const config = loadConfig();
     config.apiKeys[pluginId] = apiKey;

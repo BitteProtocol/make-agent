@@ -2,12 +2,13 @@ import { watch, writeFile, readFile, unlink } from 'fs/promises';
 import localtunnel from 'localtunnel';
 import open from 'open';
 import { join, relative } from 'path';
-import { getApiKey } from '../config/config';
-import { AI_PLUGIN_PATH, PLAYGROUND_URL } from '../config/constants';
+import { PLAYGROUND_URL } from '../config/constants';
 import { validateOpenApiSpec } from './openapi-service';
 import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
-
+import { getAuthentication } from './signer-service';
+import { getAccountId, getSpecUrl } from '../utils/url-utils';
 const BITTE_CONFIG_PATH = join(process.cwd(), 'bitte.dev.json');
+
 
 async function updateBitteConfig(data: any) {
     let existingConfig = {};
@@ -35,16 +36,16 @@ export async function watchForChanges(pluginId: string, tunnel: any): Promise<vo
         // Ignore hidden files and directories
         if (!relativePath.startsWith('.') && !relativePath.includes('node_modules')) {
             console.log(`Change detected in ${relativePath}. Attempting to update or register the plugin...`);
-            const apiKey = getApiKey(pluginId);
-            if (apiKey) {
-                await updatePlugin(pluginId);
-            } else {
-                const result = await registerPlugin(pluginId);
-                if (result) {
-                    await openPlayground(result);
-                } else {
-                    console.log('Registration failed. Waiting for next file change to retry...');
-                }
+            const accountId =  await getAccountId(tunnel)
+            const authentication = await getAuthentication(accountId);
+            const result = authentication
+                ? await updatePlugin(pluginId, accountId)
+                : await registerPlugin(pluginId, accountId);
+            
+            if (result && !authentication) {
+                await openPlayground(result);
+            } else if (!result && !authentication) {
+                console.log('Registration failed. Waiting for next file change to retry...');
             }
         }
     }
@@ -61,31 +62,36 @@ export async function openPlayground(agentId: string): Promise<string> {
 
 async function setupAndValidate(tunnel: any, pluginId: string): Promise<void> {
     // First, update bitte.dev.json with the tunnel URL
+    
     await updateBitteConfig({ url: tunnel.url });
-
+    
     // Wait a bit to ensure the API route has time to read the updated config
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Now validate the OpenAPI spec
-    if (await validateOpenApiSpec(new URL(`${tunnel.url}/${AI_PLUGIN_PATH}`))) {
-        const result = await registerPlugin(pluginId);
-        if (result) {
-            const receivedId = await openPlayground(result);
-            console.log(`Received ID from playground: ${receivedId}`);
-
-            // Update bitte.dev.json with additional info
-            await updateBitteConfig({
-                pluginId,
-                receivedId,
-            });
-
-            // You can use this ID for further operations if needed
-        } else {
-            console.log('Initial registration failed. Waiting for file changes to retry...');
-        }
-    } else {
+    const specUrl = getSpecUrl(tunnel.url)
+    const accountId = await getAccountId(tunnel.url)   
+    
+     // Now validate the OpenAPI spec
+    if (!await validateOpenApiSpec(specUrl)) {
         console.log('OpenAPI specification validation failed.');
+        return;
     }
+    
+    const result = await registerPlugin(pluginId, accountId);
+
+    if (!result) {
+        console.log('Initial registration failed. Waiting for file changes to retry...');
+        return;
+    }
+
+    const receivedId = await openPlayground(result);
+    console.log(`Received ID from playground: ${receivedId}`);
+
+    // Update bitte.dev.json with additional info
+    await updateBitteConfig({
+        pluginId,
+        receivedId,
+    });
 }
 
 
@@ -94,15 +100,15 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     console.log(`LocalTunnel URL: ${tunnel.url}`);
 
     const pluginId = new URL(tunnel.url).hostname;
-
     await setupAndValidate(tunnel, pluginId);
-
+    
     // Set up cleanup on process termination
     const cleanup = async () => {
         console.log('Terminating. Cleaning up...');
-        const apiKey = getApiKey(pluginId);
-        if (apiKey) {
-            await deletePlugin(pluginId);
+        const accountId = await getAccountId(tunnel.url)
+        const authentication = await getAuthentication(accountId);
+        if (authentication) {
+            await deletePlugin(pluginId, accountId);
         }
         tunnel.close();
 
