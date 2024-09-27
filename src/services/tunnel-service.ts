@@ -36,7 +36,7 @@ export async function watchForChanges(pluginId: string, tunnel: any): Promise<vo
         // Ignore hidden files and directories
         if (!relativePath.startsWith('.') && !relativePath.includes('node_modules')) {
             console.log(`Change detected in ${relativePath}. Attempting to update or register the plugin...`);
-            const accountId =  await getAccountId(tunnel)
+            const accountId =  await getAccountId(tunnel.url)
             const authentication = await getAuthentication(accountId);
             const result = authentication
                 ? await updatePlugin(pluginId, accountId)
@@ -70,7 +70,6 @@ async function setupAndValidate(tunnel: any, pluginId: string): Promise<void> {
 
     const specUrl = getSpecUrl(tunnel.url)
     const accountId = await getAccountId(tunnel.url)   
-    
      // Now validate the OpenAPI spec
     if (!await validateOpenApiSpec(specUrl)) {
         console.log('OpenAPI specification validation failed.');

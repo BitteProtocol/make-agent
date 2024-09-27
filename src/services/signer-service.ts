@@ -27,7 +27,7 @@ export async function getAuthentication(
 
   const parsedKey = JSON.parse(bitteKeyString) as KeySignMessageParams;
   if (accountId && (await verifyMessage(parsedKey, accountId))) {
-    return parsedKey.message;
+    return bitteKeyString;
   }
 
   return null;
@@ -36,29 +36,30 @@ export async function getAuthentication(
  * Checks if there is a BITTE_KEY in the environment. If not, redirects to Bitte wallet
  * for message signing and stores the signed message as an environment variable.
  * @param {string | undefined} accountId - The account ID to be verified in the message, if provided.
- * @returns {Promise<boolean>} A promise that resolves to true if authenticated or key created, false otherwise.
+ * @returns {Promise<string | null>} A promise that resolves to the signed message if authenticated or key created, null otherwise.
  */
 export async function authenticateOrCreateKey(
   accountId: string | undefined
-): Promise<boolean> {
-  if (await getAuthentication(accountId)) {
+): Promise<string | null> {
+  const authentication = await getAuthentication(accountId);
+  if (authentication) {
     console.log("Already authenticated.");
-    return true;
+    return authentication;
   }
 
   if (!accountId) {
     console.log("Account ID is required for authentication.");
-    return false;
+    return null;
   }
 
   console.log("Not authenticated. Redirecting to Bitte wallet for signing...");
   const newKey = await createAndStoreKey(accountId);
   if (newKey) {
     console.log("New key created and stored successfully.");
-    return true;
+    return JSON.stringify(newKey);
   } else {
     console.log("Failed to create and store new key.");
-    return false;
+    return null;
   }
 }
 
@@ -133,7 +134,7 @@ function getSignedMessage(): Promise<KeySignMessageParams> {
 }
 
 function setCORSHeaders(res: ServerResponse): void {
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
