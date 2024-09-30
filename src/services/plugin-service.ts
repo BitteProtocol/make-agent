@@ -1,14 +1,19 @@
-import { getApiKey, loadConfig, saveConfig, setApiKey } from '../config/config';
 import { BASE_URL } from '../config/constants';
+import { authenticateOrCreateKey, getAuthentication } from './signer-service';
 
-export async function registerPlugin(pluginId: string): Promise<string | null> {
+export async function registerPlugin(pluginId: string, accountId: string | undefined): Promise<string | null> {
+    const message = await authenticateOrCreateKey(accountId)
+
+    if(!message){
+        console.error("Failed to register plugin: Authentication failed. Try again.")
+        return null
+    }
+
     try {
-        const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST' });
+        const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': message }});
         if (response.ok) {
-            const data = await response.json();
-            console.log(`Plugin registered successfully. API Key: ${data.apiKey}`);
-            setApiKey(pluginId, data.apiKey);
-            console.log(`API key has been stored locally.`);
+            await response.json();
+            console.log(`Plugin registered successfully`);
             return pluginId;
         } else {
             const errorText = await response.text();
@@ -21,16 +26,17 @@ export async function registerPlugin(pluginId: string): Promise<string | null> {
     }
 }
 
-export async function updatePlugin(pluginId: string): Promise<void> {
-    const apiKey = getApiKey(pluginId);
-    if (!apiKey) {
+export async function updatePlugin(pluginId: string, accountId: string | undefined): Promise<void> {
+    const message = await getAuthentication(accountId)
+
+    if (!message) {
         console.error(`No API key found for plugin ${pluginId}. Please register the plugin first.`);
         return;
     }
 
     const response = await fetch(`${BASE_URL}/${pluginId}`, {
         method: 'PUT',
-        headers: { 'bitte-api-key': apiKey },
+        headers: { 'bitte-api-key': message },
     });
     if (response.ok) {
         console.log("Plugin updated successfully.");
@@ -39,23 +45,19 @@ export async function updatePlugin(pluginId: string): Promise<void> {
     }
 }
 
-export async function deletePlugin(pluginId: string): Promise<void> {
-    const apiKey = getApiKey(pluginId);
-    if (!apiKey) {
+export async function deletePlugin(pluginId: string, accountId: string | undefined): Promise<void> {
+    const message = await getAuthentication(accountId)
+
+    if (!message) {
         console.error(`No API key found for plugin ${pluginId}. Please register the plugin first.`);
         return;
     }
 
     const response = await fetch(`${BASE_URL}/${pluginId}`, {
         method: 'DELETE',
-        headers: { 'bitte-api-key': apiKey },
+        headers: { 'bitte-api-key': message },
     });
     if (response.ok) {
-        console.log("Plugin deleted successfully.");
-        const config = loadConfig();
-        delete config.apiKeys[pluginId];
-        saveConfig(config);
-        console.log("API key removed from local storage.");
     } else {
         console.error(`Error deleting plugin: ${await response.text()}`);
     }
