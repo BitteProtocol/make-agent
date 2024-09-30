@@ -10,6 +10,7 @@ import {
 import {
   SIGN_MESSAGE,
   SIGN_MESSAGE_PORT,
+  SIGN_MESSAGE_SUCCESS_URL,
   SIGN_MESSAGE_URL,
 } from "../config/constants";
 
@@ -84,14 +85,14 @@ function getSignedMessage(): Promise<KeySignMessageParams> {
     const server = createServer(handleRequest);
 
     server.listen(SIGN_MESSAGE_PORT, () => {  
-      const callbackUrl = `http://localhost:${SIGN_MESSAGE_PORT}`;
+      const postEndpoint = `http://localhost:${SIGN_MESSAGE_PORT}`;
       const nonce = crypto.randomBytes(16).toString("hex");
       const signUrl = `${SIGN_MESSAGE_URL}?message=${encodeURIComponent(
         SIGN_MESSAGE
       )}&callbackUrl=${encodeURIComponent(
-        callbackUrl
+        SIGN_MESSAGE_SUCCESS_URL
       )}&nonce=${encodeURIComponent(nonce)}&postEndpoint=${encodeURIComponent(
-        callbackUrl
+        postEndpoint
       )}`;
       open(signUrl).catch((error) => {
         console.error("Failed to open the browser:", error);
