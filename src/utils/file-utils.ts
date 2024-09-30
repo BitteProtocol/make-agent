@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync } from 'fs';
+import dotenv from 'dotenv';
 
 export function readFile(filePath: string): string {
     return readFileSync(filePath, 'utf-8');
@@ -13,12 +14,18 @@ export function writeFile(filePath: string, content: string): void {
 }
 
 export async function appendToEnv(key: string, value: string): Promise<void> {
-    const envPath = '.env';
+    const envFiles = ['.env', '.env.local', '.env.development', '.env.production'];
     const envEntry = `${key}=${value}`;
     
-    if (existsSync(envPath)) {
+    let envPath = envFiles.find(file => existsSync(file));
+
+    if (envPath) {
         appendFileSync(envPath, `\n${envEntry}`);
     } else {
-        appendFileSync(envPath, envEntry);
+        envPath = '.env';
+        writeFileSync(envPath, envEntry);
     }
+
+    dotenv.config();
+    dotenv.config({ path: `.env.local`, override: true });
 }
