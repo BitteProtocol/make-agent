@@ -45,7 +45,7 @@ export async function updatePlugin(pluginId: string, accountId: string | undefin
     }
 }
 
-export async function deletePlugin(pluginId: string, accountId: string | undefined): Promise<void> {
+export async function deletePlugin(pluginId: string, accountId?: string): Promise<void> {
     const message = await getAuthentication(accountId)
 
     if (!message) {
