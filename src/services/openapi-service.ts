@@ -1,35 +1,49 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 
-export async function validateOpenApiSpec(url: string | URL): Promise<boolean> {
-    console.log("Validating OpenAPI specification...");
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; 
 
-    try {
-        // Validate the OpenAPI spec
-        await SwaggerParser.validate(url.toString());
-        console.log("OpenAPI specification is valid.");
-        return true;
-    } catch (error) {
-        console.error("OpenAPI specification is invalid:", error);
-        return false;
-    }
+interface ApiResponse {
+  'x-mb'?: {
+    'account-id': string;
+  };
 }
 
-export async function parseAccountId(url: string | URL): Promise<string | undefined> {
+//parsing and validation done together to avoid fetching spec twice
+export async function validateAndParseOpenApiSpec(url: string | URL): Promise<{ isValid: boolean; accountId?: string }> {
     try {
-        const api = await SwaggerParser.parse(url.toString()) as { [key: string]: any };
-        if ('x-mb' in api && typeof api['x-mb'] === 'object' && api['x-mb'] !== null) {
-            const xMb = api['x-mb'] as Record<string, unknown>;
-            if ('account-id' in xMb) {
-                const accountId = xMb['account-id'];
-                if (typeof accountId === 'string') {
-                    return accountId;
-                }
-                // TODO: Add support for array of account IDs
-            }
-        }
-        return undefined;
+      const specUrl = url.toString();
+      const specContent = await fetchWithRetry(specUrl);
+  
+      const apiResponse = JSON.parse(specContent);
+      await SwaggerParser.validate(apiResponse);
+      console.log("OpenAPI specification is valid.");
+  
+      const accountId = apiResponse['x-mb']?.['account-id'];
+  
+      return { isValid: true, accountId: accountId };
     } catch (error) {
-        console.error("Error parsing OpenAPI specification:", error);
-        return undefined;
+      console.error("Error in OpenAPI specification fetch, validation, or parsing:", error);
+      return { isValid: false };
     }
+  }
+
+async function fetchWithRetry(url: string, retries = MAX_RETRIES): Promise<string> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const text = await response.text();
+    JSON.parse(text); 
+    return text;
+  } catch (error) {
+    if (retries > 0) {
+      console.log(`Retrying...`);
+      await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+      return fetchWithRetry(url, retries - 1);
+    }
+    throw error;
+  }
 }
+
