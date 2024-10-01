@@ -3,10 +3,10 @@ import localtunnel from 'localtunnel';
 import open from 'open';
 import { join, relative } from 'path';
 import { PLAYGROUND_URL } from '../config/constants';
-import { validateOpenApiSpec } from './openapi-service';
+import { validateAndParseOpenApiSpec } from './openapi-service';
 import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
 import { getAuthentication } from './signer-service';
-import { getAccountId, getSpecUrl } from '../utils/url-utils';
+import { getSpecUrl } from '../utils/url-utils';
 const BITTE_CONFIG_PATH = join(process.cwd(), 'bitte.dev.json');
 
 
@@ -36,7 +36,7 @@ export async function watchForChanges(pluginId: string, tunnel: any): Promise<vo
         // Ignore hidden files and directories
         if (!relativePath.startsWith('.') && !relativePath.includes('node_modules')) {
             console.log(`Change detected in ${relativePath}. Attempting to update or register the plugin...`);
-            const accountId =  await getAccountId(tunnel.url)
+            const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnel.url));
             const authentication = await getAuthentication(accountId);
             const result = authentication
                 ? await updatePlugin(pluginId, accountId)
@@ -62,20 +62,25 @@ export async function openPlayground(agentId: string): Promise<string> {
 
 async function setupAndValidate(tunnel: any, pluginId: string): Promise<void> {
     // First, update bitte.dev.json with the tunnel URL
-    
     await updateBitteConfig({ url: tunnel.url });
     
-    // Wait a bit to ensure the API route has time to read the updated config
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const specUrl = getSpecUrl(tunnel.url)
-    const accountId = await getAccountId(tunnel.url)   
-     // Now validate the OpenAPI spec
-    if (!await validateOpenApiSpec(specUrl)) {
+
+    console.log("Validating OpenAPI spec...")
+    const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
+
+    if (!isValid) {
         console.log('OpenAPI specification validation failed.');
         return;
     }
-    
+
+    if (!accountId) {
+        console.log('Failed to parse account ID from OpenAPI specification.');
+        return;
+    }    
+
     const result = await registerPlugin(pluginId, accountId);
 
     if (!result) {
@@ -104,7 +109,7 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     // Set up cleanup on process termination
     const cleanup = async () => {
         console.log('Terminating. Cleaning up...');
-        const accountId = await getAccountId(tunnel.url)
+        const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnel.url));
         const authentication = await getAuthentication(accountId);
         if (authentication) {
             await deletePlugin(pluginId, accountId);
