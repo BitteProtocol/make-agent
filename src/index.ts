@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { program } from 'commander';
+import packageJson from "../package.json";
+import { deployCommand } from './commands/deploy';
 import { devCommand } from './commands/dev';
-import packageJson from "../package.json"
 
 program
     .name('make-agent')
@@ -9,6 +10,8 @@ program
     .version(packageJson.version);
 
 program.addCommand(devCommand);
+
+program.addCommand(deployCommand);
 
 // program
 //     .addCommand(registerCommand);
