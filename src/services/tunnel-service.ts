@@ -100,6 +100,7 @@ async function setupAndValidate(tunnel: any, pluginId: string): Promise<void> {
 
 
 export async function startLocalTunnelAndRegister(port: number): Promise<void> {
+    console.log("Setting up local tunnel...")
     const tunnel = await localtunnel({ port });
     console.log(`LocalTunnel URL: ${tunnel.url}`);
 
