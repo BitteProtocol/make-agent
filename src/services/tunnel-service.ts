@@ -100,6 +100,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
 
 
 export async function startLocalTunnelAndRegister(port: number): Promise<void> {
+    console.log("Setting up local tunnel...")
     const tunnelUrl = await ngrok.connect(port);
     console.log(`Ngrok URL: ${tunnelUrl}`);
 
