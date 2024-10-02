@@ -1,5 +1,5 @@
 import { watch, writeFile, readFile, unlink } from 'fs/promises';
-import localtunnel from 'localtunnel';
+import ngrok from 'ngrok';
 import open from 'open';
 import { join, relative } from 'path';
 import { PLAYGROUND_URL } from '../config/constants';
@@ -24,7 +24,7 @@ async function updateBitteConfig(data: any) {
     console.log('bitte.dev.json file updated successfully.');
 }
 
-export async function watchForChanges(pluginId: string, tunnel: any): Promise<void> {
+export async function watchForChanges(pluginId: string, tunnelUrl: string): Promise<void> {
     const projectDir = process.cwd();
     console.log(`Watching for changes in ${projectDir}`);
     console.log('Any file changes will trigger a plugin update attempt.');
@@ -36,7 +36,7 @@ export async function watchForChanges(pluginId: string, tunnel: any): Promise<vo
         // Ignore hidden files and directories
         if (!relativePath.startsWith('.') && !relativePath.includes('node_modules')) {
             console.log(`Change detected in ${relativePath}. Attempting to update or register the plugin...`);
-            const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnel.url));
+            const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
             const authentication = await getAuthentication(accountId);
             const result = authentication
                 ? await updatePlugin(pluginId, accountId)
@@ -60,13 +60,13 @@ export async function openPlayground(agentId: string): Promise<string> {
     return "";
 }
 
-async function setupAndValidate(tunnel: any, pluginId: string): Promise<void> {
+async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<void> {
     // First, update bitte.dev.json with the tunnel URL
-    await updateBitteConfig({ url: tunnel.url });
+    await updateBitteConfig({ url: tunnelUrl });
     
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const specUrl = getSpecUrl(tunnel.url)
+    const specUrl = getSpecUrl(tunnelUrl)
 
     console.log("Validating OpenAPI spec...")
     const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
@@ -101,21 +101,22 @@ async function setupAndValidate(tunnel: any, pluginId: string): Promise<void> {
 
 export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     console.log("Setting up local tunnel...")
-    const tunnel = await localtunnel({ port });
-    console.log(`LocalTunnel URL: ${tunnel.url}`);
+    const tunnelUrl = await ngrok.connect(port);
+    console.log(`Ngrok URL: ${tunnelUrl}`);
 
-    const pluginId = new URL(tunnel.url).hostname;
-    await setupAndValidate(tunnel, pluginId);
+    const pluginId = new URL(tunnelUrl).hostname;
+    await setupAndValidate(tunnelUrl, pluginId);
     
     // Set up cleanup on process termination
     const cleanup = async () => {
         console.log('Terminating. Cleaning up...');
-        const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnel.url));
+        const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
         const authentication = await getAuthentication(accountId);
         if (authentication) {
             await deletePlugin(pluginId, accountId);
         }
-        tunnel.close();
+        await ngrok.disconnect(tunnelUrl);
+        await ngrok.kill();
 
         const emptyConfig = {
             pluginId: '',
@@ -134,5 +135,5 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     console.log('Tunnel is running. Watching for changes. Press Ctrl+C to stop.');
 
     // Start watching for changes
-    await watchForChanges(pluginId, tunnel);
+    await watchForChanges(pluginId, tunnelUrl);
 }
