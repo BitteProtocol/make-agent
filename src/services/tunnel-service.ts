@@ -1,5 +1,6 @@
 import { watch, writeFile, readFile, unlink } from 'fs/promises';
 import ngrok from 'ngrok';
+import localtunnel from 'localtunnel';
 import open from 'open';
 import { join, relative } from 'path';
 import { PLAYGROUND_URL } from '../config/constants';
@@ -8,7 +9,6 @@ import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
 import { getAuthentication } from './signer-service';
 import { getSpecUrl } from '../utils/url-utils';
 const BITTE_CONFIG_PATH = join(process.cwd(), 'bitte.dev.json');
-
 
 async function updateBitteConfig(data: any) {
     let existingConfig = {};
@@ -98,25 +98,51 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
     });
 }
 
+async function setupTunnel(port: number): Promise<{ tunnelUrl: string; cleanup: () => Promise<void> }> {
+    try {
+        console.log("Attempting to set up ngrok tunnel...");
+        const tunnelUrl = await ngrok.connect(port);
+        console.log(`Ngrok URL: ${tunnelUrl}`);
+        return {
+            tunnelUrl,
+            cleanup: async () => {
+                await ngrok.disconnect(tunnelUrl);
+                await ngrok.kill();
+            }
+        };
+    } catch (error) {
+        console.log("Failed to set up ngrok tunnel. Falling back to localtunnel...");
+        try {
+            const tunnel = await localtunnel({ port });
+            console.log(`Localtunnel URL: ${tunnel.url}`);
+            return {
+                tunnelUrl: tunnel.url,
+                cleanup: async () => {
+                    tunnel.close();
+                }
+            };
+        } catch (ltError) {
+            throw new Error("Failed to set up both ngrok and localtunnel.");
+        }
+    }
+}
 
 export async function startLocalTunnelAndRegister(port: number): Promise<void> {
-    console.log("Setting up local tunnel...")
-    const tunnelUrl = await ngrok.connect(port);
-    console.log(`Ngrok URL: ${tunnelUrl}`);
+    console.log("Setting up local tunnel...");
+    const { tunnelUrl, cleanup } = await setupTunnel(port);
 
     const pluginId = new URL(tunnelUrl).hostname;
     await setupAndValidate(tunnelUrl, pluginId);
     
     // Set up cleanup on process termination
-    const cleanup = async () => {
+    const fullCleanup = async () => {
         console.log('Terminating. Cleaning up...');
         const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
         const authentication = await getAuthentication(accountId);
         if (authentication) {
             await deletePlugin(pluginId, accountId);
         }
-        await ngrok.disconnect(tunnelUrl);
-        await ngrok.kill();
+        await cleanup();
 
         const emptyConfig = {
             pluginId: '',
@@ -129,8 +155,8 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
         process.exit(0);
     };
 
-    process.on('SIGINT', cleanup);
-    process.on('SIGTERM', cleanup);
+    process.on('SIGINT', fullCleanup);
+    process.on('SIGTERM', fullCleanup);
 
     console.log('Tunnel is running. Watching for changes. Press Ctrl+C to stop.');
 

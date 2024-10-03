@@ -30,7 +30,8 @@
   "author": "Micro",
   "license": "MIT",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/localtunnel": "^2.0.4"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -44,6 +45,7 @@
     "dotenv": "^16.4.5",
     "hono": "^4.5.11",
     "js-sha256": "^0.11.0",
+    "localtunnel": "^2.0.2",
     "near-api-js": "^4.0.3",
     "ngrok": "^5.0.0-beta.2",
     "open": "^10.1.0",
