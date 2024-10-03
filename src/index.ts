@@ -4,6 +4,10 @@ import packageJson from "../package.json";
 import { deployCommand } from './commands/deploy';
 import { devCommand } from './commands/dev';
 
+import dotenv from "dotenv";
+
+dotenv.config();
+
 program
     .name('make-agent')
     .description('CLI tool for managing AI agents')

@@ -3,9 +3,6 @@ import { registerPlugin, updatePlugin } from "../services/plugin-service";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
 import { deployedUrl } from "../utils/deployed-url";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export const deployCommand = new Command()
     .name('deploy')
