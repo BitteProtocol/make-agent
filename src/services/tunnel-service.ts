@@ -137,19 +137,28 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     // Set up cleanup on process termination
     const fullCleanup = async () => {
         console.log('Terminating. Cleaning up...');
-        const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
-        const authentication = await getAuthentication(accountId);
-        if (authentication) {
-            await deletePlugin(pluginId, accountId);
-        }
-        await cleanup();
-
-        try {
-            await unlink(BITTE_CONFIG_PATH);
-            console.log('bitte.dev.json file deleted successfully.');
-        } catch (error) {
-            console.error('Error deleting bitte.dev.json:', error);
-        }
+        await Promise.all([
+            cleanup(),
+            (async () => {
+                try {
+                    await unlink(BITTE_CONFIG_PATH);
+                    console.log('bitte.dev.json file deleted successfully.');
+                } catch (error) {
+                    console.error('Error deleting bitte.dev.json:', error);
+                }
+            })(),
+            (async () => {
+                try {
+                    const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
+                    const authentication = await getAuthentication(accountId);
+                    if (authentication) {
+                        await deletePlugin(pluginId, accountId);
+                    }
+                } catch (error) {
+                    console.error('Error validating authentication or deleting plugin:', error);
+                }
+            })()
+        ]);
 
         process.exit(0);
     };
