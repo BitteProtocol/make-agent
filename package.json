@@ -1,7 +1,7 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.11",
+  "version": "0.0.12-rc.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -46,6 +46,7 @@
     "js-sha256": "^0.11.0",
     "near-api-js": "^4.0.3",
     "ngrok": "^5.0.0-beta.2",
-    "open": "^10.1.0"
+    "open": "^10.1.0",
+    "vercel-url": "^0.2.1"
   }
 }

@@ -16,8 +16,11 @@ export async function registerPlugin(pluginId: string, accountId: string | undef
             console.log(`Plugin registered successfully`);
             return pluginId;
         } else {
-            const errorText = await response.text();
-            console.error(`Error registering plugin: ${errorText}`);
+            const errorData = await response.json();
+            console.error(`Error registering plugin: ${JSON.stringify(errorData)}`);
+            if (errorData.debugUrl) {
+                console.log(`Debug URL: ${errorData.debugUrl}`);
+            }
             return null;
         }
     } catch (error) {
