@@ -144,13 +144,12 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
         }
         await cleanup();
 
-        const emptyConfig = {
-            pluginId: '',
-            url: '',
-            receivedId: '',
-        };
-        await writeFile(BITTE_CONFIG_PATH, JSON.stringify(emptyConfig, null, 2));
-        console.log('bitte.dev.json file values replaced with empty strings.');
+        try {
+            await unlink(BITTE_CONFIG_PATH);
+            console.log('bitte.dev.json file deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting bitte.dev.json:', error);
+        }
 
         process.exit(0);
     };
