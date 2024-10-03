@@ -1,7 +1,7 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.12-rc.2",
+  "version": "0.0.12-rc.3",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
