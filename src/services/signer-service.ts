@@ -70,14 +70,22 @@ async function createAndStoreKey(
 ): Promise<KeySignMessageParams | null> {
   try {
     const signedMessage = await getSignedMessage();
-    if (signedMessage && (await verifyMessage(signedMessage, accountId))) {
-      await appendToEnv("BITTE_KEY", JSON.stringify(signedMessage));
-      return signedMessage;
+    if (!signedMessage) {
+      console.error("Failed to get signed message");
+      return null;
     }
+
+    const isVerified = await verifyMessage(signedMessage, accountId);
+    if (!isVerified) {
+      console.warn("Message verification failed");
+    }
+
+    await appendToEnv("BITTE_KEY", JSON.stringify(signedMessage));
+    return signedMessage;
   } catch (error) {
     console.error("Error creating and storing key:", error);
+    return null;
   }
-  return null;
 }
 
 function getSignedMessage(): Promise<KeySignMessageParams> {

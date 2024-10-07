@@ -29,6 +29,18 @@ Currently, the CLI supports the following command:
    Options:
    - `-p, --port <number>`: Specify the local port to expose (required)
 
+2. **deploy**: Deploy your AI agent, making it discoverable and registering it as a plugin
+
+   Usage:
+   ```bash
+   npx make-agent deploy [options]
+   ```
+
+   Options:
+   - `-u, --url <url>`: Specify the deployment URL (optional)
+
+   If no URL is provided, the command will attempt to determine the deployed URL automatically.
+
 ### Future Commands
 
 The CLI is designed to support additional commands in the future, such as:
