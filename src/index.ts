@@ -5,6 +5,9 @@ import { deployCommand } from './commands/deploy';
 import { devCommand } from './commands/dev';
 
 import dotenv from "dotenv";
+import { registerCommand } from './commands/register';
+import { updateCommand } from './commands/update';
+import { deleteCommand } from './commands/delete';
 
 dotenv.config();
 
@@ -17,13 +20,13 @@ program.addCommand(devCommand);
 
 program.addCommand(deployCommand);
 
-// program
-//     .addCommand(registerCommand);
+program
+    .addCommand(registerCommand);
 
-// program
-//     .addCommand(updateCommand);
+program
+    .addCommand(updateCommand);
 
-// program
-//     .addCommand(deleteCommand);
+program
+    .addCommand(deleteCommand);
 
 program.parse();
