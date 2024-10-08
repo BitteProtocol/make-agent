@@ -1,5 +1,4 @@
 import { watch, writeFile, readFile, unlink } from 'fs/promises';
-import ngrok from 'ngrok';
 import localtunnel from 'localtunnel';
 import open from 'open';
 import { join, relative } from 'path';
@@ -100,30 +99,17 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
 
 async function setupTunnel(port: number): Promise<{ tunnelUrl: string; cleanup: () => Promise<void> }> {
     try {
-        console.log("Attempting to set up ngrok tunnel...");
-        const tunnelUrl = await ngrok.connect(port);
-        console.log(`Ngrok URL: ${tunnelUrl}`);
+        console.log("Setting up localtunnel...");
+        const tunnel = await localtunnel({ port });
+        console.log(`Localtunnel URL: ${tunnel.url}`);
         return {
-            tunnelUrl,
+            tunnelUrl: tunnel.url,
             cleanup: async () => {
-                await ngrok.disconnect(tunnelUrl);
-                await ngrok.kill();
+                tunnel.close();
             }
         };
     } catch (error) {
-        console.log("Failed to set up ngrok tunnel. Falling back to localtunnel...");
-        try {
-            const tunnel = await localtunnel({ port });
-            console.log(`Localtunnel URL: ${tunnel.url}`);
-            return {
-                tunnelUrl: tunnel.url,
-                cleanup: async () => {
-                    tunnel.close();
-                }
-            };
-        } catch (ltError) {
-            throw new Error("Failed to set up both ngrok and localtunnel.");
-        }
+        throw new Error("Failed to set up localtunnel.");
     }
 }
 
