@@ -18,7 +18,7 @@ export const contractCommand = new Command()
       await generateTypes(outputDir, answers.contract);
       const code = await generateAIAgent(answers, outputDir);
       await writeFiles(outputDir, code, answers.contract);
-      await setupAndRunAgent(outputDir, answers.contract);
+      await setupAndRunAgent(outputDir);
 
       console.log("AI agent execution completed successfully.");
       console.log(`AI agent generated successfully in ${answers.output}`);
@@ -157,27 +157,49 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
   );
 }
 
-async function setupAndRunAgent(outputDir: string, contract: string) {
+async function setupAndRunAgent(outputDir: string) {
   process.chdir(outputDir);
 
   showLoadingMessage("Installing dependencies with npm install");
   await execAsync("npm install --legacy-peer-deps");
 
   showLoadingMessage("Running server");
-  await execAsync("npx tsx ./index.ts");
-  await new Promise((resolve) => setTimeout(resolve, 3000));
+  const serverProcess = spawn('npx', ['tsx', './index.ts']);
+
+  serverProcess.stdout.on("data", (data) => {
+    console.log(`Server: ${data}`);
+  });
+
+  serverProcess.stderr.on("data", (data) => {
+    console.error(`Server error: ${data}`);
+  });
+
+  // Wait for the server to start
+  await new Promise((resolve) => {
+    serverProcess.stdout.on('data', (data) => {
+      if (data.toString().includes('Server is running')) {
+        resolve(true);
+      }
+    });
+  });
+
+  showLoadingMessage("Running agent");
   const agentProcess = spawn('npx', ['make-agent', 'dev', '-p', '8080']);
 
   agentProcess.stdout.on("data", (data) => {
-    console.log(`${data}`);
+    console.log(`Agent: ${data}`);
   });
 
   agentProcess.stderr.on("data", (data) => {
-    console.error(`stderr: ${data}`);
+    console.error(`Agent error: ${data}`);
   });
 
   agentProcess.on("close", (code) => {
     console.log(`make-agent process exited with code ${code}`);
+    serverProcess.kill(); 
   });
+
+  // Keep the main process running
+  await new Promise((resolve) => {});
 }
 
