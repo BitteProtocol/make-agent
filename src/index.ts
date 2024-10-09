@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import { registerCommand } from './commands/register';
 import { updateCommand } from './commands/update';
 import { deleteCommand } from './commands/delete';
+import { contractCommand } from './commands/contract';
 
 dotenv.config();
 
@@ -19,6 +20,9 @@ program
 program.addCommand(devCommand);
 
 program.addCommand(deployCommand);
+
+program
+    .addCommand(contractCommand);
 
 program
     .addCommand(registerCommand);
