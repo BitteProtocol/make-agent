@@ -80,7 +80,7 @@ async function generateAIAgent(answers: {
   description: string;
   accountId: string;
 }, outputDir: string) {
-  const apiUrl = "http://localhost:3000/api/generate";
+  const apiUrl = "https://contract-to-agent.vercel.app/api/generate";
 
   showLoadingMessage("Generating AI agent");
 
