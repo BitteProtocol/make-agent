@@ -13,8 +13,10 @@ export const contractCommand = new Command()
   .action(async () => {
     try {
       const answers = await promptQuestions();
-      const { code } = await generateAIAgent(answers);
       const outputDir = path.resolve(answers.output);
+      await fs.mkdir(outputDir, { recursive: true });
+      await generateTypes(outputDir, answers.contract);
+      const code = await generateAIAgent(answers, outputDir);
       await writeFiles(outputDir, code, answers.contract);
       await setupAndRunAgent(outputDir, answers.contract);
 
@@ -26,7 +28,7 @@ export const contractCommand = new Command()
     }
   });
 
-  
+
 function showLoadingMessage(message: string): void {
   console.log(`${message}...`);
 }
@@ -67,22 +69,36 @@ async function promptQuestions() {
   }>(questions as any);
 }
 
+async function generateTypes(outputDir: string, contract: string) {
+  process.chdir(outputDir);
+  showLoadingMessage("Generating types");
+  await execAsync(`npx near2ts ${contract}`);
+}
+
 async function generateAIAgent(answers: {
   contract: string;
   description: string;
   accountId: string;
-}) {
-  const apiUrl = new URL("https://contract-to-agent.vercel.app/api/generate");
-  apiUrl.searchParams.append("contract", answers.contract);
-  apiUrl.searchParams.append("contractDescription", answers.description);
-  if (answers.accountId) {
-    apiUrl.searchParams.append("accountId", answers.accountId);
-  }
+}, outputDir: string) {
+  const apiUrl = "http://localhost:3000/api/generate";
 
   showLoadingMessage("Generating AI agent");
 
-  const response = await fetch(apiUrl.toString(), {
-    method: 'GET',
+  const typesContent = await fs.readFile(path.join(outputDir, `contract_types.ts`), 'utf-8');
+
+  const postData = {
+    contract: answers.contract,
+    contractDescription: answers.description,
+    accountId: answers.accountId,
+    types: typesContent
+  };
+
+  const response = await fetch(apiUrl, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(postData),
   });
 
   if (!response.ok) {
@@ -90,7 +106,8 @@ async function generateAIAgent(answers: {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  return await response.json();
+  const result = await response.json();
+  return result.code;
 }
 
 async function writeFiles(outputDir: string, code: string, contract: string) {
@@ -142,8 +159,6 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
 
 async function setupAndRunAgent(outputDir: string, contract: string) {
   process.chdir(outputDir);
-  showLoadingMessage("Generating types");
-  await execAsync(`npx near2ts ${contract}`);
 
   showLoadingMessage("Installing dependencies with npm install");
   await execAsync("npm install --legacy-peer-deps");
@@ -165,5 +180,4 @@ async function setupAndRunAgent(outputDir: string, contract: string) {
     console.log(`make-agent process exited with code ${code}`);
   });
 }
-
 
