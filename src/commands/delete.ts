@@ -38,7 +38,7 @@ export const deleteCommand = new Command()
         }
 
         try {
-            await deletePlugin(pluginId, accountId);
+            await deletePlugin(pluginId);
             console.log(`Plugin ${pluginId} deleted successfully.`);
         } catch (error) {
             console.error('Failed to delete the plugin:', error);

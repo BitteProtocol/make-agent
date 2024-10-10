@@ -135,11 +135,8 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
             })(),
             (async () => {
                 try {
-                    const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
-                    const authentication = await getAuthentication(accountId);
-                    if (authentication) {
-                        await deletePlugin(pluginId, accountId);
-                    }
+                    await deletePlugin(pluginId);
+                    
                 } catch (error) {
                     console.error('Error validating authentication or deleting plugin:', error);
                 }
