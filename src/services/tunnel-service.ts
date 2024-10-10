@@ -124,7 +124,7 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     const fullCleanup = async () => {
         console.log('Terminating. Cleaning up...');
         await Promise.all([
-            cleanup(),
+            
             (async () => {
                 try {
                     await unlink(BITTE_CONFIG_PATH);
@@ -143,9 +143,9 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
                 } catch (error) {
                     console.error('Error validating authentication or deleting plugin:', error);
                 }
-            })()
+            })()    
         ]);
-
+        await cleanup(),
         process.exit(0);
     };
 
