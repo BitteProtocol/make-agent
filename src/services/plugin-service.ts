@@ -60,7 +60,9 @@ export async function deletePlugin(pluginId: string): Promise<void> {
         method: 'DELETE',
         headers: { 'bitte-api-key': bitteKeyString },
     });
+    
     if (response.ok) {
+        console.log("Plugin deleted successfully")
     } else {
         console.error(`Error deleting plugin: ${await response.text()}`);
     }
