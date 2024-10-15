@@ -101,6 +101,10 @@ async function generateAIAgent(answers: {
     body: JSON.stringify(postData),
   });
 
+  if (response.status === 429) {
+    throw new Error('You have reached the daily prompt limit. Please try again tomorrow.');
+  }
+
   if (!response.ok) {
     console.error('Failed to generate AI agent');
     throw new Error(`HTTP error! status: ${response.status}`);
