@@ -48,19 +48,21 @@ export async function updatePlugin(pluginId: string, accountId: string | undefin
     }
 }
 
-export async function deletePlugin(pluginId: string, accountId?: string): Promise<void> {
-    const message = await getAuthentication(accountId)
+export async function deletePlugin(pluginId: string): Promise<void> {
+    const bitteKeyString = process.env.BITTE_KEY;
 
-    if (!message) {
-        console.error(`No API key found for plugin ${pluginId}. Please register the plugin first.`);
+    if (!bitteKeyString) {
+        console.error("No API key found. Unable to delete plugin.");
         return;
     }
 
     const response = await fetch(`${BASE_URL}/${pluginId}`, {
         method: 'DELETE',
-        headers: { 'bitte-api-key': message },
+        headers: { 'bitte-api-key': bitteKeyString },
     });
+    
     if (response.ok) {
+        console.log("Plugin deleted successfully")
     } else {
         console.error(`Error deleting plugin: ${await response.text()}`);
     }

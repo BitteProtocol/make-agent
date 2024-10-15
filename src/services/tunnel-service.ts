@@ -33,7 +33,7 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string): Prom
     for await (const event of watcher) {
         const relativePath = relative(projectDir, event.filename || '');
         // Ignore hidden files and directories
-        if (!relativePath.startsWith('.') && !relativePath.includes('node_modules')) {
+        if (!relativePath.startsWith('.') && !relativePath.includes('node_modules') &&  !relativePath.includes('bitte.dev.json')) {
             console.log(`Change detected in ${relativePath}. Attempting to update or register the plugin...`);
             const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
             const authentication = await getAuthentication(accountId);
@@ -60,7 +60,6 @@ export async function openPlayground(agentId: string): Promise<string> {
 }
 
 async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<void> {
-    // First, update bitte.dev.json with the tunnel URL
     await updateBitteConfig({ url: tunnelUrl });
     
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -99,7 +98,6 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
 
 async function setupTunnel(port: number): Promise<{ tunnelUrl: string; cleanup: () => Promise<void> }> {
     try {
-        console.log("Setting up localtunnel...");
         const tunnel = await localtunnel({ port });
         console.log(`Localtunnel URL: ${tunnel.url}`);
         return {
@@ -120,37 +118,38 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
     const pluginId = new URL(tunnelUrl).hostname;
     await setupAndValidate(tunnelUrl, pluginId);
     
-    // Set up cleanup on process termination
-    const fullCleanup = async () => {
-        console.log('Terminating. Cleaning up...');
-        await Promise.all([
-            
-            (async () => {
-                try {
-                    await unlink(BITTE_CONFIG_PATH);
-                    console.log('bitte.dev.json file deleted successfully.');
-                } catch (error) {
-                    console.error('Error deleting bitte.dev.json:', error);
-                }
-            })(),
-            (async () => {
-                try {
-                    const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
-                    const authentication = await getAuthentication(accountId);
-                    if (authentication) {
-                        await deletePlugin(pluginId, accountId);
-                    }
-                } catch (error) {
-                    console.error('Error validating authentication or deleting plugin:', error);
-                }
-            })()    
-        ]);
-        await cleanup(),
-        process.exit(0);
-    };
+    let isCleaningUp = false;
 
-    process.on('SIGINT', fullCleanup);
-    process.on('SIGTERM', fullCleanup);
+    const fullCleanup = async () => {
+        if (isCleaningUp) return;
+        isCleaningUp = true;
+        console.log('Terminating. Cleaning up...');
+        await unlink(BITTE_CONFIG_PATH).catch(() => {});
+        console.log('bitte.dev.json file deleted successfully.');
+        
+        try {
+            await deletePlugin(pluginId);
+        } catch (error) {
+            console.error('Error deleting plugin:', error);
+        }
+        
+        await cleanup();
+        console.log('Cleanup completed. Exiting...');
+        process.exit(0)
+    };
+    
+    process.on('SIGINT', async () => {
+        await fullCleanup();
+    });
+    
+    process.on('SIGTERM', async () => {
+        await fullCleanup();
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+        console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+        process.exit(1);
+    });
 
     console.log('Tunnel is running. Watching for changes. Press Ctrl+C to stop.');
 
