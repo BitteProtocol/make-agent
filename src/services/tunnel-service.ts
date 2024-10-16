@@ -5,7 +5,7 @@ import { join, relative } from 'path';
 import { PLAYGROUND_URL } from '../config/constants';
 import { validateAndParseOpenApiSpec } from './openapi-service';
 import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
-import { getAuthentication } from './signer-service';
+import { authenticateOrCreateKey, getAuthentication } from './signer-service';
 import { getSpecUrl } from '../utils/url-utils';
 const BITTE_CONFIG_PATH = join(process.cwd(), 'bitte.dev.json');
 
@@ -39,7 +39,7 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string): Prom
             const authentication = await getAuthentication(accountId);
             const result = authentication
                 ? await updatePlugin(pluginId, accountId)
-                : await registerPlugin(pluginId, accountId);
+                : await registerPlugin(pluginId);
             
             if (result && !authentication) {
                 await openPlayground(result);
@@ -64,9 +64,15 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
     
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const specUrl = getSpecUrl(tunnelUrl)
+    const signedMessage = await authenticateOrCreateKey();
+    if (!signedMessage) {
+        console.log("Failed to authenticate or create a key.");
+        return;
+    }
 
-    console.log("Validating OpenAPI spec...")
+    const specUrl = getSpecUrl(tunnelUrl);
+
+    console.log("Validating OpenAPI spec...");
     const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
 
     if (!isValid) {
@@ -79,7 +85,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
         return;
     }    
 
-    const result = await registerPlugin(pluginId, accountId);
+    const result = await registerPlugin(pluginId, signedMessage);
 
     if (!result) {
         console.log('Initial registration failed. Waiting for file changes to retry...');
