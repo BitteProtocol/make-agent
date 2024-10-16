@@ -1,16 +1,16 @@
 import { BASE_URL } from '../config/constants';
-import { authenticateOrCreateKey, getAuthentication } from './signer-service';
+import type { KeySignMessageParams } from '../utils/verify-msg-utils';
+import { getAuthentication, getSignedMessage } from './signer-service';
 
-export async function registerPlugin(pluginId: string, accountId: string | undefined): Promise<string | null> {
-    const message = await authenticateOrCreateKey(accountId)
+export async function registerPlugin(pluginId: string, bitteKey?: string): Promise<string | null> {
 
-    if(!message){
-        console.error("Failed to register plugin: Authentication failed. Try again.")
-        return null
+    if (!bitteKey) {
+        const signedMessage = await getSignedMessage();
+        bitteKey = JSON.stringify(signedMessage);
     }
 
     try {
-        const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': message }});
+        const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': bitteKey } });
         if (response.ok) {
             await response.json();
             console.log(`Plugin registered successfully`);

@@ -14,7 +14,7 @@ export interface KeySignMessageParams {
 
 export const verifyMessage = async (
   params: KeySignMessageParams,
-  accountIdToVerify: string
+  accountIdToVerify?: string
 ) => {
   const {
     message,
@@ -26,7 +26,7 @@ export const verifyMessage = async (
     accountId,
   } = params;
 
-  if (accountIdToVerify !== accountId) {
+  if (accountIdToVerify && accountIdToVerify !== accountId) {
     console.error(
       `Account mismatch: signed message has account ${accountId}, but provided account was ${accountIdToVerify}`
     );

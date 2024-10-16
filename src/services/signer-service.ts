@@ -19,16 +19,17 @@ dotenv.config({ path: `.env.local`, override: true });
 
 /**
  * Checks if there is a BITTE_KEY in the environment, verifies it, and returns the signed message.
+ * If no accountId is given, no verification is made and the signed message (if created) is returned.
  * @returns {Promise<string | null>} A promise that resolves to the signed message if authenticated, null otherwise.
  */
 export async function getAuthentication(
-  accountId: string | undefined
+  accountId?: string
 ): Promise<string | null> {
   const bitteKeyString = process.env.BITTE_KEY;
   if (!bitteKeyString) return null;
 
   const parsedKey = JSON.parse(bitteKeyString) as KeySignMessageParams;
-  if (accountId && (await verifyMessage(parsedKey, accountId))) {
+  if (accountId && (await verifyMessage(parsedKey, accountId)) || !accountId) {
     return bitteKeyString;
   }
 
@@ -37,25 +38,17 @@ export async function getAuthentication(
 /**
  * Checks if there is a BITTE_KEY in the environment. If not, redirects to Bitte wallet
  * for message signing and stores the signed message as an environment variable.
- * @param {string | undefined} accountId - The account ID to be verified in the message, if provided.
  * @returns {Promise<string | null>} A promise that resolves to the signed message if authenticated or key created, null otherwise.
  */
-export async function authenticateOrCreateKey(
-  accountId: string | undefined
-): Promise<string | null> {
-  const authentication = await getAuthentication(accountId);
+export async function authenticateOrCreateKey(): Promise<string | null> {
+  const authentication = await getAuthentication();
   if (authentication) {
     console.log("Already authenticated.");
     return authentication;
   }
 
-  if (!accountId) {
-    console.log("Account ID is required for authentication.");
-    return null;
-  }
-
   console.log("Not authenticated. Redirecting to Bitte wallet for signing...");
-  const newKey = await createAndStoreKey(accountId);
+  const newKey = await createAndStoreKey();
   if (newKey) {
     console.log("New key created and stored successfully.");
     return JSON.stringify(newKey);
@@ -65,9 +58,7 @@ export async function authenticateOrCreateKey(
   }
 }
 
-async function createAndStoreKey(
-  accountId: string
-): Promise<KeySignMessageParams | null> {
+async function createAndStoreKey(): Promise<KeySignMessageParams | null> {
   try {
     const signedMessage = await getSignedMessage();
     if (!signedMessage) {
@@ -75,7 +66,7 @@ async function createAndStoreKey(
       return null;
     }
 
-    const isVerified = await verifyMessage(signedMessage, accountId);
+    const isVerified = await verifyMessage(signedMessage);
     if (!isVerified) {
       console.warn("Message verification failed");
     }
@@ -88,7 +79,7 @@ async function createAndStoreKey(
   }
 }
 
-function getSignedMessage(): Promise<KeySignMessageParams> {
+export function getSignedMessage(): Promise<KeySignMessageParams> {
   return new Promise((resolve, reject) => {
     const server = createServer(handleRequest);
 
