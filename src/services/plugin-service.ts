@@ -1,5 +1,4 @@
 import { BASE_URL } from '../config/constants';
-import type { KeySignMessageParams } from '../utils/verify-msg-utils';
 import { getAuthentication, getSignedMessage } from './signer-service';
 
 export async function registerPlugin(pluginId: string, bitteKeyString?: string): Promise<string | null> {
