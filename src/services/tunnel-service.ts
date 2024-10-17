@@ -72,7 +72,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
 
     const specUrl = getSpecUrl(tunnelUrl);
 
-    console.log("Validating OpenAPI spec...");
+    console.log(`Validating OpenAPI spec at ${specUrl}...`);
     const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
 
     if (!isValid) {
