@@ -1,26 +1,30 @@
-import { watch, writeFile, readFile, unlink } from 'fs/promises';
+import { watch } from 'fs/promises';
 import localtunnel from 'localtunnel';
 import open from 'open';
-import { join, relative } from 'path';
-import { PLAYGROUND_URL } from '../config/constants';
+import { relative } from 'path';
+import { BITTE_CONFIG_ENV_KEY, PLAYGROUND_URL } from '../config/constants';
 import { validateAndParseOpenApiSpec } from './openapi-service';
 import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
 import { authenticateOrCreateKey, getAuthentication } from './signer-service';
 import { getSpecUrl } from '../utils/url-utils';
-const BITTE_CONFIG_PATH = join(process.cwd(), 'bitte.dev.json');
+import { appendToEnv, removeFromEnv } from '../utils/file-utils';
 
 async function updateBitteConfig(data: any) {
     let existingConfig = {};
     try {
-        const existingData = await readFile(BITTE_CONFIG_PATH, 'utf8');
-        existingConfig = JSON.parse(existingData);
+        const existingData = process?.env?.BITTE_CONFIG;
+        if (existingData) {
+            existingConfig = JSON.parse(existingData);
+            removeFromEnv(BITTE_CONFIG_ENV_KEY);
+        }
     } catch (error) {
-        // File doesn't exist or couldn't be read, we'll create a new one
+        // Env var doesn't exist or couldn't be read, we'll create a new one
     }
 
     const updatedConfig = { ...existingConfig, ...data };
-    await writeFile(BITTE_CONFIG_PATH, JSON.stringify(updatedConfig, null, 2));
-    console.log('bitte.dev.json file updated successfully.');
+    
+    await appendToEnv(BITTE_CONFIG_ENV_KEY, JSON.stringify(updatedConfig, null, 2));
+    console.log('BITTE_CONFIG updated successfully.');
 }
 
 export async function watchForChanges(pluginId: string, tunnelUrl: string): Promise<void> {
@@ -130,7 +134,7 @@ export async function startLocalTunnelAndRegister(port: number): Promise<void> {
         if (isCleaningUp) return;
         isCleaningUp = true;
         console.log('Terminating. Cleaning up...');
-        await unlink(BITTE_CONFIG_PATH).catch(() => {});
+        await removeFromEnv(BITTE_CONFIG_ENV_KEY).catch(() => {});
         console.log('bitte.dev.json file deleted successfully.');
         
         try {

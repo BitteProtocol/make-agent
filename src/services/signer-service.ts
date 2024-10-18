@@ -8,6 +8,7 @@ import {
   type KeySignMessageParams,
 } from "../utils/verify-msg-utils";
 import {
+  BITTE_KEY_ENV_KEY,
   SIGN_MESSAGE,
   SIGN_MESSAGE_PORT,
   SIGN_MESSAGE_SUCCESS_URL,
@@ -71,7 +72,7 @@ async function createAndStoreKey(): Promise<KeySignMessageParams | null> {
       console.warn("Message verification failed");
     }
 
-    await appendToEnv("BITTE_KEY", JSON.stringify(signedMessage));
+    await appendToEnv(BITTE_KEY_ENV_KEY, JSON.stringify(signedMessage));
     return signedMessage;
   } catch (error) {
     console.error("Error creating and storing key:", error);
