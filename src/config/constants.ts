@@ -10,3 +10,5 @@ export const SIGN_MESSAGE_PORT = 6969;
 export const SIGN_MESSAGE_URL = "https://wallet.bitte.ai/sign-message";
 export const SIGN_MESSAGE_SUCCESS_URL = "https://wallet.bitte.ai/success";
 export const SIGN_MESSAGE = "Register Bitte Agent!"
+export const BITTE_CONFIG_ENV_KEY = "BITTE_CONFIG"
+export const BITTE_KEY_ENV_KEY = "BITTE_KEY"
