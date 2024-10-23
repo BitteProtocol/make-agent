@@ -53,19 +53,12 @@ async function promptQuestions() {
       message: 'Enter the output directory (press Enter for current directory):',
       default: '.',
     },
-    {
-      type: 'input',
-      name: 'accountId',
-      message: 'Enter your near account ID to generate an API key:',
-      validate: (input: string) => input.length > 0 || 'Near account ID is required'
-    }
   ];
 
   return await inquirer.prompt<{
     contract: string;
     description: string;
     output: string;
-    accountId: string;
   }>(questions as any);
 }
 
@@ -78,7 +71,6 @@ async function generateTypes(outputDir: string, contract: string) {
 async function generateAIAgent(answers: {
   contract: string;
   description: string;
-  accountId: string;
 }, outputDir: string) {
   const apiUrl = "https://contract-to-agent.vercel.app/api/generate";
 
@@ -89,7 +81,6 @@ async function generateAIAgent(answers: {
   const postData = {
     contract: answers.contract,
     contractDescription: answers.description,
-    accountId: answers.accountId,
     types: typesContent
   };
 
@@ -149,7 +140,8 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
     dependencies: {
       express: "^4.17.1",
       "@types/express": "^4.17.13",
-      "make-agent": "0.0.15-rc.2",
+      "dotenv": "^10.0.0",
+      "make-agent": "^latest",
     },
     devDependencies: {
       typescript: "^4.5.4",
