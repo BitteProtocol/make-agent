@@ -149,7 +149,8 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
     dependencies: {
       express: "^4.17.1",
       "@types/express": "^4.17.13",
-      "make-agent": "0.0.15-rc.2",
+      "make-agent": "latest",
+      "dotenv": "^10.0.0",
     },
     devDependencies: {
       typescript: "^4.5.4",
