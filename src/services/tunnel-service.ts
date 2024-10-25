@@ -1,5 +1,6 @@
 import { watch } from 'fs/promises';
 import localtunnel from 'localtunnel';
+import { spawn } from 'child_process';
 import open from 'open';
 import { relative } from 'path';
 import { BITTE_CONFIG_ENV_KEY, PLAYGROUND_URL } from '../config/constants';
@@ -8,6 +9,9 @@ import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
 import { authenticateOrCreateKey, getAuthentication } from './signer-service';
 import { getSpecUrl } from '../utils/url-utils';
 import { appendToEnv, removeFromEnv } from '../utils/file-utils';
+import { promises as fs } from 'fs';
+import { homedir } from 'os';
+import { join } from 'path';
 
 async function updateBitteConfig(data: any) {
     let existingConfig = {};
@@ -106,7 +110,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
     });
 }
 
-async function setupTunnel(port: number): Promise<{ tunnelUrl: string; cleanup: () => Promise<void> }> {
+async function setupLocaltunnel(port: number): Promise<{ tunnelUrl: string; cleanup: () => Promise<void> }> {
     try {
         const tunnel = await localtunnel({ port });
         console.log(`Localtunnel URL: ${tunnel.url}`);
@@ -121,9 +125,58 @@ async function setupTunnel(port: number): Promise<{ tunnelUrl: string; cleanup: 
     }
 }
 
-export async function startLocalTunnelAndRegister(port: number): Promise<void> {
-    console.log(`Setting up local tunnel on port ${port}...`);
-    const { tunnelUrl, cleanup } = await setupTunnel(port);
+async function setupServeo(port: number): Promise<{ tunnelUrl: string; cleanup: () => Promise<void> }> {
+    const sshKeyPath = join(homedir(), '.ssh', 'serveo_key');
+    
+    // Check if SSH key exists, if not, create it
+    try {
+        await fs.access(sshKeyPath);
+    } catch (error) {
+        console.log('Generating SSH key for Serveo...');
+        await new Promise((resolve, reject) => {
+            const sshKeygen = spawn('ssh-keygen', ['-t', 'rsa', '-b', '4096', '-f', sshKeyPath, '-N', '']);
+            sshKeygen.on('close', (code) => {
+                if (code === 0) resolve(null);
+                else reject(new Error(`ssh-keygen process exited with code ${code}`));
+            });
+        });
+        console.log('SSH key generated successfully.');
+    }
+
+    return new Promise((resolve, reject) => {
+        const tunnel = spawn('ssh', ['-R', `80:localhost:${port}`, 'serveo.net', '-i', sshKeyPath]);
+        
+        let tunnelUrl = '';
+        
+        tunnel.stdout.on('data', (data) => {
+            const output = data.toString();
+            console.log(output);
+            if (output.includes('Forwarding HTTP traffic from')) {
+                tunnelUrl = output.match(/https?:\/\/[^\s]+/)[0];
+                resolve({
+                    tunnelUrl,
+                    cleanup: async () => {
+                        tunnel.kill();
+                    }
+                });
+            }
+        });
+
+        tunnel.stderr.on('data', (data) => {
+            console.error(`Tunnel error: ${data}`);
+        });
+
+        tunnel.on('close', (code) => {
+            if (code !== 0) {
+                reject(new Error(`Tunnel process exited with code ${code}`));
+            }
+        });
+    });
+}
+
+export async function startLocalTunnelAndRegister(port: number, useServeo: boolean = false): Promise<void> {
+    console.log(`Setting up ${useServeo ? 'Serveo' : 'Localtunnel'} tunnel on port ${port}...`);
+    const { tunnelUrl, cleanup } = useServeo ? await setupServeo(port) : await setupLocaltunnel(port);
 
     const pluginId = new URL(tunnelUrl).hostname;
     await setupAndValidate(tunnelUrl, pluginId);

@@ -6,6 +6,7 @@ export const devCommand = new Command()
     .name('dev')
     .description('Make your AI agent discoverable and register the plugin')
     .option('-p, --port <number>', 'Local port to expose', parseInt)
+    .option('-s, --serveo', 'Use Serveo instead of Localtunnel', false)
     .action(async (options) => {
         let port = options.port;
         if (!port) {
@@ -16,5 +17,5 @@ export const devCommand = new Command()
             }
             console.log(`Detected port: ${port}`);
         }
-        await startLocalTunnelAndRegister(port);
+        await startLocalTunnelAndRegister(port, options.serveo);
     });
