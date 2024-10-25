@@ -1,9 +1,8 @@
 import { Command } from "commander";
-import { registerPlugin } from "../services/plugin-service";
-import { openPlayground } from "../services/tunnel-service";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { getSpecUrl, getHostname } from "../utils/url-utils";
+import { registerPlugin } from "../services/plugin-service";
 import { deployedUrl } from "../utils/deployed-url";
+import { getHostname, getSpecUrl } from "../utils/url-utils";
 
 export const registerCommand = new Command()
     .name('register')
@@ -33,9 +32,7 @@ export const registerCommand = new Command()
 
         const result = await registerPlugin(pluginId, accountId);
         if (result) {
-            const receivedId = await openPlayground(result);
             console.log(`Plugin ${pluginId} registered successfully.`);
-            console.log(`Received ID from playground: ${receivedId}`);
         } else {
             console.error('Plugin registration failed.');
         }
