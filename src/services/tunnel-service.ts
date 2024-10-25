@@ -122,7 +122,7 @@ async function setupTunnel(port: number): Promise<{ tunnelUrl: string; cleanup: 
 }
 
 export async function startLocalTunnelAndRegister(port: number): Promise<void> {
-    console.log("Setting up local tunnel...");
+    console.log(`Setting up local tunnel on port ${port}...`);
     const { tunnelUrl, cleanup } = await setupTunnel(port);
 
     const pluginId = new URL(tunnelUrl).hostname;
