@@ -30,7 +30,7 @@ export const registerCommand = new Command()
             return;
         }
 
-        const result = await registerPlugin(pluginId, accountId);
+        const result = await registerPlugin({ pluginId, accountId });
         if (result) {
             console.log(`Plugin ${pluginId} registered successfully.`);
         } else {

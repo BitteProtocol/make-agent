@@ -12,10 +12,13 @@ export interface KeySignMessageParams {
   accountId?: string;
 }
 
-export const verifyMessage = async (
-  params: KeySignMessageParams,
-  accountIdToVerify?: string
-) => {
+export const verifyMessage = async ({
+  params,
+  accountIdToVerify,
+}: {
+  params: KeySignMessageParams;
+  accountIdToVerify?: string;
+}) => {
   const {
     message,
     nonce,

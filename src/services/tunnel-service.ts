@@ -47,7 +47,7 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string): Prom
             const authentication = await getAuthentication(accountId);
             const result = authentication
                 ? await updatePlugin(pluginId, accountId)
-                : await registerPlugin(pluginId);
+                : await registerPlugin({ pluginId, accountId });
             
             if (result && !authentication) {
                 await openPlayground(result);
@@ -93,7 +93,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
         return;
     }    
 
-    const result = await registerPlugin(pluginId, signedMessage);
+    const result = await registerPlugin({ pluginId, accountId });
 
     if (!result) {
         console.log('Initial registration failed. Waiting for file changes to retry...');

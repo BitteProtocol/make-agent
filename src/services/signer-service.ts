@@ -30,7 +30,7 @@ export async function getAuthentication(
   if (!bitteKeyString) return null;
 
   const parsedKey = JSON.parse(bitteKeyString) as KeySignMessageParams;
-  if (accountId && (await verifyMessage(parsedKey, accountId)) || !accountId) {
+  if (accountId && (await verifyMessage({ params: parsedKey, accountIdToVerify: accountId })) || !accountId) {
     return bitteKeyString;
   }
 
@@ -67,7 +67,7 @@ async function createAndStoreKey(): Promise<KeySignMessageParams | null> {
       return null;
     }
 
-    const isVerified = await verifyMessage(signedMessage);
+    const isVerified = await verifyMessage({ params: signedMessage });
     if (!isVerified) {
       console.warn("Message verification failed");
     }
