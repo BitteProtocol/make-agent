@@ -1,7 +1,7 @@
 import { BASE_URL } from '../config/constants';
 import { getAuthentication, getSignedMessage } from './signer-service';
 
-export async function registerPlugin(pluginId: string, accountId?: string): Promise<string | null> {
+export async function registerPlugin({pluginId, accountId}: {pluginId: string, accountId?: string}): Promise<string | null> {
 
     let message = await getAuthentication(accountId)
 

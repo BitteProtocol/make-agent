@@ -35,7 +35,7 @@ export const deployCommand = new Command()
             console.log(`Plugin ${id} updated successfully.`);
         } catch (error) {
             console.log('Plugin not found. Attempting to register...');
-            const result = await registerPlugin(id, accountId);
+            const result = await registerPlugin({ pluginId: id, accountId });
             if (result) {
                 console.log(`Plugin ${id} registered successfully.`);
             } else {
