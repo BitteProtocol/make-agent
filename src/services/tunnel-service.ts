@@ -72,7 +72,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string, bitteUrls: 
     
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const signedMessage = await authenticateOrCreateKey();
+    const signedMessage = await authenticateOrCreateKey(bitteUrls);
     if (!signedMessage) {
         console.log("Failed to authenticate or create a key.");
         return;
