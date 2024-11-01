@@ -11,8 +11,7 @@ import {
   BITTE_KEY_ENV_KEY,
   SIGN_MESSAGE,
   SIGN_MESSAGE_PORT,
-  SIGN_MESSAGE_SUCCESS_URL,
-  SIGN_MESSAGE_URL,
+  type BitteUrls,
 } from "../config/constants";
 
 dotenv.config();
@@ -41,7 +40,7 @@ export async function getAuthentication(
  * for message signing and stores the signed message as an environment variable.
  * @returns {Promise<string | null>} A promise that resolves to the signed message if authenticated or key created, null otherwise.
  */
-export async function authenticateOrCreateKey(): Promise<string | null> {
+export async function authenticateOrCreateKey(bitteUrls: BitteUrls): Promise<string | null> {
   const authentication = await getAuthentication();
   if (authentication) {
     console.log("Already authenticated.");
@@ -49,7 +48,7 @@ export async function authenticateOrCreateKey(): Promise<string | null> {
   }
 
   console.log("Not authenticated. Redirecting to Bitte wallet for signing...");
-  const newKey = await createAndStoreKey();
+  const newKey = await createAndStoreKey(bitteUrls);
   if (newKey) {
     console.log("New key created and stored successfully.");
     return JSON.stringify(newKey);
@@ -59,9 +58,9 @@ export async function authenticateOrCreateKey(): Promise<string | null> {
   }
 }
 
-async function createAndStoreKey(): Promise<KeySignMessageParams | null> {
+async function createAndStoreKey(bitteUrls: BitteUrls): Promise<KeySignMessageParams | null> {
   try {
-    const signedMessage = await getSignedMessage();
+    const signedMessage = await getSignedMessage(bitteUrls);
     if (!signedMessage) {
       console.error("Failed to get signed message");
       return null;
@@ -80,17 +79,17 @@ async function createAndStoreKey(): Promise<KeySignMessageParams | null> {
   }
 }
 
-export function getSignedMessage(): Promise<KeySignMessageParams> {
+export function getSignedMessage(bitteUrls: BitteUrls): Promise<KeySignMessageParams> {
   return new Promise((resolve, reject) => {
     const server = createServer(handleRequest);
 
     server.listen(SIGN_MESSAGE_PORT, () => {  
       const postEndpoint = `http://localhost:${SIGN_MESSAGE_PORT}`;
       const nonce = crypto.randomBytes(16).toString("hex");
-      const signUrl = `${SIGN_MESSAGE_URL}?message=${encodeURIComponent(
+      const signUrl = `${bitteUrls.SIGN_MESSAGE_URL}?message=${encodeURIComponent(
         SIGN_MESSAGE
       )}&callbackUrl=${encodeURIComponent(
-        SIGN_MESSAGE_SUCCESS_URL
+        bitteUrls.SIGN_MESSAGE_SUCCESS_URL
       )}&nonce=${encodeURIComponent(nonce)}&postEndpoint=${encodeURIComponent(
         postEndpoint
       )}`;

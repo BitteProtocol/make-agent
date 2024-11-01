@@ -1,7 +1,6 @@
-import { BASE_URL } from '../config/constants';
 import { getAuthentication, getSignedMessage } from './signer-service';
 
-export async function registerPlugin({pluginId, accountId}: {pluginId: string, accountId?: string}): Promise<string | null> {
+export async function registerPlugin({pluginId, accountId, bitteUrl}: {pluginId: string, accountId?: string, bitteUrl: string}): Promise<string | null> {
 
     let message = await getAuthentication(accountId)
 
@@ -11,7 +10,7 @@ export async function registerPlugin({pluginId, accountId}: {pluginId: string, a
     }
 
     try {
-        const response = await fetch(`${BASE_URL}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': message } });
+        const response = await fetch(`${bitteUrl}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': message } });
         if (response.ok) {
             await response.json();
             console.log(`Plugin registered successfully`);
@@ -30,7 +29,7 @@ export async function registerPlugin({pluginId, accountId}: {pluginId: string, a
     }
 }
 
-export async function updatePlugin(pluginId: string, accountId: string | undefined): Promise<void> {
+export async function updatePlugin(pluginId: string, accountId: string | undefined, bitteUrl: string): Promise<void> {
     const message = await getAuthentication(accountId)
 
     if (!message) {
@@ -38,7 +37,7 @@ export async function updatePlugin(pluginId: string, accountId: string | undefin
         return;
     }
 
-    const response = await fetch(`${BASE_URL}/${pluginId}`, {
+    const response = await fetch(`${bitteUrl}/${pluginId}`, {
         method: 'PUT',
         headers: { 'bitte-api-key': message },
     });
@@ -49,7 +48,7 @@ export async function updatePlugin(pluginId: string, accountId: string | undefin
     }
 }
 
-export async function deletePlugin(pluginId: string): Promise<void> {
+export async function deletePlugin(pluginId: string, bitteUrl: string): Promise<void> {
     const bitteKeyString = process.env.BITTE_KEY;
 
     if (!bitteKeyString) {
@@ -57,7 +56,7 @@ export async function deletePlugin(pluginId: string): Promise<void> {
         return;
     }
 
-    const response = await fetch(`${BASE_URL}/${pluginId}`, {
+    const response = await fetch(`${bitteUrl}/${pluginId}`, {
         method: 'DELETE',
         headers: { 'bitte-api-key': bitteKeyString },
     });

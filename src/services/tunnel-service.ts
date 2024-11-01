@@ -3,7 +3,7 @@ import localtunnel from 'localtunnel';
 import { spawn } from 'child_process';
 import open from 'open';
 import { relative } from 'path';
-import { BITTE_CONFIG_ENV_KEY, PLAYGROUND_URL } from '../config/constants';
+import { BITTE_CONFIG_ENV_KEY, getBitteUrls, type BitteUrls } from '../config/constants';
 import { validateAndParseOpenApiSpec } from './openapi-service';
 import { deletePlugin, registerPlugin, updatePlugin } from './plugin-service';
 import { authenticateOrCreateKey, getAuthentication } from './signer-service';
@@ -31,7 +31,7 @@ async function updateBitteConfig(data: any) {
     console.log('BITTE_CONFIG updated successfully.');
 }
 
-export async function watchForChanges(pluginId: string, tunnelUrl: string): Promise<void> {
+export async function watchForChanges(pluginId: string, tunnelUrl: string, urls: BitteUrls): Promise<void> {
     const projectDir = process.cwd();
     console.log(`Watching for changes in ${projectDir}`);
     console.log('Any file changes will trigger a plugin update attempt.');
@@ -46,11 +46,11 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string): Prom
             const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
             const authentication = await getAuthentication(accountId);
             const result = authentication
-                ? await updatePlugin(pluginId, accountId)
-                : await registerPlugin({ pluginId, accountId });
+                ? await updatePlugin(pluginId, accountId, urls.BASE_URL)
+                : await registerPlugin({ pluginId, accountId, bitteUrl: urls.BASE_URL });
             
             if (result && !authentication) {
-                await openPlayground(result);
+                await openPlayground(result, urls.PLAYGROUND_URL);
             } else if (!result && !authentication) {
                 console.log('Registration failed. Waiting for next file change to retry...');
             }
@@ -58,21 +58,21 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string): Prom
     }
 }
 
-export async function openPlayground(agentId: string): Promise<string> {
-    const playgroundUrl = `${PLAYGROUND_URL}${agentId}`;
-    console.log(`Opening playground: ${playgroundUrl}`);
-    await open(playgroundUrl);
+export async function openPlayground(agentId: string, playgroundUrl: string): Promise<string> {
+    const url = `${playgroundUrl}/${agentId}`;
+    console.log(`Opening playground: ${url}`);
+    await open(url);
 
     console.log('Waiting for the ID from the playground...');
     return "";
 }
 
-async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<void> {
+async function setupAndValidate(tunnelUrl: string, pluginId: string, bitteUrls: BitteUrls): Promise<void> {
     await updateBitteConfig({ url: tunnelUrl });
     
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const signedMessage = await authenticateOrCreateKey();
+    const signedMessage = await authenticateOrCreateKey(bitteUrls);
     if (!signedMessage) {
         console.log("Failed to authenticate or create a key.");
         return;
@@ -93,14 +93,14 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string): Promise<vo
         return;
     }    
 
-    const result = await registerPlugin({ pluginId, accountId });
+    const result = await registerPlugin({ pluginId, accountId, bitteUrl: bitteUrls.BASE_URL });
 
     if (!result) {
         console.log('Initial registration failed. Waiting for file changes to retry...');
         return;
     }
 
-    const receivedId = await openPlayground(result);
+    const receivedId = await openPlayground(result, bitteUrls.PLAYGROUND_URL);
     console.log(`Received ID from playground: ${receivedId}`);
 
     // Update bitte.dev.json with additional info
@@ -174,12 +174,12 @@ async function setupServeo(port: number): Promise<{ tunnelUrl: string; cleanup: 
     });
 }
 
-export async function startLocalTunnelAndRegister(port: number, useServeo: boolean = false): Promise<void> {
+export async function startLocalTunnelAndRegister(port: number, useServeo: boolean = false, useTestnet: boolean = false): Promise<void> {
     console.log(`Setting up ${useServeo ? 'Serveo' : 'Localtunnel'} tunnel on port ${port}...`);
     const { tunnelUrl, cleanup } = useServeo ? await setupServeo(port) : await setupLocaltunnel(port);
-
+    const bitteUrls = getBitteUrls(useTestnet);
     const pluginId = new URL(tunnelUrl).hostname;
-    await setupAndValidate(tunnelUrl, pluginId);
+    await setupAndValidate(tunnelUrl, pluginId, bitteUrls);
     
     let isCleaningUp = false;
 
@@ -191,7 +191,7 @@ export async function startLocalTunnelAndRegister(port: number, useServeo: boole
         console.log('bitte.dev.json file deleted successfully.');
         
         try {
-            await deletePlugin(pluginId);
+            await deletePlugin(pluginId, bitteUrls.BASE_URL);
         } catch (error) {
             console.error('Error deleting plugin:', error);
         }
@@ -217,5 +217,5 @@ export async function startLocalTunnelAndRegister(port: number, useServeo: boole
     console.log('Tunnel is running. Watching for changes. Press Ctrl+C to stop.');
 
     // Start watching for changes
-    await watchForChanges(pluginId, tunnelUrl);
+    await watchForChanges(pluginId, tunnelUrl, bitteUrls);
 }
