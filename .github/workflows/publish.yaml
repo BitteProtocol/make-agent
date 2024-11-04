@@ -27,6 +27,8 @@ jobs:
           npm version $VERSION --no-git-tag-version
 
       - name: Publish
-        run: npm publish --access public
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
