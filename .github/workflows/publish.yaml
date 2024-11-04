@@ -13,13 +13,20 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
+
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          export PATH="$HOME/.bun/bin:$PATH"
       - name: Build & Set Package Version to Tag
         run: |
-          yarn --frozen-lockfile
-          yarn build
+          export PATH="$HOME/.bun/bin:$PATH"
+          bun install --frozen-lockfile
+          bun run build
           VERSION=${GITHUB_REF#refs/tags/}
-          npm version $VERSION --no-git-tag-version
+          bunx npm version $VERSION --no-git-tag-version
+
       - name: Publish
-        run: npm publish --access public
+        run: bunx npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
