@@ -59,7 +59,7 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string, bitte
 }
 
 export async function openPlayground(agentId: string, playgroundUrl: string): Promise<string> {
-    const url = `${playgroundUrl}/${agentId}`;
+    const url = `${playgroundUrl}${agentId}`;
     console.log(`Opening playground: ${url}`);
     await open(url);
 
