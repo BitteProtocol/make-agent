@@ -1,16 +1,17 @@
+import type { BitteUrls } from '../config/constants';
 import { getAuthentication, getSignedMessage } from './signer-service';
 
-export async function registerPlugin({pluginId, accountId, bitteUrl}: {pluginId: string, accountId?: string, bitteUrl: string}): Promise<string | null> {
+export async function registerPlugin({pluginId, accountId, bitteUrls}: {pluginId: string, accountId?: string, bitteUrls: BitteUrls}): Promise<string | null> {
 
     let message = await getAuthentication(accountId)
 
     if (!message || !accountId) {
-        const signedMessage = await getSignedMessage();
+        const signedMessage = await getSignedMessage(bitteUrls);
         message = JSON.stringify(signedMessage);
     }
 
     try {
-        const response = await fetch(`${bitteUrl}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': message } });
+        const response = await fetch(`${bitteUrls.BASE_URL}/${pluginId}`, { method: 'POST', headers: { 'bitte-api-key': message } });
         if (response.ok) {
             await response.json();
             console.log(`Plugin registered successfully`);

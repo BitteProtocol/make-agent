@@ -4,6 +4,7 @@ import { validateAndParseOpenApiSpec } from "../services/openapi-service";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
 import { deployedUrl } from "../utils/deployed-url";
 import { getAuthentication } from "../services/signer-service";
+import { getBitteUrls } from "../config/constants";
 
 export const updateCommand = new Command()
     .name('update')
@@ -36,9 +37,9 @@ export const updateCommand = new Command()
             console.error('Authentication failed. Unable to update the plugin.');
             return;
         }
-
+        const bitteUrls = getBitteUrls();
         try {
-            await updatePlugin(pluginId, accountId);
+            await updatePlugin(pluginId, accountId, bitteUrls.BASE_URL);
             console.log(`Plugin ${pluginId} updated successfully.`);
         } catch (error) {
             console.error('Failed to update the plugin:', error);

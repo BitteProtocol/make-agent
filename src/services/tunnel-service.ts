@@ -31,7 +31,7 @@ async function updateBitteConfig(data: any) {
     console.log('BITTE_CONFIG updated successfully.');
 }
 
-export async function watchForChanges(pluginId: string, tunnelUrl: string, urls: BitteUrls): Promise<void> {
+export async function watchForChanges(pluginId: string, tunnelUrl: string, bitteUrls: BitteUrls): Promise<void> {
     const projectDir = process.cwd();
     console.log(`Watching for changes in ${projectDir}`);
     console.log('Any file changes will trigger a plugin update attempt.');
@@ -46,11 +46,11 @@ export async function watchForChanges(pluginId: string, tunnelUrl: string, urls:
             const { accountId } = await validateAndParseOpenApiSpec(getSpecUrl(tunnelUrl));
             const authentication = await getAuthentication(accountId);
             const result = authentication
-                ? await updatePlugin(pluginId, accountId, urls.BASE_URL)
-                : await registerPlugin({ pluginId, accountId, bitteUrl: urls.BASE_URL });
+                ? await updatePlugin(pluginId, accountId, bitteUrls.BASE_URL)
+                : await registerPlugin({ pluginId, accountId, bitteUrls });
             
             if (result && !authentication) {
-                await openPlayground(result, urls.PLAYGROUND_URL);
+                await openPlayground(result, bitteUrls.PLAYGROUND_URL);
             } else if (!result && !authentication) {
                 console.log('Registration failed. Waiting for next file change to retry...');
             }
@@ -93,7 +93,7 @@ async function setupAndValidate(tunnelUrl: string, pluginId: string, bitteUrls: 
         return;
     }    
 
-    const result = await registerPlugin({ pluginId, accountId, bitteUrl: bitteUrls.BASE_URL });
+    const result = await registerPlugin({ pluginId, accountId, bitteUrls });
 
     if (!result) {
         console.log('Initial registration failed. Waiting for file changes to retry...');
