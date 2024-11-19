@@ -23,13 +23,20 @@ dotenv.config({ path: `.env.local`, override: true });
  * @returns {Promise<string | null>} A promise that resolves to the signed message if authenticated, null otherwise.
  */
 export async function getAuthentication(
-  accountId?: string
+  accountId?: string,
 ): Promise<string | null> {
   const bitteKeyString = process.env.BITTE_KEY;
   if (!bitteKeyString) return null;
 
   const parsedKey = JSON.parse(bitteKeyString) as KeySignMessageParams;
-  if (accountId && (await verifyMessage({ params: parsedKey, accountIdToVerify: accountId })) || !accountId) {
+  if (
+    (accountId &&
+      (await verifyMessage({
+        params: parsedKey,
+        accountIdToVerify: accountId,
+      }))) ||
+    !accountId
+  ) {
     return bitteKeyString;
   }
 
@@ -40,7 +47,9 @@ export async function getAuthentication(
  * for message signing and stores the signed message as an environment variable.
  * @returns {Promise<string | null>} A promise that resolves to the signed message if authenticated or key created, null otherwise.
  */
-export async function authenticateOrCreateKey(bitteUrls: BitteUrls): Promise<string | null> {
+export async function authenticateOrCreateKey(
+  bitteUrls: BitteUrls,
+): Promise<string | null> {
   const authentication = await getAuthentication();
   if (authentication) {
     console.log("Already authenticated.");
@@ -58,7 +67,9 @@ export async function authenticateOrCreateKey(bitteUrls: BitteUrls): Promise<str
   }
 }
 
-async function createAndStoreKey(bitteUrls: BitteUrls): Promise<KeySignMessageParams | null> {
+async function createAndStoreKey(
+  bitteUrls: BitteUrls,
+): Promise<KeySignMessageParams | null> {
   try {
     const signedMessage = await getSignedMessage(bitteUrls);
     if (!signedMessage) {
@@ -79,19 +90,21 @@ async function createAndStoreKey(bitteUrls: BitteUrls): Promise<KeySignMessagePa
   }
 }
 
-export function getSignedMessage(bitteUrls: BitteUrls): Promise<KeySignMessageParams> {
+export function getSignedMessage(
+  bitteUrls: BitteUrls,
+): Promise<KeySignMessageParams> {
   return new Promise((resolve, reject) => {
     const server = createServer(handleRequest);
 
-    server.listen(SIGN_MESSAGE_PORT, () => {  
+    server.listen(SIGN_MESSAGE_PORT, () => {
       const postEndpoint = `http://localhost:${SIGN_MESSAGE_PORT}`;
       const nonce = crypto.randomBytes(16).toString("hex");
       const signUrl = `${bitteUrls.SIGN_MESSAGE_URL}?message=${encodeURIComponent(
-        SIGN_MESSAGE
+        SIGN_MESSAGE,
       )}&callbackUrl=${encodeURIComponent(
-        bitteUrls.SIGN_MESSAGE_SUCCESS_URL
+        bitteUrls.SIGN_MESSAGE_SUCCESS_URL,
       )}&nonce=${encodeURIComponent(nonce)}&postEndpoint=${encodeURIComponent(
-        postEndpoint
+        postEndpoint,
       )}`;
       open(signUrl).catch((error) => {
         console.error("Failed to open the browser:", error);
@@ -147,7 +160,7 @@ function handlePreflight(res: ServerResponse): void {
 
 function handleInvalidMethod(
   res: ServerResponse,
-  reject: (reason: any) => void
+  reject: (reason: any) => void,
 ): void {
   res.writeHead(405, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ error: "Method Not Allowed" }));
