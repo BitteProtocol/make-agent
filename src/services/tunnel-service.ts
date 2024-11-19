@@ -9,7 +9,6 @@ import { join } from "path";
 
 import { validateAndParseOpenApiSpec } from "./openapi-service";
 import { PluginService } from "./plugin-service";
-import { authenticateOrCreateKey, getAuthentication } from "./signer-service";
 import {
   BITTE_CONFIG_ENV_KEY,
   getBitteUrls,
@@ -71,7 +70,8 @@ export async function watchForChanges(
       const { accountId } = await validateAndParseOpenApiSpec(
         getSpecUrl(tunnelUrl),
       );
-      const authentication = await getAuthentication(accountId);
+      const authentication =
+        await pluginService.auth.getAuthentication(accountId);
       const result = authentication
         ? await pluginService.update(pluginId, accountId)
         : await pluginService.register({ pluginId, accountId });
@@ -107,8 +107,9 @@ async function setupAndValidate(
   await updateBitteConfig({ url: tunnelUrl });
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
+  const pluginService = new PluginService(bitteUrls);
 
-  const signedMessage = await authenticateOrCreateKey(bitteUrls);
+  const signedMessage = await pluginService.auth.getSignedMessage();
   if (!signedMessage) {
     console.log("Failed to authenticate or create a key.");
     return;
@@ -129,7 +130,7 @@ async function setupAndValidate(
     return;
   }
 
-  const result = await new PluginService(bitteUrls).register({
+  const result = await pluginService.register({
     pluginId,
     accountId,
   });

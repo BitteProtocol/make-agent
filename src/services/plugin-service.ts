@@ -1,11 +1,14 @@
-import { getAuthentication, getSignedMessage } from "./signer-service";
+import { AuthenticationService } from "./authentication";
 import type { BitteUrls } from "../config/constants";
+
 
 export class PluginService {
   private readonly bitteUrls: BitteUrls;
+  readonly auth: AuthenticationService;
 
   constructor(bitteUrls: BitteUrls) {
     this.bitteUrls = bitteUrls;
+    this.auth = new AuthenticationService(bitteUrls);
   }
 
   async register({
@@ -15,10 +18,9 @@ export class PluginService {
     pluginId: string;
     accountId?: string;
   }): Promise<string | null> {
-    let message = await getAuthentication(accountId);
-
+    let message = await this.auth.getAuthentication(accountId);
     if (!message || !accountId) {
-      const signedMessage = await getSignedMessage(this.bitteUrls);
+      const signedMessage = await this.auth.getSignedMessage();
       message = JSON.stringify(signedMessage);
     }
 
@@ -47,7 +49,7 @@ export class PluginService {
   }
 
   async update(pluginId: string, accountId?: string): Promise<void> {
-    const message = await getAuthentication(accountId);
+    const message = await this.auth.getAuthentication(accountId);
 
     if (!message) {
       console.error(
@@ -69,7 +71,7 @@ export class PluginService {
   }
 
   async delete(pluginId: string): Promise<void> {
-    const message = await getAuthentication();
+    const message = await this.auth.getAuthentication();
 
     if (!message) {
       console.error("No API key found. Unable to delete plugin.");
