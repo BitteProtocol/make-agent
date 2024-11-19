@@ -3,12 +3,6 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
-interface ApiResponse {
-  "x-mb"?: {
-    "account-id": string;
-  };
-}
-
 //parsing and validation done together to avoid fetching spec twice
 export async function validateAndParseOpenApiSpec(
   url: string | URL,

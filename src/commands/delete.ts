@@ -1,5 +1,6 @@
 import { Command } from "commander";
 
+import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
 import { deletePlugin } from "../services/plugin-service";
 import { getAuthentication } from "../services/signer-service";
@@ -39,7 +40,7 @@ export const deleteCommand = new Command()
     }
 
     try {
-      await deletePlugin(pluginId);
+      await deletePlugin(pluginId, getBitteUrls().BASE_URL);
       console.log(`Plugin ${pluginId} deleted successfully.`);
     } catch (error) {
       console.error("Failed to delete the plugin:", error);

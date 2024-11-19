@@ -226,5 +226,7 @@ async function setupAndRunAgent(outputDir: string): Promise<void> {
   });
 
   // Keep the main process running
-  await new Promise((resolve) => {});
+  // TODO(bh2smith): This is bad practice. Find a better way to keep the process running.
+  //  https://github.com/BitteProtocol/make-agent/issues/23
+  await new Promise(() => {});
 }
