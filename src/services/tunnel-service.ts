@@ -1,21 +1,22 @@
+import { spawn } from "child_process";
+import { promises as fs } from "fs";
 import { watch } from "fs/promises";
 import localtunnel from "localtunnel";
-import { spawn } from "child_process";
 import open from "open";
+import { homedir } from "os";
 import { relative } from "path";
+import { join } from "path";
+
+import { validateAndParseOpenApiSpec } from "./openapi-service";
+import { deletePlugin, registerPlugin, updatePlugin } from "./plugin-service";
+import { authenticateOrCreateKey, getAuthentication } from "./signer-service";
 import {
   BITTE_CONFIG_ENV_KEY,
   getBitteUrls,
   type BitteUrls,
 } from "../config/constants";
-import { validateAndParseOpenApiSpec } from "./openapi-service";
-import { deletePlugin, registerPlugin, updatePlugin } from "./plugin-service";
-import { authenticateOrCreateKey, getAuthentication } from "./signer-service";
-import { getSpecUrl } from "../utils/url-utils";
 import { appendToEnv, removeFromEnv } from "../utils/file-utils";
-import { promises as fs } from "fs";
-import { homedir } from "os";
-import { join } from "path";
+import { getSpecUrl } from "../utils/url-utils";
 
 async function updateBitteConfig(data: any) {
   let existingConfig = {};

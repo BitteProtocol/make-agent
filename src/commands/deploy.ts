@@ -1,9 +1,10 @@
 import { Command } from "commander";
-import { registerPlugin, updatePlugin } from "../services/plugin-service";
-import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { getSpecUrl, getHostname } from "../utils/url-utils";
-import { deployedUrl } from "../utils/deployed-url";
+
 import { getBitteUrls } from "../config/constants";
+import { validateAndParseOpenApiSpec } from "../services/openapi-service";
+import { registerPlugin, updatePlugin } from "../services/plugin-service";
+import { deployedUrl } from "../utils/deployed-url";
+import { getSpecUrl, getHostname } from "../utils/url-utils";
 
 export const deployCommand = new Command()
   .name("deploy")

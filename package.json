@@ -21,8 +21,8 @@
     "build": "bun build ./src/index.ts --outdir ./dist --target node",
     "prepublishOnly": "bun run build",
     "build-binary": "bun build ./src/index.ts --compile --outfile make-agent",
-    "lint": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'",
-    "fmt": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'"
+    "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
+    "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && yarn lint --fix"
   },
   "keywords": [
     "ai",
@@ -34,6 +34,9 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/localtunnel": "^2.0.4",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-import": "^2.31.0",
     "prettier": "^3.3.3"
   },
   "peerDependencies": {

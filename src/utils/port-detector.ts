@@ -30,7 +30,7 @@ export async function detectPort(): Promise<number | null> {
 
       // Get ports for all node processes
       const { stdout: portOutput } = await execAsync(
-        `lsof -n -i -P | grep LISTEN | grep node`,
+        "lsof -n -i -P | grep LISTEN | grep node",
       );
       const portLines = portOutput.trim().split("\n");
 

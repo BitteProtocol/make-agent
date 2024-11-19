@@ -1,4 +1,5 @@
 import { Command } from "commander";
+
 import { startLocalTunnelAndRegister } from "../services/tunnel-service";
 import { detectPort } from "../utils/port-detector";
 

@@ -1,9 +1,10 @@
 import { Command } from "commander";
+
+import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
 import { registerPlugin } from "../services/plugin-service";
 import { deployedUrl } from "../utils/deployed-url";
 import { getHostname, getSpecUrl } from "../utils/url-utils";
-import { getBitteUrls } from "../config/constants";
 
 export const registerCommand = new Command()
   .name("register")

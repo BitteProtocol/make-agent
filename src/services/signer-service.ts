@@ -1,21 +1,22 @@
+import crypto from "crypto";
+import dotenv from "dotenv";
 import { createServer, Server, IncomingMessage, ServerResponse } from "http";
 import open from "open";
-import dotenv from "dotenv";
-import crypto from "crypto";
-import { appendToEnv } from "../utils/file-utils";
-import {
-  verifyMessage,
-  type KeySignMessageParams,
-} from "../utils/verify-msg-utils";
+
 import {
   BITTE_KEY_ENV_KEY,
   SIGN_MESSAGE,
   SIGN_MESSAGE_PORT,
   type BitteUrls,
 } from "../config/constants";
+import { appendToEnv } from "../utils/file-utils";
+import {
+  verifyMessage,
+  type KeySignMessageParams,
+} from "../utils/verify-msg-utils";
 
 dotenv.config();
-dotenv.config({ path: `.env.local`, override: true });
+dotenv.config({ path: ".env.local", override: true });
 
 /**
  * Checks if there is a BITTE_KEY in the environment, verifies it, and returns the signed message.

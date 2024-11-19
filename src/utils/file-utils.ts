@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import {
   existsSync,
   mkdirSync,
@@ -5,7 +6,6 @@ import {
   writeFileSync,
   appendFileSync,
 } from "fs";
-import dotenv from "dotenv";
 
 export function readFile(filePath: string): string {
   return readFileSync(filePath, "utf-8");
@@ -39,7 +39,7 @@ export async function appendToEnv(key: string, value: string): Promise<void> {
   }
 
   dotenv.config();
-  dotenv.config({ path: `.env.local`, override: true });
+  dotenv.config({ path: ".env.local", override: true });
 }
 
 export async function removeFromEnv(key: string): Promise<void> {
@@ -62,5 +62,5 @@ export async function removeFromEnv(key: string): Promise<void> {
 
   // Reload environment variables
   dotenv.config();
-  dotenv.config({ path: `.env.local`, override: true });
+  dotenv.config({ path: ".env.local", override: true });
 }

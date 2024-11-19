@@ -1,9 +1,9 @@
+import { exec, spawn } from "child_process";
 import { Command } from "commander";
 import fs from "fs/promises";
-import path from "path";
-import { exec, spawn } from "child_process";
-import { promisify } from "util";
 import inquirer from "inquirer";
+import path from "path";
+import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
@@ -91,7 +91,7 @@ async function generateAIAgent(
   showLoadingMessage("Generating AI agent");
 
   const typesContent = await fs.readFile(
-    path.join(outputDir, `contract_types.ts`),
+    path.join(outputDir, "contract_types.ts"),
     "utf-8",
   );
 
