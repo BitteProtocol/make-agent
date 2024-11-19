@@ -6,10 +6,10 @@ import open from "open";
 import { homedir } from "os";
 import { relative, join } from "path";
 
-import { validateAndParseOpenApiSpec } from "./openapi-service";
 import { PluginService } from "./plugin";
 import { BITTE_CONFIG_ENV_KEY } from "../config/constants";
 import { appendToEnv, removeFromEnv } from "../utils/file-utils";
+import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { getSpecUrl } from "../utils/url-utils";
 
 interface BitteConfig {
