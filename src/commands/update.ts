@@ -1,10 +1,8 @@
 import { Command } from "commander";
 
-import { getBitteUrls } from "../config/constants";
-import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { updatePlugin } from "../services/plugin-service";
-import { getAuthentication } from "../services/signer-service";
+import { PluginService } from "../services/plugin";
 import { deployedUrl } from "../utils/deployed-url";
+import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
 
 export const updateCommand = new Command()
@@ -32,15 +30,16 @@ export const updateCommand = new Command()
       console.error("Failed to parse account ID from OpenAPI specification.");
       return;
     }
-
-    const authentication = await getAuthentication(accountId);
+    const pluginService = new PluginService();
+    const authentication =
+      await pluginService.auth.getAuthentication(accountId);
     if (!authentication) {
       console.error("Authentication failed. Unable to update the plugin.");
       return;
     }
-    const bitteUrls = getBitteUrls();
+
     try {
-      await updatePlugin(pluginId, accountId, bitteUrls.BASE_URL);
+      await pluginService.update(pluginId, accountId);
       console.log(`Plugin ${pluginId} updated successfully.`);
     } catch (error) {
       console.error("Failed to update the plugin:", error);

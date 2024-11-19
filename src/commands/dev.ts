@@ -1,6 +1,6 @@
 import { Command } from "commander";
 
-import { startLocalTunnelAndRegister } from "../services/tunnel-service";
+import { TunnelService } from "../services/tunnel";
 import { detectPort } from "../utils/port-detector";
 
 export const devCommand = new Command()
@@ -21,5 +21,10 @@ export const devCommand = new Command()
       }
       console.log(`Detected port: ${port}`);
     }
-    await startLocalTunnelAndRegister(port, options.serveo, options.testnet);
+    const tunnelService = new TunnelService({
+      port,
+      useServeo: options.serveo,
+      useTestnet: options.testnet,
+    });
+    await tunnelService.start();
   });

@@ -1,10 +1,8 @@
 import { Command } from "commander";
 
-import { getBitteUrls } from "../config/constants";
-import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { deletePlugin } from "../services/plugin-service";
-import { getAuthentication } from "../services/signer-service";
+import { PluginService } from "../services/plugin";
 import { deployedUrl } from "../utils/deployed-url";
+import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
 
 export const deleteCommand = new Command()
@@ -32,15 +30,16 @@ export const deleteCommand = new Command()
       console.error("Failed to parse account ID from OpenAPI specification.");
       return;
     }
-
-    const authentication = await getAuthentication(accountId);
+    const pluginService = new PluginService();
+    const authentication =
+      await pluginService.auth.getAuthentication(accountId);
     if (!authentication) {
       console.error("Authentication failed. Unable to delete the plugin.");
       return;
     }
 
     try {
-      await deletePlugin(pluginId, getBitteUrls().BASE_URL);
+      await pluginService.delete(pluginId);
       console.log(`Plugin ${pluginId} deleted successfully.`);
     } catch (error) {
       console.error("Failed to delete the plugin:", error);
