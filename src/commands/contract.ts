@@ -28,7 +28,6 @@ export const contractCommand = new Command()
     }
   });
 
-
 function showLoadingMessage(message: string): void {
   console.log(`${message}...`);
 }
@@ -36,29 +35,33 @@ function showLoadingMessage(message: string): void {
 async function promptQuestions() {
   const questions = [
     {
-      type: 'input',
-      name: 'contract',
-      message: 'Enter the Near Protocol contract name:',
-      validate: (input: string) => input.length > 0 || 'Contract name is required'
+      type: "input",
+      name: "contract",
+      message: "Enter the Near Protocol contract name:",
+      validate: (input: string) =>
+        input.length > 0 || "Contract name is required",
     },
     {
-      type: 'input',
-      name: 'description',
-      message: 'Enter the contract description (agent instructions):',
-      validate: (input: string) => input.length > 0 || 'Contract description is required'
+      type: "input",
+      name: "description",
+      message: "Enter the contract description (agent instructions):",
+      validate: (input: string) =>
+        input.length > 0 || "Contract description is required",
     },
     {
-      type: 'input',
-      name: 'output',
-      message: 'Enter the output directory (press Enter for current directory):',
-      default: '.',
+      type: "input",
+      name: "output",
+      message:
+        "Enter the output directory (press Enter for current directory):",
+      default: ".",
     },
     {
-      type: 'input',
-      name: 'accountId',
-      message: 'Enter your near account ID to generate an API key:',
-      validate: (input: string) => input.length > 0 || 'Near account ID is required'
-    }
+      type: "input",
+      name: "accountId",
+      message: "Enter your near account ID to generate an API key:",
+      validate: (input: string) =>
+        input.length > 0 || "Near account ID is required",
+    },
   ];
 
   return await inquirer.prompt<{
@@ -75,38 +78,46 @@ async function generateTypes(outputDir: string, contract: string) {
   await execAsync(`npx near2ts ${contract}`);
 }
 
-async function generateAIAgent(answers: {
-  contract: string;
-  description: string;
-  accountId: string;
-}, outputDir: string) {
+async function generateAIAgent(
+  answers: {
+    contract: string;
+    description: string;
+    accountId: string;
+  },
+  outputDir: string,
+) {
   const apiUrl = "https://contract-to-agent.vercel.app/api/generate";
 
   showLoadingMessage("Generating AI agent");
 
-  const typesContent = await fs.readFile(path.join(outputDir, `contract_types.ts`), 'utf-8');
+  const typesContent = await fs.readFile(
+    path.join(outputDir, `contract_types.ts`),
+    "utf-8",
+  );
 
   const postData = {
     contract: answers.contract,
     contractDescription: answers.description,
     accountId: answers.accountId,
-    types: typesContent
+    types: typesContent,
   };
 
   const response = await fetch(apiUrl, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(postData),
   });
 
   if (response.status === 429) {
-    throw new Error('You have reached the daily prompt limit. Please try again tomorrow.');
+    throw new Error(
+      "You have reached the daily prompt limit. Please try again tomorrow.",
+    );
   }
 
   if (!response.ok) {
-    console.error('Failed to generate AI agent');
+    console.error("Failed to generate AI agent");
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
@@ -117,7 +128,7 @@ async function generateAIAgent(answers: {
 async function writeFiles(outputDir: string, code: string, contract: string) {
   await fs.mkdir(outputDir, { recursive: true });
 
-  await fs.writeFile(path.join(outputDir, 'index.ts'), code);
+  await fs.writeFile(path.join(outputDir, "index.ts"), code);
 
   const tsConfig = {
     compilerOptions: {
@@ -134,7 +145,7 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
   };
   await fs.writeFile(
     path.join(outputDir, "tsconfig.json"),
-    JSON.stringify(tsConfig, null, 2)
+    JSON.stringify(tsConfig, null, 2),
   );
 
   const packageJson = {
@@ -150,7 +161,7 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
       express: "^4.17.1",
       "@types/express": "^4.17.13",
       "make-agent": "latest",
-      "dotenv": "^10.0.0",
+      dotenv: "^10.0.0",
     },
     devDependencies: {
       typescript: "^4.5.4",
@@ -158,7 +169,7 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
   };
   await fs.writeFile(
     path.join(outputDir, "package.json"),
-    JSON.stringify(packageJson, null, 2)
+    JSON.stringify(packageJson, null, 2),
   );
 }
 
@@ -169,7 +180,7 @@ async function setupAndRunAgent(outputDir: string) {
   await execAsync("npm install --legacy-peer-deps");
 
   showLoadingMessage("Running server");
-  const serverProcess = spawn('npx', ['tsx', './index.ts']);
+  const serverProcess = spawn("npx", ["tsx", "./index.ts"]);
 
   serverProcess.stdout.on("data", (data) => {
     console.log(`Server: ${data}`);
@@ -181,15 +192,15 @@ async function setupAndRunAgent(outputDir: string) {
 
   // Wait for the server to start
   await new Promise((resolve) => {
-    serverProcess.stdout.on('data', (data) => {
-      if (data.toString().includes('Server is running')) {
+    serverProcess.stdout.on("data", (data) => {
+      if (data.toString().includes("Server is running")) {
         resolve(true);
       }
     });
   });
 
   showLoadingMessage("Running agent");
-  const agentProcess = spawn('npx', ['make-agent', 'dev', '-p', '8080']);
+  const agentProcess = spawn("npx", ["make-agent", "dev", "-p", "8080"]);
 
   agentProcess.stdout.on("data", (data) => {
     console.log(`Agent: ${data}`);
@@ -201,10 +212,9 @@ async function setupAndRunAgent(outputDir: string) {
 
   agentProcess.on("close", (code) => {
     console.log(`make-agent process exited with code ${code}`);
-    serverProcess.kill(); 
+    serverProcess.kill();
   });
 
   // Keep the main process running
   await new Promise((resolve) => {});
 }
-
