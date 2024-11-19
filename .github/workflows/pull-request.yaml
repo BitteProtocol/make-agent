@@ -32,8 +32,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bun-
 
-      - name: Install & Lint
+      - name: Install, Lint & Build
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
           bun install --frozen-lockfile
           bun lint
+          bun run build
