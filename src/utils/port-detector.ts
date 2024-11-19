@@ -39,7 +39,7 @@ export async function detectPort(): Promise<number | null> {
         .filter((line) => pids.some((pid) => line.includes(pid)))
         .map((line) => {
           const match = line.match(/:(\d+)/);
-          return match ? parseInt(match[1], 10) : null;
+          return match?.[1] ? parseInt(match[1], 10) : null;
         })
         .filter((port): port is number => port !== null);
 
@@ -60,7 +60,7 @@ export async function detectPort(): Promise<number | null> {
         );
       }
 
-      return ports[0];
+      return ports[0] ?? null;
     } catch (error) {
       // If lsof fails, it might be a Windows system or lsof is not installed
       try {

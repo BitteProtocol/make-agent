@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import dotenv from "dotenv";
-import { createServer, Server, IncomingMessage, ServerResponse } from "http";
+import { createServer, IncomingMessage, ServerResponse } from "http";
 import open from "open";
 
 import {
