@@ -1,7 +1,7 @@
 import { Command } from "commander";
 
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { PluginService } from "../services/plugin-service";
+import { PluginService } from "../services/plugin";
 import { deployedUrl } from "../utils/deployed-url";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
 
