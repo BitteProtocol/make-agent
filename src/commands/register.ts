@@ -3,6 +3,7 @@ import { validateAndParseOpenApiSpec } from "../services/openapi-service";
 import { registerPlugin } from "../services/plugin-service";
 import { deployedUrl } from "../utils/deployed-url";
 import { getHostname, getSpecUrl } from "../utils/url-utils";
+import { getBitteUrls } from "../config/constants";
 
 export const registerCommand = new Command()
     .name('register')
@@ -30,7 +31,7 @@ export const registerCommand = new Command()
             return;
         }
 
-        const result = await registerPlugin({ pluginId, accountId });
+        const result = await registerPlugin({ pluginId, accountId, bitteUrls: getBitteUrls() });
         if (result) {
             console.log(`Plugin ${pluginId} registered successfully.`);
         } else {
