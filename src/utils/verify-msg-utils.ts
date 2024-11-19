@@ -18,7 +18,7 @@ export const verifyMessage = async ({
 }: {
   params: KeySignMessageParams;
   accountIdToVerify?: string;
-}) => {
+}): Promise<boolean> => {
   const {
     message,
     nonce,

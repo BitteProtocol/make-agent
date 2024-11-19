@@ -47,7 +47,7 @@ async function fetchWithRetry(
     return text;
   } catch (error) {
     if (retries > 0) {
-      console.log(`Retrying...`);
+      console.log("Retrying...");
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
       return fetchWithRetry(url, retries - 1);
     }

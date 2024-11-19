@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 import { program } from "commander";
+import dotenv from "dotenv";
+
 import packageJson from "../package.json";
+import { contractCommand } from "./commands/contract";
+import { deleteCommand } from "./commands/delete";
 import { deployCommand } from "./commands/deploy";
 import { devCommand } from "./commands/dev";
-
-import dotenv from "dotenv";
 import { registerCommand } from "./commands/register";
 import { updateCommand } from "./commands/update";
-import { deleteCommand } from "./commands/delete";
-import { contractCommand } from "./commands/contract";
 
 dotenv.config();
 

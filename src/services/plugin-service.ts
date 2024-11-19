@@ -1,5 +1,5 @@
-import type { BitteUrls } from "../config/constants";
 import { getAuthentication, getSignedMessage } from "./signer-service";
+import type { BitteUrls } from "../config/constants";
 
 export async function registerPlugin({
   pluginId,
@@ -24,7 +24,7 @@ export async function registerPlugin({
     });
     if (response.ok) {
       await response.json();
-      console.log(`Plugin registered successfully`);
+      console.log("Plugin registered successfully");
       return pluginId;
     } else {
       const errorData = await response.json();

@@ -1,10 +1,11 @@
 import { Command } from "commander";
-import { updatePlugin } from "../services/plugin-service";
-import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { getSpecUrl, getHostname } from "../utils/url-utils";
-import { deployedUrl } from "../utils/deployed-url";
-import { getAuthentication } from "../services/signer-service";
+
 import { getBitteUrls } from "../config/constants";
+import { validateAndParseOpenApiSpec } from "../services/openapi-service";
+import { updatePlugin } from "../services/plugin-service";
+import { getAuthentication } from "../services/signer-service";
+import { deployedUrl } from "../utils/deployed-url";
+import { getSpecUrl, getHostname } from "../utils/url-utils";
 
 export const updateCommand = new Command()
   .name("update")

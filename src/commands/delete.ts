@@ -1,9 +1,10 @@
 import { Command } from "commander";
-import { deletePlugin } from "../services/plugin-service";
+
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { getSpecUrl, getHostname } from "../utils/url-utils";
-import { deployedUrl } from "../utils/deployed-url";
+import { deletePlugin } from "../services/plugin-service";
 import { getAuthentication } from "../services/signer-service";
+import { deployedUrl } from "../utils/deployed-url";
+import { getSpecUrl, getHostname } from "../utils/url-utils";
 
 export const deleteCommand = new Command()
   .name("delete")

@@ -4,7 +4,7 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 export async function detectPort(): Promise<number | null> {
-  const sleep = (ms: number) =>
+  const sleep = (ms: number): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, ms));
   const maxAttempts = 5;
 
@@ -30,7 +30,7 @@ export async function detectPort(): Promise<number | null> {
 
       // Get ports for all node processes
       const { stdout: portOutput } = await execAsync(
-        `lsof -n -i -P | grep LISTEN | grep node`,
+        "lsof -n -i -P | grep LISTEN | grep node",
       );
       const portLines = portOutput.trim().split("\n");
 

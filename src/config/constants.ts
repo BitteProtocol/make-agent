@@ -1,7 +1,7 @@
 import os from "os";
 import { join } from "path";
 
-const getWalletUrl = (isTestnet: boolean = false) =>
+const getWalletUrl = (isTestnet: boolean = false): string =>
   isTestnet ? "https://testnet.wallet.bitte.ai" : "https://wallet.bitte.ai";
 
 export interface BitteUrls {
