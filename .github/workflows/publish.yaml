@@ -29,6 +29,11 @@ jobs:
       - name: Publish
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
-          npm publish --access public
+          # Check if this is a pre-release version (contains a hyphen like "-rc")
+          if [[ "${GITHUB_REF#refs/tags/}" == *-* ]]; then
+            npm publish --access public --tag next
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
