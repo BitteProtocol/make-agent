@@ -32,8 +32,16 @@ function showLoadingMessage(message: string): void {
   console.log(`${message}...`);
 }
 
-async function promptQuestions() {
-  const questions = [
+interface PromptAnswers {
+  contract: string;
+  description: string;
+  output: string;
+  accountId: string;
+}
+
+async function promptQuestions(): Promise<PromptAnswers> {
+  // @ts-expect-error: Cannot find namespace 'inquirer'.ts(2503)
+  const questions: inquirer.QuestionCollection<PromptAnswers> = [
     {
       type: "input",
       name: "contract",
@@ -64,15 +72,13 @@ async function promptQuestions() {
     },
   ];
 
-  return await inquirer.prompt<{
-    contract: string;
-    description: string;
-    output: string;
-    accountId: string;
-  }>(questions as any);
+  return await inquirer.prompt<PromptAnswers>(questions);
 }
 
-async function generateTypes(outputDir: string, contract: string) {
+async function generateTypes(
+  outputDir: string,
+  contract: string,
+): Promise<void> {
   process.chdir(outputDir);
   showLoadingMessage("Generating types");
   await execAsync(`npx near2ts ${contract}`);
@@ -85,7 +91,7 @@ async function generateAIAgent(
     accountId: string;
   },
   outputDir: string,
-) {
+): Promise<string> {
   const apiUrl = "https://contract-to-agent.vercel.app/api/generate";
 
   showLoadingMessage("Generating AI agent");
@@ -125,7 +131,11 @@ async function generateAIAgent(
   return result.code;
 }
 
-async function writeFiles(outputDir: string, code: string, contract: string) {
+async function writeFiles(
+  outputDir: string,
+  code: string,
+  contract: string,
+): Promise<void> {
   await fs.mkdir(outputDir, { recursive: true });
 
   await fs.writeFile(path.join(outputDir, "index.ts"), code);
@@ -173,7 +183,7 @@ async function writeFiles(outputDir: string, code: string, contract: string) {
   );
 }
 
-async function setupAndRunAgent(outputDir: string) {
+async function setupAndRunAgent(outputDir: string): Promise<void> {
   process.chdir(outputDir);
 
   showLoadingMessage("Installing dependencies with npm install");

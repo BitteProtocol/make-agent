@@ -33,8 +33,11 @@
   "license": "MIT",
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/inquirer": "^9.0.7",
     "@types/localtunnel": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "ajv": "^8.17.1",
+    "ajv-draft-04": "^1.0.0",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0",
     "prettier": "^3.3.3"

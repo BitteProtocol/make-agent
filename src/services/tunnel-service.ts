@@ -18,7 +18,13 @@ import {
 import { appendToEnv, removeFromEnv } from "../utils/file-utils";
 import { getSpecUrl } from "../utils/url-utils";
 
-async function updateBitteConfig(data: any) {
+interface BitteConfig {
+  url?: string;
+  pluginId?: string;
+  receivedId?: string;
+}
+
+async function updateBitteConfig(data: BitteConfig): Promise<void> {
   let existingConfig = {};
   try {
     const existingData = process?.env?.BITTE_CONFIG;
@@ -241,7 +247,7 @@ export async function startLocalTunnelAndRegister(
 
   let isCleaningUp = false;
 
-  const fullCleanup = async () => {
+  const fullCleanup = async (): Promise<void> => {
     if (isCleaningUp) return;
     isCleaningUp = true;
     console.log("Terminating. Cleaning up...");

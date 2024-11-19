@@ -4,7 +4,7 @@ import { promisify } from "util";
 const execAsync = promisify(exec);
 
 export async function detectPort(): Promise<number | null> {
-  const sleep = (ms: number) =>
+  const sleep = (ms: number): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, ms));
   const maxAttempts = 5;
 

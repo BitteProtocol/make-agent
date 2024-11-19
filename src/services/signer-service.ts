@@ -114,7 +114,7 @@ export function getSignedMessage(
       });
     });
 
-    function handleRequest(req: IncomingMessage, res: ServerResponse) {
+    function handleRequest(req: IncomingMessage, res: ServerResponse): void {
       setCORSHeaders(res);
 
       if (req.method === "OPTIONS") {
@@ -161,7 +161,7 @@ function handlePreflight(res: ServerResponse): void {
 
 function handleInvalidMethod(
   res: ServerResponse,
-  reject: (reason: any) => void,
+  reject: (reason: Error) => void,
 ): void {
   res.writeHead(405, { "Content-Type": "application/json" });
   res.end(JSON.stringify({ error: "Method Not Allowed" }));
