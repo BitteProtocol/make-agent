@@ -2,7 +2,7 @@ import { Command } from "commander";
 
 import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { registerPlugin } from "../services/plugin-service";
+import { PluginService } from "../services/plugin-service";
 import { deployedUrl } from "../utils/deployed-url";
 import { getHostname, getSpecUrl } from "../utils/url-utils";
 
@@ -32,10 +32,9 @@ export const registerCommand = new Command()
       return;
     }
 
-    const result = await registerPlugin({
+    const result = await new PluginService(getBitteUrls()).register({
       pluginId,
       accountId,
-      bitteUrls: getBitteUrls(),
     });
     if (result) {
       console.log(`Plugin ${pluginId} registered successfully.`);

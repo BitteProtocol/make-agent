@@ -2,7 +2,7 @@ import { Command } from "commander";
 
 import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { deletePlugin } from "../services/plugin-service";
+import { PluginService } from "../services/plugin-service";
 import { getAuthentication } from "../services/signer-service";
 import { deployedUrl } from "../utils/deployed-url";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
@@ -38,9 +38,9 @@ export const deleteCommand = new Command()
       console.error("Authentication failed. Unable to delete the plugin.");
       return;
     }
-
+    const pluginService = new PluginService(getBitteUrls());
     try {
-      await deletePlugin(pluginId, getBitteUrls().BASE_URL);
+      await pluginService.delete(pluginId);
       console.log(`Plugin ${pluginId} deleted successfully.`);
     } catch (error) {
       console.error("Failed to delete the plugin:", error);

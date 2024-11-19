@@ -2,7 +2,7 @@ import { Command } from "commander";
 
 import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { updatePlugin } from "../services/plugin-service";
+import { PluginService } from "../services/plugin-service";
 import { getAuthentication } from "../services/signer-service";
 import { deployedUrl } from "../utils/deployed-url";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
@@ -38,9 +38,9 @@ export const updateCommand = new Command()
       console.error("Authentication failed. Unable to update the plugin.");
       return;
     }
-    const bitteUrls = getBitteUrls();
+    const pluginService = new PluginService(getBitteUrls());
     try {
-      await updatePlugin(pluginId, accountId, bitteUrls.BASE_URL);
+      await pluginService.update(pluginId, accountId);
       console.log(`Plugin ${pluginId} updated successfully.`);
     } catch (error) {
       console.error("Failed to update the plugin:", error);

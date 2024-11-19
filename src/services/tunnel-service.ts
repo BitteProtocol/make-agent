@@ -8,7 +8,7 @@ import { relative } from "path";
 import { join } from "path";
 
 import { validateAndParseOpenApiSpec } from "./openapi-service";
-import { deletePlugin, registerPlugin, updatePlugin } from "./plugin-service";
+import { PluginService } from "./plugin-service";
 import { authenticateOrCreateKey, getAuthentication } from "./signer-service";
 import {
   BITTE_CONFIG_ENV_KEY,
@@ -53,6 +53,7 @@ export async function watchForChanges(
   const projectDir = process.cwd();
   console.log(`Watching for changes in ${projectDir}`);
   console.log("Any file changes will trigger a plugin update attempt.");
+  const pluginService = new PluginService(bitteUrls);
 
   const watcher = watch(projectDir, { recursive: true });
 
@@ -72,8 +73,8 @@ export async function watchForChanges(
       );
       const authentication = await getAuthentication(accountId);
       const result = authentication
-        ? await updatePlugin(pluginId, accountId, bitteUrls.BASE_URL)
-        : await registerPlugin({ pluginId, accountId, bitteUrls });
+        ? await pluginService.update(pluginId, accountId)
+        : await pluginService.register({ pluginId, accountId });
 
       if (result && !authentication) {
         await openPlayground(result, bitteUrls.PLAYGROUND_URL);
@@ -128,7 +129,10 @@ async function setupAndValidate(
     return;
   }
 
-  const result = await registerPlugin({ pluginId, accountId, bitteUrls });
+  const result = await new PluginService(bitteUrls).register({
+    pluginId,
+    accountId,
+  });
 
   if (!result) {
     console.log(
@@ -255,7 +259,7 @@ export async function startLocalTunnelAndRegister(
     console.log("bitte.dev.json file deleted successfully.");
 
     try {
-      await deletePlugin(pluginId, bitteUrls.BASE_URL);
+      await new PluginService(bitteUrls).delete(pluginId);
     } catch (error) {
       console.error("Error deleting plugin:", error);
     }

@@ -2,7 +2,7 @@ import { Command } from "commander";
 
 import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
-import { registerPlugin, updatePlugin } from "../services/plugin-service";
+import { PluginService } from "../services/plugin-service";
 import { deployedUrl } from "../utils/deployed-url";
 import { getSpecUrl, getHostname } from "../utils/url-utils";
 
@@ -33,16 +33,15 @@ export const deployCommand = new Command()
       console.error("Failed to parse account ID from OpenAPI specification.");
       return;
     }
-    const bitteUrls = getBitteUrls();
+    const pluginService = new PluginService(getBitteUrls());
     try {
-      await updatePlugin(id, accountId, bitteUrls.BASE_URL);
+      await pluginService.update(id, accountId);
       console.log(`Plugin ${id} updated successfully.`);
     } catch (error) {
       console.log("Plugin not found. Attempting to register...");
-      const result = await registerPlugin({
+      const result = await pluginService.register({
         pluginId: id,
         accountId,
-        bitteUrls,
       });
       if (result) {
         console.log(`Plugin ${id} registered successfully.`);
