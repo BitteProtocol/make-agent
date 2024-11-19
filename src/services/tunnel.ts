@@ -8,7 +8,7 @@ import { relative, join } from "path";
 
 import { validateAndParseOpenApiSpec } from "./openapi-service";
 import { PluginService } from "./plugin-service";
-import { BITTE_CONFIG_ENV_KEY, type BitteUrls } from "../config/constants";
+import { BITTE_CONFIG_ENV_KEY } from "../config/constants";
 import { appendToEnv, removeFromEnv } from "../utils/file-utils";
 import { getSpecUrl } from "../utils/url-utils";
 
@@ -21,21 +21,22 @@ interface BitteConfig {
 interface TunnelConfig {
   port: number;
   useServeo: boolean;
+  useTestnet: boolean;
 }
 
 export class TunnelService {
   private readonly config: TunnelConfig;
-  private readonly bitteUrls: BitteUrls;
+  private readonly playgroundUrl: string;
   private readonly pluginService: PluginService;
   private tunnelUrl?: string;
   private pluginId?: string;
   private cleanup?: () => Promise<void>;
   private isCleaningUp = false;
 
-  constructor(config: TunnelConfig, bitteUrls: BitteUrls) {
+  constructor(config: TunnelConfig) {
     this.config = config;
-    this.bitteUrls = bitteUrls;
-    this.pluginService = new PluginService(bitteUrls);
+    this.pluginService = new PluginService(config.useTestnet);
+    this.playgroundUrl = this.pluginService.bitteUrls.PLAYGROUND_URL;
   }
 
   async start(): Promise<void> {
@@ -251,7 +252,7 @@ export class TunnelService {
   }
 
   private async openPlayground(agentId: string): Promise<string> {
-    const url = `${this.bitteUrls.PLAYGROUND_URL}${agentId}`;
+    const url = `${this.playgroundUrl}${agentId}`;
     console.log(`Opening playground: ${url}`);
     await open(url);
     console.log("Waiting for the ID from the playground...");

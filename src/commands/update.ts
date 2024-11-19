@@ -1,6 +1,5 @@
 import { Command } from "commander";
 
-import { getBitteUrls } from "../config/constants";
 import { validateAndParseOpenApiSpec } from "../services/openapi-service";
 import { PluginService } from "../services/plugin-service";
 import { deployedUrl } from "../utils/deployed-url";
@@ -31,7 +30,7 @@ export const updateCommand = new Command()
       console.error("Failed to parse account ID from OpenAPI specification.");
       return;
     }
-    const pluginService = new PluginService(getBitteUrls());
+    const pluginService = new PluginService();
     const authentication =
       await pluginService.auth.getAuthentication(accountId);
     if (!authentication) {

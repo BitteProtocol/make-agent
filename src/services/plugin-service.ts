@@ -1,13 +1,13 @@
 import { AuthenticationService } from "./authentication";
-import type { BitteUrls } from "../config/constants";
+import { getBitteUrls, type BitteUrls } from "../config/constants";
 
 export class PluginService {
-  private readonly bitteUrls: BitteUrls;
+  readonly bitteUrls: BitteUrls;
   readonly auth: AuthenticationService;
 
-  constructor(bitteUrls: BitteUrls) {
-    this.bitteUrls = bitteUrls;
-    this.auth = new AuthenticationService(bitteUrls);
+  constructor(testnet: boolean = false) {
+    this.bitteUrls = getBitteUrls(testnet);
+    this.auth = new AuthenticationService(this.bitteUrls);
   }
 
   async register({

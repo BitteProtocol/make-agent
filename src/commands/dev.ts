@@ -1,6 +1,5 @@
 import { Command } from "commander";
 
-import { getBitteUrls } from "../config/constants";
 import { TunnelService } from "../services/tunnel";
 import { detectPort } from "../utils/port-detector";
 
@@ -22,10 +21,10 @@ export const devCommand = new Command()
       }
       console.log(`Detected port: ${port}`);
     }
-    const bitteUrls = getBitteUrls(options.testnet);
-    const tunnelService = new TunnelService(
-      { port, useServeo: options.serveo },
-      bitteUrls,
-    );
+    const tunnelService = new TunnelService({
+      port,
+      useServeo: options.serveo,
+      useTestnet: options.testnet,
+    });
     await tunnelService.start();
   });
