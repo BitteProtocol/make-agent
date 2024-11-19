@@ -1,7 +1,6 @@
 import { AuthenticationService } from "./authentication";
 import type { BitteUrls } from "../config/constants";
 
-
 export class PluginService {
   private readonly bitteUrls: BitteUrls;
   readonly auth: AuthenticationService;
