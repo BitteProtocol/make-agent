@@ -35,7 +35,9 @@ export class PluginService {
         return pluginId;
       } else {
         const errorData = await response.json();
-        console.error(`Error registering plugin: ${JSON.stringify(errorData)}`);
+        const errorMessage = `Failed to register plugin (ID: ${pluginId}). HTTP Status: ${response.status} - ${response.statusText}.`;
+        console.error(errorMessage);
+        console.error(`Server response: ${JSON.stringify(errorData)}`);
         if (errorData.debugUrl) {
           console.log(`Debug URL: ${errorData.debugUrl}`);
         }
