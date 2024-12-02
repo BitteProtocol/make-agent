@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
+    "@typescript/github-link": "^0.2.2",
     "borsh": "^0.7.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",

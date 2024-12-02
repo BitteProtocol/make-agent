@@ -90,4 +90,27 @@ export class PluginService {
       console.error(`Error deleting plugin: ${await response.text()}`);
     }
   }
+
+  async verify(pluginId: string, accountId: string, githubToken: string): Promise<void> {
+
+    let message = await this.auth.getAuthentication(accountId);
+    if (!message) {
+        console.log("Authentication failed.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${this.bitteUrls.VERIFY_PLUGIN_URL}/${pluginId}`, { method: "POST", headers: { "bitte-api-key": message, "github-token": githubToken } })
+        const responseBody = await response.json();
+        if (!response.ok) {
+            console.error(`Failed to request validation for plugin ${pluginId}.\nReason: ${JSON.stringify(responseBody)}`);
+            return;
+        }
+    } catch (error) {
+        console.error(`Network error during plugin verification request: ${error}`);
+        return;
+    }
+    console.log(`Verification request for plugin <${pluginId}> submitted successfully.`);
+    
+}
 }

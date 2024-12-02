@@ -10,6 +10,7 @@ export interface BitteUrls {
   PLAYGROUND_URL: string;
   SIGN_MESSAGE_URL: string;
   SIGN_MESSAGE_SUCCESS_URL: string;
+  VERIFY_PLUGIN_URL: string;
 }
 
 export const getBitteUrls = (isTestnet: boolean = false): BitteUrls => {
@@ -20,6 +21,7 @@ export const getBitteUrls = (isTestnet: boolean = false): BitteUrls => {
     PLAYGROUND_URL: `${BITTE_WALLET_URL}/smart-actions/prompt/what%20can%20you%20help%20me%20with%3F?mode=debug&agentId=`,
     SIGN_MESSAGE_URL: `${BITTE_WALLET_URL}/sign-message`,
     SIGN_MESSAGE_SUCCESS_URL: `${BITTE_WALLET_URL}/success`,
+    VERIFY_PLUGIN_URL: `${BITTE_WALLET_URL}/verify`
   };
 };
 
