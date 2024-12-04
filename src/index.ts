@@ -9,6 +9,7 @@ import { deployCommand } from "./commands/deploy";
 import { devCommand } from "./commands/dev";
 import { registerCommand } from "./commands/register";
 import { updateCommand } from "./commands/update";
+import { verifyCommand } from "./commands/verify";
 
 dotenv.config();
 
@@ -17,16 +18,13 @@ program
   .description("CLI tool for managing AI agents")
   .version(packageJson.version);
 
-program.addCommand(devCommand);
-
-program.addCommand(deployCommand);
-
-program.addCommand(contractCommand);
-
-program.addCommand(registerCommand);
-
-program.addCommand(updateCommand);
-
-program.addCommand(deleteCommand);
+program
+  .addCommand(devCommand)
+  .addCommand(deployCommand)
+  .addCommand(contractCommand)
+  .addCommand(registerCommand)
+  .addCommand(updateCommand)
+  .addCommand(deleteCommand)
+  .addCommand(verifyCommand);
 
 program.parse();
