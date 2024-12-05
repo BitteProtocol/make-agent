@@ -91,7 +91,19 @@ export class PluginService {
     }
   }
 
-  async verify({ pluginId, email, repo, version, accountId }: { pluginId: string, email: string, repo: string, version?: string, accountId?: string }): Promise<void> {
+  async verify({
+    pluginId,
+    email,
+    repo,
+    version,
+    accountId,
+  }: {
+    pluginId: string;
+    email: string;
+    repo: string;
+    version?: string;
+    accountId?: string;
+  }): Promise<void> {
     const message = await this.auth.getAuthentication(accountId);
     if (!message) {
       console.error("No API key found. Unable to request plugin verification.");
@@ -100,23 +112,33 @@ export class PluginService {
 
     try {
       //const res = await fetch(`${this.bitteUrls.BASE_URL}/verify/${pluginId}`, {
-      const res = await fetch(`http://localhost:3001/api/ai-plugins/verify/${pluginId}`, {
-        method: "POST",
-        headers: { "bitte-api-key": message },
-        body: JSON.stringify({
-          repo: repo,
-          email: email,
-          version: version,
-        }),
-      });
+      const res = await fetch(
+        `http://localhost:3001/api/ai-plugins/verify/${pluginId}`,
+        {
+          method: "POST",
+          headers: { "bitte-api-key": message },
+          body: JSON.stringify({
+            repo: repo,
+            email: email,
+            version: version,
+          }),
+        },
+      );
 
       if (res.ok) {
-        console.log("Your verification request has been uploaded and will be processed in the following days.");
+        console.log(
+          "Your verification request has been uploaded and will be processed in the following days.",
+        );
       } else {
-        console.error(`Failed to upload verification request: ${JSON.stringify(await res.json())} \nStatus: ${res.status}`);
+        console.error(
+          `Failed to upload verification request: ${JSON.stringify(
+            await res.json(),
+          )} \nStatus: ${res.status}`,
+        );
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : JSON.stringify(error);
+      const msg =
+        error instanceof Error ? error.message : JSON.stringify(error);
       console.error(`Failed to request plugin verification: ${msg}`);
     }
   }

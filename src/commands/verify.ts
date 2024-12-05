@@ -5,14 +5,22 @@ import { deployedUrl } from "../utils/deployed-url";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { getHostname, getSpecUrl } from "../utils/url-utils";
 
-
 export const verifyCommand = new Command()
   .name("verify")
   .description("Request verification of your deployed AI agent plugin")
   .requiredOption("-u, --url <url>", "Specify the url of the deployed plugin")
-  .requiredOption("-e, --email <email>", "Provide an email so we can contact you regarding the verification process")
-  .requiredOption("-r, --repo <repoUrl>", "To verify a plugin we need the url for a public repository containing the plugin's code")
-  .option("-v, --version <versionNumber>", "Specify the version of the plugin in case of an update")
+  .requiredOption(
+    "-e, --email <email>",
+    "Provide an email so we can contact you regarding the verification process",
+  )
+  .requiredOption(
+    "-r, --repo <repoUrl>",
+    "To verify a plugin we need the url for a public repository containing the plugin's code",
+  )
+  .option(
+    "-v, --version <versionNumber>",
+    "Specify the version of the plugin in case of an update",
+  )
   .action(async (options) => {
     const url = options.url || deployedUrl;
 
@@ -35,12 +43,11 @@ export const verifyCommand = new Command()
       return;
     }
 
-
     await new PluginService().verify({
       pluginId,
       accountId,
       email: options.email,
       repo: options.repo,
-      version: options.version
+      version: options.version,
     });
   });

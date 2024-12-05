@@ -73,7 +73,9 @@ export class AuthenticationService {
       server.listen(SIGN_MESSAGE_PORT, () => {
         const postEndpoint = `http://localhost:${SIGN_MESSAGE_PORT}`;
         const nonce = crypto.randomBytes(16).toString("hex");
-        const signUrl = `${this.bitteUrls.SIGN_MESSAGE_URL}?message=${encodeURIComponent(
+        const signUrl = `${
+          this.bitteUrls.SIGN_MESSAGE_URL
+        }?message=${encodeURIComponent(
           SIGN_MESSAGE,
         )}&callbackUrl=${encodeURIComponent(
           this.bitteUrls.SIGN_MESSAGE_SUCCESS_URL,
