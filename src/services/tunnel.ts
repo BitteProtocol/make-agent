@@ -165,7 +165,7 @@ export class TunnelService {
     await this.updateBitteConfig({ url: this.tunnelUrl });
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    const signedMessage = await this.pluginService.auth.getSignedMessage();
+    const signedMessage = await this.pluginService.auth.authenticateOrCreateKey();
     if (!signedMessage) {
       throw new Error("Failed to authenticate or create a key.");
     }
