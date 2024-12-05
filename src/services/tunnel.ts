@@ -43,7 +43,7 @@ export class TunnelService {
     console.log(
       `Setting up ${
         this.config.useServeo ? "Serveo" : "Localtunnel"
-      } tunnel on port ${this.config.port}...`
+      } tunnel on port ${this.config.port}...`,
     );
 
     const tunnel = this.config.useServeo
@@ -58,7 +58,7 @@ export class TunnelService {
     this.registerCleanupHandlers();
 
     console.log(
-      "Tunnel is running. Watching for changes. Press Ctrl+C to stop."
+      "Tunnel is running. Watching for changes. Press Ctrl+C to stop.",
     );
     await this.watchForChanges();
   }
@@ -131,7 +131,7 @@ export class TunnelService {
       tunnelUrl: string;
       cleanup: () => Promise<void>;
     }) => void,
-    reject: (reason: Error) => void
+    reject: (reason: Error) => void,
   ): void {
     let tunnelUrl = "";
 
@@ -178,7 +178,7 @@ export class TunnelService {
 
     if (!isValid || !accountId) {
       throw new Error(
-        "OpenAPI specification validation failed or missing account ID."
+        "OpenAPI specification validation failed or missing account ID.",
       );
     }
 
@@ -189,7 +189,7 @@ export class TunnelService {
 
     if (!result) {
       console.log(
-        "Initial registration failed. Waiting for file changes to retry..."
+        "Initial registration failed. Waiting for file changes to retry...",
       );
       return;
     }
@@ -217,7 +217,7 @@ export class TunnelService {
 
   private async handleFileChange(
     event: { filename: string | null },
-    projectDir: string
+    projectDir: string,
   ): Promise<void> {
     if (!this.tunnelUrl || !this.pluginId) return;
 
@@ -225,15 +225,14 @@ export class TunnelService {
     if (this.shouldIgnorePath(relativePath)) return;
 
     console.log(
-      `Change detected in ${relativePath}. Attempting to update or register the plugin...`
+      `Change detected in ${relativePath}. Attempting to update or register the plugin...`,
     );
 
     const { accountId } = await validateAndParseOpenApiSpec(
-      getSpecUrl(this.tunnelUrl)
+      getSpecUrl(this.tunnelUrl),
     );
-    const authentication = await this.pluginService.auth.getAuthentication(
-      accountId
-    );
+    const authentication =
+      await this.pluginService.auth.getAuthentication(accountId);
 
     const result = authentication
       ? await this.pluginService.update(this.pluginId, accountId)
@@ -278,7 +277,7 @@ export class TunnelService {
     const updatedConfig = { ...existingConfig, ...data };
     await appendToEnv(
       BITTE_CONFIG_ENV_KEY,
-      JSON.stringify(updatedConfig, null, 2)
+      JSON.stringify(updatedConfig, null, 2),
     );
     console.log("BITTE_CONFIG updated successfully.");
   }
