@@ -10,6 +10,7 @@ import { devCommand } from "./commands/dev";
 import { registerCommand } from "./commands/register";
 import { updateCommand } from "./commands/update";
 import { verifyCommand } from "./commands/verify";
+import { playgroundCommand } from "./commands/playground";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ program
   .addCommand(registerCommand)
   .addCommand(updateCommand)
   .addCommand(deleteCommand)
-  .addCommand(verifyCommand);
+  .addCommand(verifyCommand)
+  .addCommand(playgroundCommand);
 
 program.parse();

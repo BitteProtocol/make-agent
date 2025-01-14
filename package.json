@@ -18,7 +18,7 @@
   "homepage": "https://github.com/mintbase/make-agent/repo#readme",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "dev": "bun run ./src/index.ts dev --port 3000",
+    "dev": "bun run ./src/index.ts playground --port 3000",
     "build": "bun run typecheck && bun build ./src/index.ts --outdir ./dist --target node",
     "prepublishOnly": "bun run build",
     "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
@@ -58,7 +58,10 @@
     "js-sha256": "^0.11.0",
     "localtunnel": "^2.0.2",
     "near-api-js": "^4.0.3",
+    "near-ca": "^0.8.1",
+    "near-safe": "^0.9.6",
     "open": "^10.1.0",
-    "vercel-url": "^0.2.1"
+    "vercel-url": "^0.2.1",
+    "vite": "^6.0.7"
   }
 }
