@@ -97,12 +97,16 @@ export class PluginService {
     repo,
     version,
     accountId,
+    categories,
+    chains,
   }: {
     pluginId: string;
     email: string;
     repo: string;
     version?: string;
     accountId?: string;
+    categories?: string[];
+    chains?: number[];
   }): Promise<void> {
     const message = await this.auth.getAuthentication(accountId);
     if (!message) {
@@ -111,19 +115,17 @@ export class PluginService {
     }
 
     try {
-      //const res = await fetch(`${this.bitteUrls.BASE_URL}/verify/${pluginId}`, {
-      const res = await fetch(
-        `http://localhost:3001/api/ai-plugins/verify/${pluginId}`,
-        {
-          method: "POST",
-          headers: { "bitte-api-key": message },
-          body: JSON.stringify({
-            repo: repo,
-            email: email,
-            version: version,
-          }),
-        },
-      );
+      const res = await fetch(`${this.bitteUrls.BASE_URL}/verify/${pluginId}`, {
+        method: "POST",
+        headers: { "bitte-api-key": message },
+        body: JSON.stringify({
+          repo: repo,
+          email: email,
+          version: version,
+          categories: categories,
+          chains: chains,
+        }),
+      });
 
       if (res.ok) {
         console.log(
