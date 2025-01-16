@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import path from "path";
-import { createServer } from 'vite';
+import { createServer } from "vite";
 
 export const playgroundCommand = new Command()
   .name("playground")
@@ -16,7 +16,8 @@ export const playgroundCommand = new Command()
         server: {
           port: port
         },
-        configFile: path.resolve(dir, 'vite.config.ts'),
+        configFile: path.resolve(dir, "vite.config.ts"),
+
       });
 
       await server.listen();
@@ -24,7 +25,7 @@ export const playgroundCommand = new Command()
       server.printUrls();
 
       // Handle process termination
-      process.on('SIGINT', async () => {
+      process.on("SIGINT", async () => {
         await server.close();
         process.exit();
       });

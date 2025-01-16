@@ -1,4 +1,64 @@
-:root {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+main > div {
+  width: 700px;
+  margin: 0 auto;
+}
+
+body {
+  background-color: #242424;
+}
+
+header {
+  width: 100%;
+  text-align: center;
+  margin: 20px 0;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+p,
+.bitte-text-gray-40 {
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.connect-button {
+  background-color: white;
+  color: black;
+  border-radius: 0.375rem; /* Equivalent to Tailwind's rounded */
+  padding: 0.75rem; /* Equivalent to Tailwind's p-3 */
+  transition: background-color 0.2s;
+}
+
+.connect-button:hover {
+  background-color: #e1e1e1;
+}
+
+/* Styles for the disconnect button */
+.disconnect-button {
+  background-color: white;
+  color: black;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  transition: background-color 0.2s;
+}
+
+.disconnect-button:hover {
+  background-color: #e1e1e1;
+}
+
+/* Styles for the container div */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem; /* Equivalent to Tailwind's mt-4 */
+}
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -65,4 +125,4 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
+} */
