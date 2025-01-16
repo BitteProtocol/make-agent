@@ -12,8 +12,6 @@ export const NearWalletConnector = () => {
     return connect();
   };
 
-  // ... existing code ...
-
   if (!isConnected) {
     return (
       <button className="connect-button" onClick={handleSignIn}>
