@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@bitte-ai/chat": "0.1.0-animation-color-5f2c527",
-    "@mintbase-js/react": "latest",
+    "@bitte-ai/chat": "latest",
+    "@bitte-ai/react": "0.6.6-beta-prerelease.35",
     "@near-wallet-selector/modal-ui": "^8.9.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
