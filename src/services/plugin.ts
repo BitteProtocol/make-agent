@@ -49,14 +49,12 @@ export class PluginService {
     }
   }
 
-  async update(pluginId: string, accountId?: string): Promise<void> {
+  async update(pluginId: string, accountId?: string): Promise<string | null> {
     const message = await this.auth.getAuthentication(accountId);
 
     if (!message) {
-      console.error(
-        `No API key found for plugin ${pluginId}. Please register the plugin first.`,
-      );
-      return;
+      console.warn(`No API key found for plugin ${pluginId}.`);
+      return null;
     }
 
     const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
@@ -64,11 +62,13 @@ export class PluginService {
       headers: { "bitte-api-key": message },
     });
 
-    if (response.ok) {
-      console.log("Plugin updated successfully.");
-    } else {
-      console.error(`Error updating plugin: ${await response.text()}`);
+    if (!response.ok) {
+      console.error(`Failed to update plugin: ${await response.text()}`);
+      return null;
     }
+
+    console.log("Plugin updated successfully.");
+    return pluginId;
   }
 
   async delete(pluginId: string): Promise<void> {
