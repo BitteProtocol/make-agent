@@ -1,6 +1,6 @@
 "use client";
 
-import { BitteAiChat } from "@bitte-ai/chat";
+import { BitteAiChat, BitteOpenAPISpec } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
 import { useBitteWallet, Wallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
@@ -17,6 +17,18 @@ const bitteAgent = {
   image: "/bitte.svg",
 };
 
+declare const __APP_DATA__: {
+  localAgent: {
+    pluginId: string;
+    accountId: string;
+    spec: BitteOpenAPISpec;
+  };
+  serverStartTime: string;
+  environment: string;
+  bitteApiKey: string;
+  bitteApiUrl: string;
+};
+
 
 const Main: React.FC = () => {
   const { selector } = useBitteWallet();
@@ -24,21 +36,24 @@ const Main: React.FC = () => {
 
   useEffect(() => {
     const fetchWallet = async () => {
-      const walletInstance =  await selector.wallet();
+      const walletInstance = await selector.wallet();
       setWallet(walletInstance);
     };
     if (selector) fetchWallet();
   }, [selector]);
+
+  console.log('__APP_DATA__', __APP_DATA__.bitteApiKey);
 
   return (
     <main>
       <Header />
       <div>
         <BitteAiChat
-          options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name }}
-          agentid={bitteAgent.id}
+          options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name, localAgent: __APP_DATA__.localAgent }}
+          agentid={__APP_DATA__.localAgent.pluginId}
           wallet={{ near: { wallet } }}
-          apiUrl="/api/chat"
+          apiUrl={__APP_DATA__.bitteApiUrl}
+          key={__APP_DATA__.bitteApiKey}
           colors={{
             generalBackground: "#18181A",
             messageBackground: "#0A0A0A",
