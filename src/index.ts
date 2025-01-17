@@ -22,9 +22,9 @@ program
   .addCommand(devCommand)
   .addCommand(deployCommand)
   .addCommand(contractCommand)
-  .addCommand(registerCommand)
-  .addCommand(updateCommand)
   .addCommand(deleteCommand)
-  .addCommand(verifyCommand);
+  .addCommand(verifyCommand)
+  .addCommand(registerCommand)
+  .addCommand(updateCommand);
 
 program.parse();

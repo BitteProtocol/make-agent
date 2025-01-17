@@ -34,18 +34,15 @@ export const deployCommand = new Command()
     }
     const pluginService = new PluginService();
     try {
-      await pluginService.update(id, accountId);
-      console.log(`Plugin ${id} updated successfully.`);
-    } catch (error) {
-      console.log("Plugin not found. Attempting to register...");
-      const result = await pluginService.register({
-        pluginId: id,
-        accountId,
-      });
-      if (result) {
-        console.log(`Plugin ${id} registered successfully.`);
-      } else {
-        console.error("Plugin registration failed.");
+      const updateRes = await pluginService.update(id, accountId);
+      if (!updateRes) {
+        console.log("Attempting to register plugin...");
+        await pluginService.register({
+          pluginId: id,
+          accountId,
+        });
       }
+    } catch (error) {
+      console.error(`Failed to deploy plugin ${id}. Error: ${error}`);
     }
   });
