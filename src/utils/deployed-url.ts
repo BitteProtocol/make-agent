@@ -63,7 +63,7 @@ const getDeployedUrl = (): string => {
   }
 
   // Fallback to localhost if no deployment URL is found
-  return "http://localhost:3000";
+  return "http://localhost:3000"; // TODO: make port dynamic
 };
 
 export const deployedUrl = getDeployedUrl();
