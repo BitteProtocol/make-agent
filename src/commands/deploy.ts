@@ -21,17 +21,13 @@ export const deployCommand = new Command()
 
     const id = getHostname(url);
     const specUrl = getSpecUrl(url);
-    const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
-
-    if (!isValid) {
+    const xMbSpec = await validateAndParseOpenApiSpec(specUrl);
+    if (!xMbSpec) {
       console.error("OpenAPI specification validation failed.");
       return;
     }
+    const accountId = xMbSpec["account-id"];
 
-    if (!accountId) {
-      console.error("Failed to parse account ID from OpenAPI specification.");
-      return;
-    }
     const pluginService = new PluginService();
     try {
       const updateRes = await pluginService.update(id, accountId);

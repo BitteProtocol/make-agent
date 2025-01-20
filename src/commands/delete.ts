@@ -19,17 +19,14 @@ export const deleteCommand = new Command()
 
     const pluginId = getHostname(url);
     const specUrl = getSpecUrl(url);
-    const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
+    const xMbSpec = await validateAndParseOpenApiSpec(specUrl);
 
-    if (!isValid) {
+    if (!xMbSpec) {
       console.error("OpenAPI specification validation failed.");
       return;
     }
+    const accountId = xMbSpec["account-id"];
 
-    if (!accountId) {
-      console.error("Failed to parse account ID from OpenAPI specification.");
-      return;
-    }
     const pluginService = new PluginService();
     const authentication =
       await pluginService.auth.getAuthentication(accountId);
