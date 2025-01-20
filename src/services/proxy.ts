@@ -16,15 +16,12 @@ export async function startApiServer(config: ApiConfig) {
   
   // Add request logging middleware
   app.use((req, res, next) => {
-    console.log(`[Express] Incoming request: ${req.method} ${req.url}`);
     next();
   });
 
   // Handle chat requests
   app.post('/api/v1/chat', async (req, res) => {
-    try {
-      console.log('[Server] Forwarding chat request to Bitte API');
-      
+    try {      
       const response = await fetch(config.url, {
         method: 'POST',
         headers: {
@@ -36,7 +33,6 @@ export async function startApiServer(config: ApiConfig) {
       });
 
       const data = await response.text();
-      console.log('[Server] Response received:', data);
 
       res.status(response.status);
       response.headers.forEach((value, key) => {
@@ -48,7 +44,6 @@ export async function startApiServer(config: ApiConfig) {
       res.send(data);
 
     } catch (error) {
-      console.error('[Server] Error handling chat request:', error);
       res.status(500).json({
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error'
@@ -59,11 +54,9 @@ export async function startApiServer(config: ApiConfig) {
   return new Promise<ReturnType<typeof app.listen>>((resolve, reject) => {
     try {
       const server = app.listen(config.serverPort, () => {
-        console.log(`API server running on port ${config.serverPort}`);
         resolve(server);
       });
     } catch (error) {
-      console.error('Failed to start API server:', error);
       reject(error);
     }
   });

@@ -39,7 +39,7 @@ export class ViteServer {
       });
 
       await this.server.listen();
-      console.log(`Vite dev server running at http://localhost:${this.config.port}`);
+      console.log(`Playground running at http://localhost:${this.config.port}`);
 
     } catch (error) {
       console.error('Failed to start Vite server:', error);

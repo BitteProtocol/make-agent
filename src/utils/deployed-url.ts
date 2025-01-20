@@ -16,7 +16,7 @@ export const VERCEL_DEPLOYMENT_URL = (() => {
   }
 })();
 
-const getDeployedUrl = (): string => {
+export const getDeployedUrl = (port?: number): string => {
   // Vercel
   if (VERCEL_ENV) {
     return VERCEL_DEPLOYMENT_URL;
@@ -63,7 +63,7 @@ const getDeployedUrl = (): string => {
   }
 
   // Fallback to localhost if no deployment URL is found
-  return "http://localhost:3000"; // TODO: make port dynamic
+  return `http://localhost:${port || 3000}`;
 };
 
 export const deployedUrl = getDeployedUrl();

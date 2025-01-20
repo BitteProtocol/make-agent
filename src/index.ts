@@ -6,11 +6,11 @@ import packageJson from "../package.json";
 import { contractCommand } from "./commands/contract";
 import { deleteCommand } from "./commands/delete";
 import { deployCommand } from "./commands/deploy";
-import { devCommand } from "./commands/dev";
+import { devDeprecatedCommand } from "./commands/dev-deprecated";
 import { registerCommand } from "./commands/register";
 import { updateCommand } from "./commands/update";
 import { verifyCommand } from "./commands/verify";
-import { playgroundCommand } from "./commands/playground";
+import { devCommand } from "./commands/dev";
 
 dotenv.config();
 
@@ -27,6 +27,6 @@ program
   .addCommand(updateCommand)
   .addCommand(deleteCommand)
   .addCommand(verifyCommand)
-  .addCommand(playgroundCommand);
+  .addCommand(devDeprecatedCommand);
 
 program.parse();

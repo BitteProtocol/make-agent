@@ -18,10 +18,14 @@ export async function validateAndParseOpenApiSpec(
     const accountId = apiResponse["x-mb"]?.["account-id"];
 
     return { isValid: true, accountId: accountId };
-  } catch (error) {
+  } catch (error: any) {
     console.error(
-      "Error in OpenAPI specification fetch, validation, or parsing:",
-      error,
+      "OpenAPI Validation Errors:",
+      error?.details?.map((detail: any) => ({
+        path: detail.instancePath,
+        error: detail.message,
+        params: detail.params
+      })) || error?.message || 'Unknown error'
     );
     return { isValid: false };
   }
