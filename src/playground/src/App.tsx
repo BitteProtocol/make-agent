@@ -1,8 +1,10 @@
 "use client";
 
-import { BitteAiChat, BitteOpenAPISpec } from "@bitte-ai/chat";
+import { BitteAiChat } from "@bitte-ai/chat";
+import type { BitteOpenAPISpec } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
-import { useBitteWallet, Wallet } from "@mintbase-js/react";
+import { useBitteWallet } from "@mintbase-js/react";
+import type { Wallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
 import "./shims";
 import "@bitte-ai/chat/style.css";
@@ -41,8 +43,6 @@ const Main: React.FC = () => {
     };
     if (selector) fetchWallet();
   }, [selector]);
-
-  console.log('__APP_DATA__', __APP_DATA__.bitteApiKey);
 
   return (
     <main>

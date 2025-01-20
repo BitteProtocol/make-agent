@@ -16,6 +16,10 @@ export async function startApiServer(config: ApiConfig) {
   
   // Add request logging middleware
   app.use((req, res, next) => {
+    console.log('[Server] Incoming request:', req.method, req.url);
+    res.on('finish', () => {
+      console.log('[Server] Response status:', res.statusCode);
+    });
     next();
   });
 
