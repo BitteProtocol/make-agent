@@ -1,12 +1,14 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 
+import { validateXMbSpec, type XMbSpec } from "../config/types";
+
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
 //parsing and validation done together to avoid fetching spec twice
 export async function validateAndParseOpenApiSpec(
   url: string | URL,
-): Promise<{ isValid: boolean; accountId?: string }> {
+): Promise<XMbSpec | undefined> {
   try {
     const specUrl = url.toString();
     const specContent = await fetchWithRetry(specUrl);
@@ -15,15 +17,16 @@ export async function validateAndParseOpenApiSpec(
     await SwaggerParser.validate(apiResponse);
     console.log("OpenAPI specification is valid.");
 
-    const accountId = apiResponse["x-mb"]?.["account-id"];
+    const xMbSpec = apiResponse["x-mb"];
+    validateXMbSpec(xMbSpec);
 
-    return { isValid: true, accountId: accountId };
+    return xMbSpec;
   } catch (error) {
     console.error(
       "Error in OpenAPI specification fetch, validation, or parsing:",
       error,
     );
-    return { isValid: false };
+    return undefined;
   }
 }
 

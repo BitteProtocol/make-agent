@@ -174,13 +174,12 @@ export class TunnelService {
     }
 
     const specUrl = getSpecUrl(this.tunnelUrl);
-    const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
-
-    if (!isValid || !accountId) {
-      throw new Error(
-        "OpenAPI specification validation failed or missing account ID.",
-      );
+    const xMbSpec = await validateAndParseOpenApiSpec(specUrl);
+    if (!xMbSpec) {
+      console.error("OpenAPI specification validation failed.");
+      return;
     }
+    const accountId = xMbSpec["account-id"];
 
     const result = await this.pluginService.register({
       pluginId: this.pluginId,
@@ -228,9 +227,10 @@ export class TunnelService {
       `Change detected in ${relativePath}. Attempting to update or register the plugin...`,
     );
 
-    const { accountId } = await validateAndParseOpenApiSpec(
+    const xMbSpec = await validateAndParseOpenApiSpec(
       getSpecUrl(this.tunnelUrl),
     );
+    const accountId = xMbSpec?.["account-id"];
     const authentication =
       await this.pluginService.auth.getAuthentication(accountId);
 
