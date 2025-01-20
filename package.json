@@ -19,7 +19,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "bun run ./src/index.ts dev --port 3000",
-    "build": "bun run typecheck && bun build ./src/index.ts --outdir ./dist --target node",
+    "build": "bun run typecheck && bun build ./src/index.ts --outdir ./dist --target node --external=lightningcss",
     "prepublishOnly": "bun run build",
     "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
     "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
@@ -66,9 +66,9 @@
     "near-api-js": "^4.0.3",
     "near-ca": "^0.8.1",
     "near-safe": "^0.9.6",
-    "next": "^15.1.4",
     "open": "^10.1.0",
+    "tsup": "^8.3.5",
     "vercel-url": "^0.2.1",
-    "vite": "^6.0.7"
+    "vite": "^6.0.9"
   }
 }
