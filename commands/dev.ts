@@ -1,9 +1,8 @@
+import { exec } from "child_process";
 import { Command } from "commander";
 import dotenv from "dotenv";
 import isPortReachable from "is-port-reachable";
 
-import { startDevServer } from "../services/dev-server";
-import { startApiServer } from "../services/proxy";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
@@ -43,11 +42,11 @@ async function findAvailablePort(startPort: number): Promise<number> {
   return port;
 }
 
-const API_CONFIG: ApiConfig = {
-  key: process.env.BITTE_API_KEY!,
-  url: process.env.BITTE_API_URL!,
-  serverPort: DEFAULT_PORTS.SERVER
-};
+// const API_CONFIG: ApiConfig = {
+//   key: process.env.BITTE_API_KEY!,
+//   url: process.env.BITTE_API_URL!,
+//   serverPort: DEFAULT_PORTS.SERVER
+// };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   const pluginId = getHostname(url);
@@ -101,12 +100,8 @@ export const devCommand = new Command()
   .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
   .action(async (options) => {
     try {
-      // Setup ports for the servers
-      const { port, serverPort } = await setupPorts(options);
-
-      // Start API server
-      API_CONFIG.serverPort = serverPort;
-      const apiServer = await startApiServer(API_CONFIG);
+      // Setup ports for the server
+      const { port } = await setupPorts(options);
 
       // Get and validate the deployed URL
       const deployedUrl = getDeployedUrl(port);
@@ -117,26 +112,20 @@ export const devCommand = new Command()
       // Fetch and validate the spec
       const localAgent = await fetchAndValidateSpec(deployedUrl);
 
-      // Start the integrated dev server
-      const devServer = await startDevServer({
-        port,
-        apiPort: serverPort,
-        define: {
-          __APP_DATA__: JSON.stringify({
-            serverStartTime: new Date().toISOString(),
-            environment: "make-agent",
-            localAgent,
-            apiUrl: `http://localhost:${serverPort}/api/v1/chat`,
-            bitteApiKey: API_CONFIG.key,
-            bitteApiUrl: `http://localhost:${serverPort}/api/v1/chat`
-          })
+      exec(`cd playground && next dev -p ${port}`, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Error starting Next.js server: ${error.message}`);
+          return;
         }
+        if (stderr) {
+          console.error(`Next.js server stderr: ${stderr}`);
+          return;
+        }
+        console.log(`Next.js server stdout: ${stdout}`);
       });
 
       // Handle cleanup
       const cleanup = async (): Promise<void> => {
-        await new Promise(resolve => devServer.close(resolve));
-        await new Promise(resolve => apiServer.close(resolve));
         process.exit(0);
       };
 
@@ -145,8 +134,7 @@ export const devCommand = new Command()
 
       console.log(`
 Development server is running:
-- Main UI: http://localhost:${port}
-- API Server: http://localhost:${serverPort}
+- Main UI & API: http://localhost:${port}
 Press Ctrl+C to stop
       `);
 

@@ -48,11 +48,9 @@
     "near-safe": "^0.9.6",
     "open": "^10.1.0",
     "tsup": "^8.3.5",
-    "vercel-url": "^0.2.1",
-    "@bitte-ai/playground": "file:packages/playground"
-  },
+    "vercel-url": "^0.2.1"
+    },
   "devDependencies": {
-    "@types/bun": "latest",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/inquirer": "^9.0.7",
