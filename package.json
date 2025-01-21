@@ -5,23 +5,25 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "private": true,
+  "description": "Bitte AI Agent Builder and Playground",
   "bin": {
     "make-agent": "./dist/index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mintbase/make-agent"
-  },
+  "repository": "git+https://github.com/BitteProtocol/make-agent",
   "bugs": {
-    "url": "https://github.com/mintbase/make-agent/issues"
+    "url": "https://github.com/BitteProtocol/make-agent/issues"
   },
-  "homepage": "https://github.com/mintbase/make-agent/repo#readme",
+  "homepage": "https://github.com/BitteProtocol/make-agent/repo#readme",
+  "workspaces": [
+    "src/playground",
+    "src/commands"
+  ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "dev": "bun run ./src/index.ts dev --port 3000",
-    "build": "bun run typecheck && bun build ./src/index.ts --outdir ./dist --target node --external=lightningcss",
-    "prepublishOnly": "bun run build",
-    "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
+    "dev": "tsup src/index.ts --watch --onSuccess 'node dist/index.js'",
+    "build": "tsup --config tsup.config.ts",
+    "prepublishOnly": "yarn build",
     "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
     "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && yarn lint --fix"
   },
@@ -30,26 +32,8 @@
     "agent",
     "cli"
   ],
-  "author": "Micro",
+  "author": "Bitte Team",
   "license": "MIT",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/inquirer": "^9.0.7",
-    "@types/localtunnel": "^2.0.4",
-    "@types/node": "^22.7.2",
-    "@types/open": "^6.2.1",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
-    "ajv": "^8.17.1",
-    "ajv-draft-04": "^1.0.0",
-    "eslint": "^9.15.0",
-    "eslint-plugin-import": "^2.31.0",
-    "prettier": "^3.3.3"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "borsh": "^0.7.0",
@@ -68,7 +52,24 @@
     "near-safe": "^0.9.6",
     "open": "^10.1.0",
     "tsup": "^8.3.5",
-    "vercel-url": "^0.2.1",
-    "vite": "^6.0.9"
+    "vercel-url": "^0.2.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/inquirer": "^9.0.7",
+    "@types/localtunnel": "^2.0.4",
+    "@types/node": "^22.7.2",
+    "@types/open": "^6.2.1",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "ajv": "^8.17.1",
+    "ajv-draft-04": "^1.0.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.3.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }
