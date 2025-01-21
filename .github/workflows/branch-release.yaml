@@ -15,7 +15,7 @@ jobs:
           node-version: '20' # Specify the Node.js version you want to use
 
       - name: Install Dependencies
-        run: npm ci
+        run: yarn install
 
       - name: Build
         run: yarn build
