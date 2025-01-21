@@ -3,8 +3,8 @@ import { Command } from "commander";
 import { TunnelService } from "../services/tunnel";
 import { detectPort } from "../utils/port-detector";
 
-export const devCommand = new Command()
-  .name("dev")
+export const devDeprecatedCommand = new Command()
+  .name("dev-deprecated")
   .description("Make your AI agent discoverable and register the plugin")
   .option("-p, --port <number>", "Local port to expose", parseInt)
   .option("-s, --serveo", "Use Serveo instead of Localtunnel", false)

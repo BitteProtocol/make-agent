@@ -2,7 +2,7 @@
 import { program } from "commander";
 import dotenv from "dotenv";
 
-import packageJson from "../package.json";
+import packageJson from "./package.json";
 import { contractCommand } from "./commands/contract";
 import { deleteCommand } from "./commands/delete";
 import { deployCommand } from "./commands/deploy";
