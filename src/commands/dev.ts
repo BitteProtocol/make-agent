@@ -1,9 +1,9 @@
 import { Command } from "commander";
-import dotenv from 'dotenv';
-import isPortReachable from 'is-port-reachable';
-import path from "path";
+import dotenv from "dotenv";
+import isPortReachable from "is-port-reachable";
+
+import { startDevServer } from "../services/dev-server";
 import { startApiServer } from "../services/proxy";
-import { createViteServer } from "../services/vite";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
@@ -15,14 +15,19 @@ validateEnv();
 
 interface ApiConfig {
   key: string;
-  url: string; 
+  url: string;
+  serverPort: number;
+}
+
+interface PortConfig {
+  port: number;
   serverPort: number;
 }
 
 interface ValidationResult {
   pluginId: string;
   accountId: string;
-  spec: any;
+  spec: unknown;
 }
 
 const DEFAULT_PORTS = {
@@ -32,7 +37,7 @@ const DEFAULT_PORTS = {
 
 async function findAvailablePort(startPort: number): Promise<number> {
   let port = startPort;
-  while (await isPortReachable(port, {host: 'localhost'})) {
+  while (await isPortReachable(port, {host: "localhost"})) {
     port++;
   }
   return port;
@@ -47,10 +52,10 @@ const API_CONFIG: ApiConfig = {
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
-  
+
   const validation = await validateAndParseOpenApiSpec(specUrl);
   const { isValid, accountId } = validation;
-  
+
   const specContent = await fetch(specUrl).then(res => res.text());
   let spec = JSON.parse(specContent);
 
@@ -72,8 +77,8 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   };
 }
 
-async function setupPorts(options: { port?: string }) {
-  let port = parseInt(options.port || '') || 0;
+async function setupPorts(options: { port?: string }):  Promise<PortConfig> {
+  let port = parseInt(options.port || "") || 0;
 
   if (port === 0) {
     const detectedPort = await detectPort();
@@ -84,28 +89,9 @@ async function setupPorts(options: { port?: string }) {
     }
   }
 
-  const uiPort = await findAvailablePort(DEFAULT_PORTS.UI);
   const serverPort = await findAvailablePort(DEFAULT_PORTS.SERVER);
 
-  return { port, uiPort, serverPort };
-}
-
-async function createViteConfiguration(uiPort: number, serverPort: number, localAgent: ValidationResult) {
-  return {
-    root: path.resolve(__dirname, "../playground"),
-    port: uiPort,
-    configFile: path.resolve(__dirname, "../playground/vite.config.ts"),
-    define: {
-      __APP_DATA__: JSON.stringify({
-        serverStartTime: new Date().toISOString(),
-        environment: "make-agent",
-        localAgent,
-        apiUrl: `http://localhost:${serverPort}/api/v1/chat`,
-        bitteApiKey: API_CONFIG.key,
-        bitteApiUrl: `http://localhost:${serverPort}/api/v1/chat`
-      })
-    }
-  };
+  return { port, serverPort };
 }
 
 export const devCommand = new Command()
@@ -115,28 +101,57 @@ export const devCommand = new Command()
   .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
   .action(async (options) => {
     try {
-      const { port, uiPort, serverPort } = await setupPorts(options);
-      
-      API_CONFIG.serverPort = serverPort;
-      const server = await startApiServer(API_CONFIG);
+      // Setup ports for the servers
+      const { port, serverPort } = await setupPorts(options);
 
+      // Start API server
+      API_CONFIG.serverPort = serverPort;
+      const apiServer = await startApiServer(API_CONFIG);
+
+      // Get and validate the deployed URL
       const deployedUrl = getDeployedUrl(port);
       if (!deployedUrl) {
         throw new Error("Deployed URL could not be determined.");
       }
 
+      // Fetch and validate the spec
       const localAgent = await fetchAndValidateSpec(deployedUrl);
-      const viteConfig = await createViteConfiguration(uiPort, serverPort, localAgent);
-      const viteServer = createViteServer(viteConfig);
-      await viteServer.start();
 
-      process.on("SIGINT", async () => {
-        await viteServer.close();
-        server.close();
-        process.exit(0);
+      // Start the integrated dev server
+      const devServer = await startDevServer({
+        port,
+        apiPort: serverPort,
+        define: {
+          __APP_DATA__: JSON.stringify({
+            serverStartTime: new Date().toISOString(),
+            environment: "make-agent",
+            localAgent,
+            apiUrl: `http://localhost:${serverPort}/api/v1/chat`,
+            bitteApiKey: API_CONFIG.key,
+            bitteApiUrl: `http://localhost:${serverPort}/api/v1/chat`
+          })
+        }
       });
 
+      // Handle cleanup
+      const cleanup = async (): Promise<void> => {
+        await new Promise(resolve => devServer.close(resolve));
+        await new Promise(resolve => apiServer.close(resolve));
+        process.exit(0);
+      };
+
+      process.on("SIGINT", cleanup);
+      process.on("SIGTERM", cleanup);
+
+      console.log(`
+Development server is running:
+- Main UI: http://localhost:${port}
+- API Server: http://localhost:${serverPort}
+Press Ctrl+C to stop
+      `);
+
     } catch (error) {
+      console.error("Failed to start development server:", error);
       process.exit(1);
     }
   });
