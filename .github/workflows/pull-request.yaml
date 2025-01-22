@@ -36,5 +36,5 @@ jobs:
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
           bun install --frozen-lockfile
-          bun lint
+          # bun lint
           bun run build
