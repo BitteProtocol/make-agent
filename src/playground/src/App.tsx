@@ -6,6 +6,7 @@ import "@bitte-ai/chat/style.css";
 import { useBitteWallet } from "@mintbase-js/react";
 import type { Wallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
+
 import "./shims";
 import "@bitte-ai/chat/style.css";
 import { Header } from "./Header";
@@ -39,11 +40,11 @@ const Main: React.FC = () => {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const response = await fetch('/api/config');
+        const response = await fetch("/api/config");
         const data = await response.json();
         setConfig(data);
       } catch (error) {
-        console.error('Failed to fetch config:', error);
+        console.error("Failed to fetch config:", error);
       }
     };
     fetchConfig();

@@ -24,8 +24,10 @@ export async function validateAndParseOpenApiSpec(
       error?.details?.map((detail: any) => ({
         path: detail.instancePath,
         error: detail.message,
-        params: detail.params
-      })) || error?.message || 'Unknown error'
+        params: detail.params,
+      })) ||
+        error?.message ||
+        "Unknown error",
     );
     return { isValid: false };
   }

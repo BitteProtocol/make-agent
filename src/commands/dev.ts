@@ -1,6 +1,7 @@
 import { Command } from "commander";
-import dotenv from 'dotenv';
-import isPortReachable from 'is-port-reachable';
+import dotenv from "dotenv";
+import isPortReachable from "is-port-reachable";
+
 import { startApiServer } from "../services/proxy";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
@@ -13,7 +14,7 @@ validateEnv();
 
 interface ApiConfig {
   key: string;
-  url: string; 
+  url: string;
   serverPort: number;
 }
 
@@ -25,12 +26,12 @@ interface ValidationResult {
 
 const DEFAULT_PORTS = {
   SERVER: 3010,
-  UI: 5000
+  UI: 5000,
 } as const;
 
 async function findAvailablePort(startPort: number): Promise<number> {
   let port = startPort;
-  while (await isPortReachable(port, {host: 'localhost'})) {
+  while (await isPortReachable(port, { host: "localhost" })) {
     port++;
   }
   return port;
@@ -39,17 +40,17 @@ async function findAvailablePort(startPort: number): Promise<number> {
 const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
   url: process.env.BITTE_API_URL!,
-  serverPort: DEFAULT_PORTS.SERVER
+  serverPort: DEFAULT_PORTS.SERVER,
 };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
-  
+
   const validation = await validateAndParseOpenApiSpec(specUrl);
   const { isValid, accountId } = validation;
-  
-  const specContent = await fetch(specUrl).then(res => res.text());
+
+  const specContent = await fetch(specUrl).then((res) => res.text());
   let spec = JSON.parse(specContent);
 
   if (!isValid) {
@@ -59,19 +60,19 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
       "x-mb": {
         ...spec["x-mb"],
         "account-id": accountId || "anon",
-      }
+      },
     };
   }
 
   return {
     pluginId,
     accountId: accountId || "anon",
-    spec
+    spec,
   };
 }
 
 async function setupPorts(options: { port?: string }) {
-  let port = parseInt(options.port || '') || 0;
+  let port = parseInt(options.port || "") || 0;
 
   if (port === 0) {
     const detectedPort = await detectPort();
@@ -88,7 +89,6 @@ async function setupPorts(options: { port?: string }) {
   return { port, uiPort, serverPort };
 }
 
-
 export const devCommand = new Command()
   .name("dev")
   .description("Start a local playground for your AI agent")
@@ -97,7 +97,7 @@ export const devCommand = new Command()
   .action(async (options) => {
     try {
       const { port, serverPort } = await setupPorts(options);
-      
+
       API_CONFIG.serverPort = serverPort;
       const server = await startApiServer(API_CONFIG);
 
@@ -107,11 +107,14 @@ export const devCommand = new Command()
       }
 
       try {
-        console.log('[Dev] Fetching and validating OpenAPI spec from:', deployedUrl);
+        console.log(
+          "[Dev] Fetching and validating OpenAPI spec from:",
+          deployedUrl,
+        );
         await fetchAndValidateSpec(deployedUrl);
-        console.log('[Dev] OpenAPI spec validation successful');
+        console.log("[Dev] OpenAPI spec validation successful");
       } catch (error) {
-        console.error('[Dev] Error validating OpenAPI spec:', error);
+        console.error("[Dev] Error validating OpenAPI spec:", error);
         throw error;
       }
 
@@ -119,7 +122,6 @@ export const devCommand = new Command()
         server.close();
         process.exit(0);
       });
-
     } catch (error) {
       process.exit(1);
     }
