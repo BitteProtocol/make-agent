@@ -27,17 +27,20 @@ jobs:
         with:
           path: |
             node_modules
+            src/playground/node_modules
             ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
-      - name: Install, Lint & Build
+      - name: Install & Build Root Project
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
           bun install --frozen-lockfile
-          cd src/playground
           bun run build
-          cd ..
-          # bun lint
+
+      - name: Install & Build Playground
+        run: |
+          cd src/playground
+          bun install --frozen-lockfile
           bun run build
