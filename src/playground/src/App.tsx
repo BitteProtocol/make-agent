@@ -67,7 +67,7 @@ const Main: React.FC = (): JSX.Element => {
       <Header />
       <div>
         <BitteAiChat
-          options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name }}
+          options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name, localAgent: config.localAgent }}
           agentid={config.localAgent.pluginId}
           wallet={{ near: { wallet } }}
           apiUrl={config.bitteApiUrl}
