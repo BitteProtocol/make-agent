@@ -36,5 +36,8 @@ jobs:
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
           bun install --frozen-lockfile
+          cd src/playground
+          bun run build
+          cd ..
           # bun lint
           bun run build
