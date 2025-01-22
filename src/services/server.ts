@@ -8,7 +8,7 @@ interface ApiConfig {
   serverPort: number;
 }
 
-export async function startApiServer(
+export async function startUIServer(
   apiConfig: ApiConfig,
 ): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
@@ -61,37 +61,6 @@ export async function startApiServer(
     } catch (err) {
       console.error("[Server] Error reading index.html:", err);
       res.status(404).send("Not found");
-    }
-  });
-
-  // Handle chat requests
-  app.post("/api/v1/chat", async (req, res) => {
-    try {
-      const response = await fetch(apiConfig.url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiConfig.key}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(req.body),
-      });
-
-      const data = await response.text();
-
-      res.status(response.status);
-      response.headers.forEach((value, key) => {
-        // Skip content-encoding to avoid compression issues
-        if (key.toLowerCase() !== "content-encoding") {
-          res.setHeader(key, value);
-        }
-      });
-      res.send(data);
-    } catch (error) {
-      res.status(500).json({
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
     }
   });
 

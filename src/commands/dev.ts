@@ -2,7 +2,7 @@ import { Command } from "commander";
 import dotenv from "dotenv";
 import isPortReachable from "is-port-reachable";
 
-import { startApiServer } from "../services/proxy";
+import { startUIServer } from "../services/server";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
@@ -99,7 +99,7 @@ export const devCommand = new Command()
       const { port, serverPort } = await setupPorts(options);
 
       API_CONFIG.serverPort = serverPort;
-      const server = await startApiServer(API_CONFIG);
+      const server = await startUIServer(API_CONFIG);
 
       const deployedUrl = getDeployedUrl(port);
       if (!deployedUrl) {
