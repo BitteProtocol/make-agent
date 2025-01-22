@@ -64,7 +64,7 @@ export async function startUIServer(
   // Serve config endpoint
   app.get("/api/config", async (req, res) => {
     try {
-      const specUrl = `${req.protocol}://${req.hostname}/.well-known/ai-plugin.json`;
+      const specUrl = `${req.protocol}://${req.hostname}:${apiConfig.serverPort}/.well-known/ai-plugin.json`;
       const specResponse = await fetch(specUrl);
       const spec = await specResponse.json();
 
