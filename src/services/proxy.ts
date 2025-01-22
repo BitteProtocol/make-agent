@@ -40,7 +40,8 @@ export async function startApiServer(
         accountId: "anon",
         spec: {},
       },
-      apiUrl: "https://mintbase-wallet-git-local-agent-bitteprotocol.vercel.app/api/v1/chat", // TODO: change to "https://wallet.bitte.ai/api/v1/chat",
+      apiUrl:
+        "https://mintbase-wallet-git-local-agent-bitteprotocol.vercel.app/api/v1/chat", // TODO: change to "https://wallet.bitte.ai/api/v1/chat",
       bitteApiKey: apiConfig.key,
       bitteApiUrl: apiConfig.url,
     };
