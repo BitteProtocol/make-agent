@@ -37,10 +37,15 @@ jobs:
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
           bun install --frozen-lockfile
-          bun run build
 
       - name: Install & Build Playground
         run: |
           cd src/playground
           bun install --frozen-lockfile
+
+      - name: Build Full Project
+        run: |
           bun run build
+      - name: Lint Full Project
+        run: |
+          bun lint
