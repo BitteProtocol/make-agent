@@ -2,11 +2,7 @@ import express from "express";
 import { promises as fs } from "fs";
 import path from "path";
 
-interface ApiConfig {
-  key: string;
-  url: string;
-  serverPort: number;
-}
+import { type ApiConfig } from "../commands/dev";
 
 export async function startUIServer(
   apiConfig: ApiConfig,
@@ -64,7 +60,7 @@ export async function startUIServer(
   // Serve config endpoint
   app.get("/api/config", async (req, res) => {
     try {
-      const specUrl = `${req.protocol}://${req.hostname}:${apiConfig.serverPort}/.well-known/ai-plugin.json`;
+      const specUrl = `${apiConfig.localAgentUrl}/.well-known/ai-plugin.json`;
       const specResponse = await fetch(specUrl);
       const spec = await specResponse.json();
 

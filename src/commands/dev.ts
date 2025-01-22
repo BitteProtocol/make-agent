@@ -12,9 +12,10 @@ import { getHostname, getSpecUrl } from "../utils/url-utils";
 dotenv.config();
 validateEnv();
 
-interface ApiConfig {
+export interface ApiConfig {
   key: string;
   url: string;
+  localAgentUrl?: string;
   serverPort: number;
 }
 
@@ -99,6 +100,7 @@ export const devCommand = new Command()
       const { port, serverPort } = await setupPorts(options);
 
       API_CONFIG.serverPort = serverPort;
+      API_CONFIG.localAgentUrl = `http://localhost:${port}`;
       const server = await startUIServer(API_CONFIG);
 
       const deployedUrl = getDeployedUrl(port);
