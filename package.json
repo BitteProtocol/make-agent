@@ -19,7 +19,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "bun run ./src/index.ts dev --port 3000",
-    "build": "bun run typecheck && bun build ./src/index.ts --outdir ../dist --target node && bun run build:ui",
+    "build": "bun run typecheck && bun build ./src/index.ts --outdir --minify ./dist --target node && bun run build:ui",
     "build:ui": "bun run typecheck && cd ./src/playground && bun run build && cp -r ./dist ../../dist/playground",
     "prepublishOnly": "bun run build",
     "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
@@ -43,7 +43,6 @@
     "@types/open": "^6.2.1",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "ajv": "^8.17.1",
-    "ajv-draft-04": "^1.0.0",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0",
     "prettier": "^3.3.3"
