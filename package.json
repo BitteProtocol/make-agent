@@ -19,7 +19,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "bun run ./src/index.ts dev --port 3000",
-    "build": "bun run typecheck && bun build ./src/index.ts --outdir --minify ./dist --target node && bun run build:ui",
+    "build": "bun run typecheck && bun build --minify ./src/index.ts --outdir ./dist --target node && bun run build:ui",
     "build:ui": "bun run typecheck && cd ./src/playground && bun run build && cp -r ./dist ../../dist/playground",
     "prepublishOnly": "bun run build",
     "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
