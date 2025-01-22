@@ -13,8 +13,39 @@ export async function startUIServer(
 ): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
 
-  // Serve static files from playground/dist
-  const staticPath = path.resolve(process.cwd(), "dist", "playground");
+  // Try multiple possible paths for the static files
+  const possiblePaths = [
+    // When running in development mode
+    path.resolve(process.cwd(), "dist", "playground"),
+    // When installed as a node module
+    path.resolve(process.cwd(), "node_modules", "make-agent", "dist", "playground"),
+    // When running from the node_modules/.bin directory
+    path.resolve(process.cwd(), "..", "make-agent", "dist", "playground")
+  ];
+
+  let staticPath: string | undefined;
+  
+  // Try each path until we find one that exists
+  for (const testPath of possiblePaths) {
+    try {
+      await fs.access(testPath);
+      const indexExists = await fs.access(path.join(testPath, "index.html"))
+        .then(() => true)
+        .catch(() => false);
+      
+      if (indexExists) {
+        staticPath = testPath;
+        break;
+      }
+    } catch {
+      continue;
+    }
+  }
+
+  if (!staticPath) {
+    throw new Error("Could not find static files directory with index.html");
+  }
+
   console.log("[Server] Serving static files from:", staticPath);
   console.log("[Server] Current directory:", __dirname);
   console.log("[Server] Process working directory:", process.cwd());
@@ -49,7 +80,7 @@ export async function startUIServer(
   });
 
   // Serve index.html for all routes
-  app.get("/", async (req, res) => {
+  app.get("*", async (req, res) => {
     console.log("[Server] Received route request:", req.path);
     const indexPath = path.join(staticPath, "index.html");
 
