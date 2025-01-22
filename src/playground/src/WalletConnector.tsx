@@ -1,14 +1,14 @@
 import { useBitteWallet } from "@mintbase-js/react";
 
-export const NearWalletConnector = () => {
+export const NearWalletConnector = (): JSX.Element => {
   const { isConnected, selector, connect, activeAccountId } = useBitteWallet();
 
-  const handleSignout = async () => {
+  const handleSignout = async (): Promise<void> => {
     const wallet = await selector.wallet();
     return wallet.signOut();
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (): Promise<void> => {
     return connect();
   };
 

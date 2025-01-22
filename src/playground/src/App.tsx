@@ -32,13 +32,13 @@ type AppConfig = {
   bitteApiUrl: string;
 };
 
-const Main: React.FC = () => {
+const Main: React.FC = (): JSX.Element => {
   const { selector } = useBitteWallet();
   const [wallet, setWallet] = useState<Wallet>();
   const [config, setConfig] = useState<AppConfig>();
 
   useEffect(() => {
-    const fetchConfig = async () => {
+    const fetchConfig = async (): Promise<void> => {
       try {
         const response = await fetch("/api/config");
         const data = await response.json();
@@ -51,7 +51,7 @@ const Main: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchWallet = async () => {
+    const fetchWallet = async (): Promise<void> => {
       const walletInstance = await selector.wallet();
       setWallet(walletInstance);
     };

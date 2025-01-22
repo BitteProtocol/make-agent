@@ -8,7 +8,9 @@ interface ApiConfig {
   serverPort: number;
 }
 
-export async function startApiServer(apiConfig: ApiConfig) {
+export async function startApiServer(
+  apiConfig: ApiConfig,
+): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
 
   // Serve static files from playground/dist

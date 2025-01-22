@@ -1,10 +1,9 @@
+import { BitteWalletContextProvider } from "@mintbase-js/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import "./index.css";
 import App from "./App.tsx";
-
-import { BitteWalletContextProvider } from "@mintbase-js/react";
+import "./index.css";
 import "@near-wallet-selector/modal-ui/styles.css";
 
 const BitteWalletSetup = {

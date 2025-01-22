@@ -21,12 +21,11 @@ interface ApiConfig {
 interface ValidationResult {
   pluginId: string;
   accountId: string;
-  spec: any;
+  spec: unknown;
 }
 
 const DEFAULT_PORTS = {
   SERVER: 3010,
-  UI: 5000,
 } as const;
 
 async function findAvailablePort(startPort: number): Promise<number> {
@@ -71,7 +70,9 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   };
 }
 
-async function setupPorts(options: { port?: string }) {
+async function setupPorts(options: {
+  port?: string;
+}): Promise<{ port: number; serverPort: number }> {
   let port = parseInt(options.port || "") || 0;
 
   if (port === 0) {
@@ -83,10 +84,9 @@ async function setupPorts(options: { port?: string }) {
     }
   }
 
-  const uiPort = await findAvailablePort(DEFAULT_PORTS.UI);
   const serverPort = await findAvailablePort(DEFAULT_PORTS.SERVER);
 
-  return { port, uiPort, serverPort };
+  return { port, serverPort };
 }
 
 export const devCommand = new Command()
