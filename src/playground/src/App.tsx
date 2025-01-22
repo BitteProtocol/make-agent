@@ -19,7 +19,7 @@ const bitteAgent = {
   image: "/bitte.svg",
 };
 
-declare const __APP_DATA__: {
+type AppConfig = {
   localAgent: {
     pluginId: string;
     accountId: string;
@@ -31,10 +31,23 @@ declare const __APP_DATA__: {
   bitteApiUrl: string;
 };
 
-
 const Main: React.FC = () => {
   const { selector } = useBitteWallet();
   const [wallet, setWallet] = useState<Wallet>();
+  const [config, setConfig] = useState<AppConfig>();
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('/api/config');
+        const data = await response.json();
+        setConfig(data);
+      } catch (error) {
+        console.error('Failed to fetch config:', error);
+      }
+    };
+    fetchConfig();
+  }, []);
 
   useEffect(() => {
     const fetchWallet = async () => {
@@ -44,16 +57,20 @@ const Main: React.FC = () => {
     if (selector) fetchWallet();
   }, [selector]);
 
+  if (!config) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <main>
       <Header />
       <div>
         <BitteAiChat
-          options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name, localAgent: __APP_DATA__.localAgent }}
-          agentid={__APP_DATA__.localAgent.pluginId}
+          options={{ agentImage: bitteAgent.image, agentName: bitteAgent.name }}
+          agentid={config.localAgent.pluginId}
           wallet={{ near: { wallet } }}
-          apiUrl={__APP_DATA__.bitteApiUrl}
-          key={__APP_DATA__.bitteApiKey}
+          apiUrl={config.bitteApiUrl}
+          // bitteApiKey={config.bitteApiKey}
           colors={{
             generalBackground: "#18181A",
             messageBackground: "#0A0A0A",

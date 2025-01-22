@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@bitte-ai/chat": "0.1.0-local-agent-402a0a9",
+    "@bitte-ai/chat": "0.0.14",
     "@mintbase-js/react": "latest",
     "@near-wallet-selector/modal-ui": "^8.9.15",
     "buffer": "^6.0.3",

@@ -1,9 +1,7 @@
 import { Command } from "commander";
 import dotenv from 'dotenv';
 import isPortReachable from 'is-port-reachable';
-import path from "path";
 import { startApiServer } from "../services/proxy";
-import { createViteServer } from "../services/vite";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
@@ -90,23 +88,6 @@ async function setupPorts(options: { port?: string }) {
   return { port, uiPort, serverPort };
 }
 
-async function createViteConfiguration(uiPort: number, serverPort: number, localAgent: ValidationResult) {
-  return {
-    root: path.resolve(__dirname, "../playground"),
-    port: uiPort,
-    configFile: path.resolve(__dirname, "../playground/vite.config.ts"),
-    define: {
-      __APP_DATA__: JSON.stringify({
-        serverStartTime: new Date().toISOString(),
-        environment: "make-agent",
-        localAgent,
-        apiUrl: `http://localhost:${serverPort}/api/v1/chat`,
-        bitteApiKey: API_CONFIG.key,
-        bitteApiUrl: `http://localhost:${serverPort}/api/v1/chat`
-      })
-    }
-  };
-}
 
 export const devCommand = new Command()
   .name("dev")
@@ -115,7 +96,7 @@ export const devCommand = new Command()
   .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
   .action(async (options) => {
     try {
-      const { port, uiPort, serverPort } = await setupPorts(options);
+      const { port, serverPort } = await setupPorts(options);
       
       API_CONFIG.serverPort = serverPort;
       const server = await startApiServer(API_CONFIG);
@@ -125,13 +106,16 @@ export const devCommand = new Command()
         throw new Error("Deployed URL could not be determined.");
       }
 
-      const localAgent = await fetchAndValidateSpec(deployedUrl);
-      const viteConfig = await createViteConfiguration(uiPort, serverPort, localAgent);
-      const viteServer = createViteServer(viteConfig);
-      await viteServer.start();
+      try {
+        console.log('[Dev] Fetching and validating OpenAPI spec from:', deployedUrl);
+        await fetchAndValidateSpec(deployedUrl);
+        console.log('[Dev] OpenAPI spec validation successful');
+      } catch (error) {
+        console.error('[Dev] Error validating OpenAPI spec:', error);
+        throw error;
+      }
 
       process.on("SIGINT", async () => {
-        await viteServer.close();
         server.close();
         process.exit(0);
       });
