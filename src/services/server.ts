@@ -62,21 +62,30 @@ export async function startUIServer(
   );
 
   // Serve config endpoint
-  app.get("/api/config", (req, res) => {
-    const serverConfig = {
-      serverStartTime: new Date().toISOString(),
-      environment: "make-agent",
-      localAgent: {
-        pluginId: req.hostname,
-        accountId: "anon",
-        spec: {},
-      },
-      apiUrl:
-        "https://mintbase-wallet-git-local-agent-bitteprotocol.vercel.app/api/v1/chat", // TODO: change to "https://wallet.bitte.ai/api/v1/chat",
-      bitteApiKey: apiConfig.key,
-      bitteApiUrl: apiConfig.url,
-    };
-    res.json(serverConfig);
+  app.get("/api/config", async (req, res) => {
+    try {
+      const specUrl = `${req.protocol}://${req.hostname}/.well-known/ai-plugin.json`;
+      const specResponse = await fetch(specUrl);
+      const spec = await specResponse.json();
+
+      const serverConfig = {
+        serverStartTime: new Date().toISOString(),
+        environment: "make-agent",
+        localAgent: {
+          pluginId: req.hostname,
+          accountId: "anon", 
+          spec,
+        },
+        apiUrl:
+          "https://mintbase-wallet-git-local-agent-bitteprotocol.vercel.app/api/v1/chat", // TODO: change to "https://wallet.bitte.ai/api/v1/chat",
+        bitteApiKey: apiConfig.key,
+        bitteApiUrl: apiConfig.url,
+      };
+      res.json(serverConfig);
+    } catch (error) {
+      console.error("[Server] Error fetching AI plugin spec:", error);
+      res.status(500).json({ error: "Failed to fetch AI plugin spec" });
+    }
   });
 
   // Serve index.html for all routes
