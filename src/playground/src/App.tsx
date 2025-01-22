@@ -71,7 +71,7 @@ const Main: React.FC = (): JSX.Element => {
           agentid={config.localAgent.pluginId}
           wallet={{ near: { wallet } }}
           apiUrl={config.bitteApiUrl}
-          // bitteApiKey={config.bitteApiKey}
+          apiKey={config.bitteApiKey}
           colors={{
             generalBackground: "#18181A",
             messageBackground: "#0A0A0A",
