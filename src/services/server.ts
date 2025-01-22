@@ -14,21 +14,28 @@ export async function startUIServer(
     // When running in development mode
     path.resolve(process.cwd(), "dist", "playground"),
     // When installed as a node module
-    path.resolve(process.cwd(), "node_modules", "make-agent", "dist", "playground"),
+    path.resolve(
+      process.cwd(),
+      "node_modules",
+      "make-agent",
+      "dist",
+      "playground",
+    ),
     // When running from the node_modules/.bin directory
-    path.resolve(process.cwd(), "..", "make-agent", "dist", "playground")
+    path.resolve(process.cwd(), "..", "make-agent", "dist", "playground"),
   ];
 
   let staticPath: string | undefined;
-  
+
   // Try each path until we find one that exists
   for (const testPath of possiblePaths) {
     try {
       await fs.access(testPath);
-      const indexExists = await fs.access(path.join(testPath, "index.html"))
+      const indexExists = await fs
+        .access(path.join(testPath, "index.html"))
         .then(() => true)
         .catch(() => false);
-      
+
       if (indexExists) {
         staticPath = testPath;
         break;
@@ -69,7 +76,7 @@ export async function startUIServer(
         environment: "make-agent",
         localAgent: {
           pluginId: req.hostname,
-          accountId: "anon", 
+          accountId: "anon",
           spec,
         },
         apiUrl:
