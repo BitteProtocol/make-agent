@@ -26,7 +26,7 @@ interface ValidationResult {
 }
 
 const DEFAULT_PORTS = {
-  SERVER: 3010,
+  SERVER: 3000,
 } as const;
 
 async function findAvailablePort(startPort: number): Promise<number> {
@@ -44,25 +44,41 @@ const API_CONFIG: ApiConfig = {
 };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
+  console.log("[Dev] Getting plugin ID and spec URL");
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
+  console.log("[Dev] Plugin ID:", pluginId);
+  console.log("[Dev] Spec URL:", specUrl);
 
-  const validation = await validateAndParseOpenApiSpec(specUrl);
-  const { isValid, accountId } = validation;
+  let isValid, accountId;
+  try {
+    console.log("[Dev] Validating OpenAPI spec...");
+    const validation = await validateAndParseOpenApiSpec(specUrl);
+    ({ isValid, accountId } = validation);
+    console.log("[Dev] Validation result:", { isValid, accountId });
+  } catch (error) {
+    console.error("Failed to validate OpenAPI spec:", error instanceof Error ? error.message : "Unknown error");
+    isValid = false;
+    accountId = undefined;
+  }
 
+  console.log("[Dev] Fetching spec content...");
   const specContent = await fetch(specUrl).then((res) => res.text());
   let spec = JSON.parse(specContent);
+  console.log("[Dev] Successfully parsed spec content");
 
-  if (!isValid) {
-    spec = {
-      ...spec,
-      servers: [{ url }],
-      "x-mb": {
-        ...spec["x-mb"],
-        "account-id": accountId || "anon",
-      },
-    };
-  }
+  console.log("[Dev] Spec validation status:", isValid);
+
+  console.log("[Dev] Updating spec with server URL and account ID");
+  spec = {
+    ...spec,
+    servers: [{ url }],
+    "x-mb": {
+      ...spec["x-mb"],
+      "account-id": accountId || "anon",
+    },
+  };
+  console.log("[Dev] Updated spec servers URL:", spec.servers[0].url);
 
   return {
     pluginId,
@@ -101,24 +117,28 @@ export const devCommand = new Command()
 
       API_CONFIG.serverPort = serverPort;
       API_CONFIG.localAgentUrl = `http://localhost:${port}`;
-      const server = await startUIServer(API_CONFIG);
 
       const deployedUrl = getDeployedUrl(port);
       if (!deployedUrl) {
         throw new Error("Deployed URL could not be determined.");
       }
 
+      let agentSpec;
       try {
         console.log(
           "[Dev] Fetching and validating OpenAPI spec from:",
           deployedUrl,
         );
-        await fetchAndValidateSpec(deployedUrl);
+        const { spec } = await fetchAndValidateSpec(deployedUrl);
         console.log("[Dev] OpenAPI spec validation successful");
+        agentSpec = spec;
       } catch (error) {
         console.error("[Dev] Error validating OpenAPI spec:", error);
         throw error;
       }
+
+      const server = await startUIServer(API_CONFIG, agentSpec);
+
 
       process.on("SIGINT", async () => {
         server.close();

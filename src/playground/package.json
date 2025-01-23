@@ -1,5 +1,5 @@
 {
-  "name": "my-vue-app",
+  "name": "playground",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@bitte-ai/chat": "0.1.0-local-agent-c36fd89",
+    "@bitte-ai/chat": "file://../../../bitte-ai-chat",
     "@mintbase-js/react": "latest",
     "@near-wallet-selector/modal-ui": "^8.9.15",
     "buffer": "^6.0.3",

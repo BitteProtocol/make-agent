@@ -1,13 +1,27 @@
 import express from "express";
 import { promises as fs } from "fs";
 import path from "path";
+import cors from "cors";
 
 import { type ApiConfig } from "../commands/dev";
 
 export async function startUIServer(
   apiConfig: ApiConfig,
+  agentSpec: any
 ): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
+
+  // Enable CORS with more permissive settings
+  app.use(cors({
+    origin: true, // Reflects the request origin
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    credentials: true,
+    maxAge: 86400,
+    exposedHeaders: "*"
+  }));
+
+  app.use(express.json());
 
   // Try multiple possible paths for the static files
   const possiblePaths = [
@@ -49,10 +63,6 @@ export async function startUIServer(
     throw new Error("Could not find static files directory with index.html");
   }
 
-  console.log("[Server] Serving static files from:", staticPath);
-  console.log("[Server] Current directory:", __dirname);
-  console.log("[Server] Process working directory:", process.cwd());
-
   // Serve static files with correct MIME types
   app.use(
     express.static(staticPath, {
@@ -67,9 +77,6 @@ export async function startUIServer(
   // Serve config endpoint
   app.get("/api/config", async (req, res) => {
     try {
-      const specUrl = `${apiConfig.localAgentUrl}/.well-known/ai-plugin.json`;
-      const specResponse = await fetch(specUrl);
-      const spec = await specResponse.json();
 
       const serverConfig = {
         serverStartTime: new Date().toISOString(),
@@ -77,32 +84,59 @@ export async function startUIServer(
         localAgent: {
           pluginId: req.hostname,
           accountId: "anon",
-          spec,
+          spec: agentSpec,
         },
         apiUrl:
-          "https://mintbase-wallet-git-local-agent-bitteprotocol.vercel.app/api/v1/chat", // TODO: change to "https://wallet.bitte.ai/api/v1/chat",
+          `${req.protocol}://${req.get('host')}/api/v1/chat`,
         bitteApiKey: apiConfig.key,
-        bitteApiUrl: apiConfig.url,
+        bitteApiUrl: `${req.protocol}://${req.get('host')}/api/v1/chat`,
       };
       res.json(serverConfig);
     } catch (error) {
-      console.error("[Server] Error fetching AI plugin spec:", error);
       res.status(500).json({ error: "Failed to fetch AI plugin spec" });
+    }
+  });
+  // Proxy chat requests and stream results
+  app.post("/api/v1/chat", async (req, res) => {
+    try {
+      const response = await fetch(apiConfig.url, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiConfig.key}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(req.body),
+      });
+
+      const data = await response.text();
+
+      res.status(response.status);
+      response.headers.forEach((value, key) => {
+        // Skip content-encoding to avoid compression issues
+        if (key.toLowerCase() !== "content-encoding") {
+          res.setHeader(key, value);
+        }
+      });
+      res.send(data);
+    } catch (error) {
+      res.status(500).json({
+        error: "Internal server error", 
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   });
 
   // Serve index.html for all routes
   app.get("*", async (req, res) => {
-    console.log("[Server] Received route request:", req.path);
+    console.log(req.path)
     const indexPath = path.join(staticPath, "index.html");
 
     try {
       const html = await fs.readFile(indexPath, "utf8");
       res.setHeader("Content-Type", "text/html");
       res.send(html);
-      console.log("[Server] Successfully served index.html");
     } catch (err) {
-      console.error("[Server] Error reading index.html:", err);
       res.status(404).send("Not found");
     }
   });
