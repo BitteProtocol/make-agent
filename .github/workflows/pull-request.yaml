@@ -20,21 +20,28 @@ jobs:
       - name: Install Bun
         run: |
           curl -fsSL https://bun.sh/install | bash
-          export PATH="$HOME/.bun/bin:$PATH"
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
 
       - name: Cache node modules
         uses: actions/cache@v4
         with:
           path: |
             node_modules
+            src/playground/node_modules
             ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
-      - name: Install, Lint & Build
-        run: |
-          export PATH="$HOME/.bun/bin:$PATH"
-          bun install --frozen-lockfile
-          bun lint
-          bun run build
+      - name: Install & Build Root Project
+        run: bun install --frozen-lockfile
+
+      - name: Install & Build Playground
+        working-directory: src/playground
+        run: bun install --frozen-lockfile
+
+      - name: Build Full Project
+        run: bun run build
+
+      - name: Lint Full Project
+        run: bun lint
