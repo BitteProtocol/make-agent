@@ -16,7 +16,7 @@ importers:
         version: 0.6.5(bn.js@5.2.1)(borsh@1.0.0)(graphql@16.10.0)
       '@near-wallet-selector/modal-ui':
         specifier: ^8.9.15
-        version: 8.9.15(near-api-js@4.0.4)
+        version: 8.9.15(near-api-js@4.0.3)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -5016,9 +5016,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@near-wallet-selector/modal-ui@8.9.15(near-api-js@4.0.4)':
+  '@near-wallet-selector/modal-ui@8.9.15(near-api-js@4.0.3)':
     dependencies:
-      '@near-wallet-selector/core': 8.9.15(near-api-js@4.0.4)
+      '@near-wallet-selector/core': 8.9.15(near-api-js@4.0.3)
       copy-to-clipboard: 3.3.3
       qrcode: 1.5.4
       react: 18.2.0

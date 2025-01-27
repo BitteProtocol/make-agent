@@ -1,7 +1,7 @@
+import cors from "cors";
 import express from "express";
 import { promises as fs } from "fs";
 import path from "path";
-import cors from "cors";
 
 import { type ApiConfig } from "../commands/dev";
 
@@ -91,43 +91,12 @@ export async function startUIServer(
           accountId: "anon",
           spec: agentSpec,
         },
-        apiUrl: `${req.protocol}://${req.get("host")}/api/v1/chat`,
         bitteApiKey: apiConfig.key,
-        bitteApiUrl: `${req.protocol}://${req.get("host")}/api/v1/chat`,
+        bitteApiUrl: apiConfig.url,
       };
       res.json(serverConfig);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch AI plugin spec" });
-    }
-  });
-  // Proxy chat requests and stream results
-  app.post("/api/v1/chat", async (req, res) => {
-    try {
-      const response = await fetch(apiConfig.url, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiConfig.key}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(req.body),
-      });
-
-      const data = await response.text();
-
-      res.status(response.status);
-      response.headers.forEach((value, key) => {
-        // Skip content-encoding to avoid compression issues
-        if (key.toLowerCase() !== "content-encoding") {
-          res.setHeader(key, value);
-        }
-      });
-      res.send(data);
-    } catch (error) {
-      res.status(500).json({
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
     }
   });
 
