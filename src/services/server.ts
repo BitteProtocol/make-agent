@@ -12,16 +12,22 @@ export async function startUIServer(
   const app = express();
 
   // Enable CORS with more permissive settings
-  app.use(cors({
-    origin: true, // Reflects the request origin
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: true,
-    maxAge: 86400,
-    exposedHeaders: "*"
-  }));
+  app.use(
+    cors({
+      origin: true, // Reflects the request origin
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
+      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+      credentials: true,
+      maxAge: 86400,
+      exposedHeaders: "*",
+    })
+  );
 
-  app.use(express.json());
+  app.use(
+    express.json({
+      limit: "2mb",
+    })
+  );
 
   // Try multiple possible paths for the static files
   const possiblePaths = [
@@ -33,7 +39,7 @@ export async function startUIServer(
       "node_modules",
       "make-agent",
       "dist",
-      "playground",
+      "playground"
     ),
     // When running from the node_modules/.bin directory
     path.resolve(process.cwd(), "..", "make-agent", "dist", "playground"),
@@ -71,13 +77,12 @@ export async function startUIServer(
           res.setHeader("Content-Type", "text/css");
         }
       },
-    }),
+    })
   );
 
   // Serve config endpoint
   app.get("/api/config", async (req, res) => {
     try {
-
       const serverConfig = {
         serverStartTime: new Date().toISOString(),
         environment: "make-agent",
@@ -86,10 +91,9 @@ export async function startUIServer(
           accountId: "anon",
           spec: agentSpec,
         },
-        apiUrl:
-          `${req.protocol}://${req.get('host')}/api/v1/chat`,
+        apiUrl: `${req.protocol}://${req.get("host")}/api/v1/chat`,
         bitteApiKey: apiConfig.key,
-        bitteApiUrl: `${req.protocol}://${req.get('host')}/api/v1/chat`,
+        bitteApiUrl: `${req.protocol}://${req.get("host")}/api/v1/chat`,
       };
       res.json(serverConfig);
     } catch (error) {
@@ -121,7 +125,7 @@ export async function startUIServer(
       res.send(data);
     } catch (error) {
       res.status(500).json({
-        error: "Internal server error", 
+        error: "Internal server error",
         message: error instanceof Error ? error.message : "Unknown error",
       });
     }
@@ -129,7 +133,7 @@ export async function startUIServer(
 
   // Serve index.html for all routes
   app.get("*", async (req, res) => {
-    console.log(req.path)
+    console.log(req.path);
     const indexPath = path.join(staticPath, "index.html");
 
     try {
@@ -145,7 +149,7 @@ export async function startUIServer(
     try {
       const server = app.listen(apiConfig.serverPort, () => {
         console.log(
-          `[Server] UI server listening http://localhost:${apiConfig.serverPort}`,
+          `[Server] UI server listening http://localhost:${apiConfig.serverPort}`
         );
         console.log("[Server] Ready to handle requests");
         resolve(server);

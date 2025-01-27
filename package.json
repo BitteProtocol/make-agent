@@ -19,8 +19,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "bun run ./src/index.ts dev --port 3000",
-    "build": "rm -rf ./dist && bun run typecheck && bun build --minify ./src/index.ts --outdir ./dist --target node && bun run build:ui",
-    "build:ui": "bun run typecheck && cd ./src/playground && rm -rf ./dist && bun run build && cp -r ./dist ../../dist/playground",
+    "build": "rm -rf ./dist && bun build --minify ./src/index.ts --outdir ./dist --target node && bun run build:ui",
+    "build:ui": "cd ./src/playground && pnpm i && rm -rf ./dist && bun run build && cp -r ./dist ../../dist/playground",
     "prepublishOnly": "bun run build",
     "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
     "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
