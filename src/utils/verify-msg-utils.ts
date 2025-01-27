@@ -1,4 +1,4 @@
-import * as borsh from "borsh";
+import { serialize } from "borsh";
 import { sha256 } from "js-sha256";
 import { utils } from "near-api-js";
 
@@ -31,7 +31,7 @@ export const verifyMessage = async ({
 
   if (accountIdToVerify && accountIdToVerify !== accountId) {
     console.error(
-      `Account mismatch: signed message has account ${accountId}, but provided account was ${accountIdToVerify}`,
+      `Account mismatch: signed message has account ${accountId}, but provided account was ${accountIdToVerify}`
     );
     return false;
   }
@@ -46,7 +46,7 @@ export const verifyMessage = async ({
 
   return utils.PublicKey.from(publicKey).verify(
     hashedPayload,
-    Buffer.from(signature, "base64"),
+    Buffer.from(signature, "base64")
   );
 };
 
@@ -66,7 +66,7 @@ const getNonceBuffer = (nonce: string): Buffer => {
 };
 
 const hashPayload = (payload: Payload): Uint8Array => {
-  const borshPayload = borsh.serialize(payloadSchema, payload);
+  const borshPayload = serialize(payloadSchema, payload);
   const prefixNumber = 413 + 2 ** 31;
   const prefixBuffer = new Uint8Array([
     prefixNumber & 0xff,

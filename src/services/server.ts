@@ -1,4 +1,3 @@
-import cors from "cors";
 import express from "express";
 import { promises as fs } from "fs";
 import path from "path";
@@ -10,18 +9,6 @@ export async function startUIServer(
   agentSpec: any
 ): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
-
-  // Enable CORS with more permissive settings
-  app.use(
-    cors({
-      origin: true, // Reflects the request origin
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"],
-      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-      credentials: true,
-      maxAge: 86400,
-      exposedHeaders: "*",
-    })
-  );
 
   app.use(
     express.json({
