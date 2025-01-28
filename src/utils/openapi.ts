@@ -1,6 +1,6 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 
-import { validateXMbSpec, type XMbSpec } from "../config/types";
+import { isXMbSpec, type XMbSpec } from "../config/types";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -21,7 +21,7 @@ export async function validateAndParseOpenApiSpec(
         "Failed to parse OpenAPI spec JSON:",
         error instanceof Error ? error.message : "Unknown error",
       );
-      return { isValid: false };
+      return undefined;
     }
 
     try {
@@ -47,11 +47,11 @@ export async function validateAndParseOpenApiSpec(
           );
         }
       }
-      return { isValid: false };
+      return undefined;
     }
 
     const xMbSpec = apiResponse["x-mb"];
-    validateXMbSpec(xMbSpec);
+    isXMbSpec(xMbSpec);
 
     return xMbSpec;
   } catch (error) {

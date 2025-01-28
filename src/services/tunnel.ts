@@ -179,7 +179,6 @@ export class TunnelService {
       console.error("OpenAPI specification validation failed.");
       return;
     }
-    const accountId = xMbSpec["account-id"];
 
     const result = await this.pluginService.register({
       pluginId: this.pluginId,
