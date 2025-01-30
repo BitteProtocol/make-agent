@@ -39,7 +39,7 @@ async function findAvailablePort(startPort: number): Promise<number> {
 
 const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
-  url: process.env.BITTE_API_URL!,
+  url: process.env.BITTE_API_URL! || "https://api.bitte.ai/api/v1/chat",
   serverPort: DEFAULT_PORTS.SERVER,
 };
 
@@ -57,7 +57,10 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
     ({ isValid, accountId } = validation);
     console.log("[Dev] Validation result:", { isValid, accountId });
   } catch (error) {
-    console.error("Failed to validate OpenAPI spec:", error instanceof Error ? error.message : "Unknown error");
+    console.error(
+      "Failed to validate OpenAPI spec:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
     isValid = false;
     accountId = undefined;
   }
@@ -138,7 +141,6 @@ export const devCommand = new Command()
       }
 
       const server = await startUIServer(API_CONFIG, agentSpec);
-
 
       process.on("SIGINT", async () => {
         server.close();

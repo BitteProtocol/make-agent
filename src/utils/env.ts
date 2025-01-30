@@ -3,7 +3,7 @@
  * @throws Error if required environment variables are missing
  */
 export function validateEnv(): void {
-  const requiredEnvVars = ["BITTE_API_KEY", "BITTE_API_URL"];
+  const requiredEnvVars = ["BITTE_API_KEY"];
 
   const missingVars = requiredEnvVars.filter(
     (varName) => !process.env[varName],

@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@bitte-ai/chat':
-        specifier: file://../../../bitte-ai-chat
-        version: file:../../../bitte-ai-chat(@tanstack/query-core@5.65.0)(@tanstack/react-query@5.65.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        specifier: 0.1.0-local-agent-ddcccd2
+        version: 0.1.0-local-agent-ddcccd2(@tanstack/query-core@5.65.0)(@tanstack/react-query@5.65.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@mintbase-js/react':
         specifier: latest
         version: 0.6.5(bn.js@5.2.1)(borsh@1.0.0)(graphql@16.10.0)
       '@near-wallet-selector/modal-ui':
         specifier: ^8.9.15
-        version: 8.9.15(near-api-js@4.0.4)
+        version: 8.9.15(near-api-js@4.0.3)
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -220,8 +220,8 @@ packages:
     resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
     engines: {node: '>=6.9.0'}
 
-  '@bitte-ai/chat@file:../../../bitte-ai-chat':
-    resolution: {directory: ../../../bitte-ai-chat, type: directory}
+  '@bitte-ai/chat@0.1.0-local-agent-ddcccd2':
+    resolution: {integrity: sha512-SUnZvCv8ptxSnv5o1RreOz+F3zAvawxL8OsecyIu9R5lmbb8ZN5Dgec3pmgpuIjelmjpPo/LZ/7UDg0+DAtEBw==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -2608,6 +2608,7 @@ packages:
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -4009,7 +4010,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@bitte-ai/chat@file:../../../bitte-ai-chat(@tanstack/query-core@5.65.0)(@tanstack/react-query@5.65.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@bitte-ai/chat@0.1.0-local-agent-ddcccd2(@tanstack/query-core@5.65.0)(@tanstack/react-query@5.65.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@ai-sdk/anthropic': 1.1.4(zod@3.24.1)
       '@ai-sdk/openai': 1.1.4(zod@3.24.1)
@@ -4629,7 +4630,7 @@ snapshots:
 
   '@mintbase-js/sdk@0.6.2':
     dependencies:
-      near-api-js: 4.0.3
+      near-api-js: 4.0.4
     transitivePeerDependencies:
       - encoding
 
@@ -5016,9 +5017,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@near-wallet-selector/modal-ui@8.9.15(near-api-js@4.0.4)':
+  '@near-wallet-selector/modal-ui@8.9.15(near-api-js@4.0.3)':
     dependencies:
-      '@near-wallet-selector/core': 8.9.15(near-api-js@4.0.4)
+      '@near-wallet-selector/core': 8.9.15(near-api-js@4.0.3)
       copy-to-clipboard: 3.3.3
       qrcode: 1.5.4
       react: 18.2.0
