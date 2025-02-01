@@ -12,6 +12,7 @@ export const devCommand = new Command()
   .action(async (options) => {
     let port = options.port;
     if (!port) {
+      console.log('Port not specified. Attempting to detect an app port for tunneling...');
       port = await detectPort();
       if (!port) {
         console.error(
