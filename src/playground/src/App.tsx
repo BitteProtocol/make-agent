@@ -6,6 +6,8 @@ import "@bitte-ai/chat/style.css";
 import { useBitteWallet } from "@mintbase-js/react";
 import type { Wallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
+import ContextProvider from "./context";
+import Cookies from "js-cookie";
 
 import "./shims";
 import "@bitte-ai/chat/style.css";
@@ -58,33 +60,37 @@ const Main: React.FC = (): JSX.Element => {
     if (selector) fetchWallet();
   }, [selector]);
 
+  const cookies = Cookies.get("wagmi");
+
   if (!config) {
     return <div>Loading...</div>;
   }
 
   return (
     <main>
-      <Header />
-      <div>
-        <BitteAiChat
-          options={{
-            agentImage: bitteAgent.image,
-            agentName: bitteAgent.name,
-            localAgent: config.localAgent,
-          }}
-          agentId={config.localAgent.pluginId}
-          wallet={{ near: { wallet } }}
-          apiUrl={config.bitteApiUrl}
-          apiKey={config.bitteApiKey}
-          colors={{
-            generalBackground: "#18181A",
-            messageBackground: "#0A0A0A",
-            textColor: "#FAFAFA",
-            buttonColor: "#000000",
-            borderColor: "#334155",
-          }}
-        />
-      </div>
+      <ContextProvider cookies={cookies}>
+        <Header />
+        <div>
+          <BitteAiChat
+            options={{
+              agentImage: bitteAgent.image,
+              agentName: bitteAgent.name,
+              localAgent: config.localAgent,
+            }}
+            agentId={config.localAgent.pluginId}
+            wallet={{ near: { wallet } }}
+            apiUrl={config.bitteApiUrl}
+            apiKey={config.bitteApiKey}
+            colors={{
+              generalBackground: "#18181A",
+              messageBackground: "#0A0A0A",
+              textColor: "#FAFAFA",
+              buttonColor: "#000000",
+              borderColor: "#334155",
+            }}
+          />
+        </div>
+      </ContextProvider>
     </main>
   );
 };

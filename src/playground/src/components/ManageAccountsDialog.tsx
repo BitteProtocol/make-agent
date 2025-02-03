@@ -39,6 +39,17 @@ interface ManageAccountsDialogProps {
   setConnectModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "appkit-network-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
+
 const ManageAccountsDialog: React.FC<ManageAccountsDialogProps> = ({
   isOpen,
   isConnected,

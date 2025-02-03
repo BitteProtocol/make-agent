@@ -7,6 +7,17 @@ import { Button } from "./button";
 import { DialogContent, DialogTitle, DialogTrigger } from "./dialog";
 import { Dialog } from "./dialog";
 
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "appkit-connect-button": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      > & { label: string };
+    }
+  }
+}
+
 interface ConnectDialogProps {
   isOpen: boolean;
   setConnectModalOpen: Dispatch<SetStateAction<boolean>>;
