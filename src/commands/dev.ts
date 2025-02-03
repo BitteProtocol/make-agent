@@ -112,7 +112,7 @@ async function setupPorts(options: {
 export const devCommand = new Command()
   .name("dev")
   .description("Start a local playground for your AI agent")
-  .option("-p, --port <port>", "Port to run playground on", "3000")
+  .option("-p, --port <port>", "Port to run playground on")
   .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
   .action(async (options) => {
     try {
