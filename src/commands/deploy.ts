@@ -34,12 +34,11 @@ export const deployCommand = new Command()
     }
     const pluginService = new PluginService();
     try {
-      const updateRes = await pluginService.update(id, accountId);
+      const updateRes = await pluginService.update(id);
       if (!updateRes) {
         console.log("Attempting to register plugin...");
         await pluginService.register({
           pluginId: id,
-          accountId,
         });
       }
     } catch (error) {

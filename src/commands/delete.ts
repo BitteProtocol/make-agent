@@ -31,8 +31,7 @@ export const deleteCommand = new Command()
       return;
     }
     const pluginService = new PluginService();
-    const authentication =
-      await pluginService.auth.getAuthentication(accountId);
+    const authentication = await pluginService.auth.getAuthentication();
     if (!authentication) {
       console.error("Authentication failed. Unable to delete the plugin.");
       return;
