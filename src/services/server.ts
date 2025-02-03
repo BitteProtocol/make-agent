@@ -6,7 +6,7 @@ import { type ApiConfig } from "../commands/dev";
 
 export async function startUIServer(
   apiConfig: ApiConfig,
-  agentSpec: any,
+  agentSpec: unknown,
 ): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
 
