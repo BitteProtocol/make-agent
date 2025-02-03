@@ -23,10 +23,10 @@ program
   .addCommand(devCommand)
   .addCommand(deployCommand)
   .addCommand(contractCommand)
-  .addCommand(registerCommand)
-  .addCommand(updateCommand)
   .addCommand(deleteCommand)
   .addCommand(verifyCommand)
-  .addCommand(devDeprecatedCommand);
+  .addCommand(devDeprecatedCommand)
+  .addCommand(registerCommand)
+  .addCommand(updateCommand);
 
 program.parse();
