@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 import "./shims";
 import "@bitte-ai/chat/style.css";
-import { Header } from "./Header";
+import { Header } from "./components/Header";
 
 const bitteAgent = {
   id: "bitte-assistant",
