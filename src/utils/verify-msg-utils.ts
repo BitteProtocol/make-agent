@@ -31,7 +31,7 @@ export const verifyMessage = async ({
 
   if (accountIdToVerify && accountIdToVerify !== accountId) {
     console.error(
-      `Account mismatch: signed message has account ${accountId}, but provided account was ${accountIdToVerify}`
+      `Account mismatch: signed message has account ${accountId}, but provided account was ${accountIdToVerify}`,
     );
     return false;
   }
@@ -46,7 +46,7 @@ export const verifyMessage = async ({
 
   return utils.PublicKey.from(publicKey).verify(
     hashedPayload,
-    Buffer.from(signature, "base64")
+    Buffer.from(signature, "base64"),
   );
 };
 
