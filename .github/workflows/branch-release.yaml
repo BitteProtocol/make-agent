@@ -1,12 +1,7 @@
-name: NPM Publish
+name: Branch Release
 
 on:
-  push:
-    branches:
-      - 'main'  # or specify the branch you want to trigger the workflow on
-  pull_request:
-    branches:
-      - 'main'  # or specify the branch you want to trigger the workflow on
+  push
 
 jobs:
   publish-npm:
@@ -58,7 +53,7 @@ jobs:
       - name: Publish
         run: |
           if [[ "${GITHUB_REF#refs/tags/}" == *-* ]]; then
-            npm publish --access public --tag next
+            npm publish --access public --tag beta
           else
             npm publish --access public
           fi
