@@ -20,28 +20,27 @@ dotenv.config({ path: ".env.local", override: true });
 
 export class AuthenticationService {
   private readonly bitteUrls: BitteUrls;
+  private readonly apiKey: string;
 
   constructor(bitteUrls: BitteUrls) {
     this.bitteUrls = bitteUrls;
+    this.apiKey = (() => {
+      if (process?.env?.BITTE_KEY) {
+        console.error(
+          "BITTE_KEY is now deprecated. Please use BITTE_API_KEY instead. You can get an api key here: https://key.bitte.ai/",
+        );
+      }
+      if (!process?.env?.BITTE_API_KEY) {
+        throw new Error(
+          "Missing api key. Please define BITTE_API_KEY in your environment variables. You can get an api key here: https://key.bitte.ai/",
+        );
+      }
+      return process.env.BITTE_API_KEY;
+    })();
   }
 
-  async getAuthentication(accountId?: string): Promise<string | null> {
-    const bitteKeyString = process.env.BITTE_KEY;
-    if (!bitteKeyString) return null;
-
-    const parsedKey = JSON.parse(bitteKeyString) as KeySignMessageParams;
-    if (
-      (accountId &&
-        (await verifyMessage({
-          params: parsedKey,
-          accountIdToVerify: accountId,
-        }))) ||
-      !accountId
-    ) {
-      return bitteKeyString;
-    }
-
-    return null;
+  async getAuthentication(): Promise<string> {
+    return this.apiKey;
   }
 
   async authenticateOrCreateKey(): Promise<string | null> {

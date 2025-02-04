@@ -184,7 +184,6 @@ export class TunnelService {
 
     const result = await this.pluginService.register({
       pluginId: this.pluginId,
-      accountId,
     });
 
     if (!result) {
@@ -228,17 +227,12 @@ export class TunnelService {
       `Change detected in ${relativePath}. Attempting to update or register the plugin...`,
     );
 
-    const { accountId } = await validateAndParseOpenApiSpec(
-      getSpecUrl(this.tunnelUrl),
-    );
-    const authentication =
-      await this.pluginService.auth.getAuthentication(accountId);
+    const authentication = await this.pluginService.auth.getAuthentication();
 
     const result = authentication
-      ? await this.pluginService.update(this.pluginId, accountId)
+      ? await this.pluginService.update(this.pluginId)
       : await this.pluginService.register({
           pluginId: this.pluginId,
-          accountId,
         });
 
     if (result && !authentication) {

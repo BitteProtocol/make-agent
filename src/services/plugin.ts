@@ -10,23 +10,12 @@ export class PluginService {
     this.auth = new AuthenticationService(this.bitteUrls);
   }
 
-  async register({
-    pluginId,
-    accountId,
-  }: {
-    pluginId: string;
-    accountId?: string;
-  }): Promise<string | null> {
-    let message = await this.auth.getAuthentication(accountId);
-    if (!message || !accountId) {
-      const signedMessage = await this.auth.getSignedMessage();
-      message = JSON.stringify(signedMessage);
-    }
-
+  async register({ pluginId }: { pluginId: string }): Promise<string | null> {
+    let apiKey = await this.auth.getAuthentication();
     try {
       const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
         method: "POST",
-        headers: { "bitte-api-key": message },
+        headers: { authorization: apiKey },
       });
 
       if (response.ok) {
@@ -34,13 +23,10 @@ export class PluginService {
         console.log("Plugin registered successfully");
         return pluginId;
       } else {
-        const errorData = await response.json();
         const errorMessage = `Failed to register plugin (ID: ${pluginId}). HTTP Status: ${response.status} - ${response.statusText}.`;
         console.error(errorMessage);
-        console.error(`Server response: ${JSON.stringify(errorData)}`);
-        if (errorData.debugUrl) {
-          console.log(`Debug URL: ${errorData.debugUrl}`);
-        }
+        const errorData = await response.text();
+        console.error(`Server response: ${errorData}`);
         return null;
       }
     } catch (error) {
@@ -49,17 +35,17 @@ export class PluginService {
     }
   }
 
-  async update(pluginId: string, accountId?: string): Promise<string | null> {
-    const message = await this.auth.getAuthentication(accountId);
+  async update(pluginId: string): Promise<string | null> {
+    const apiKey = await this.auth.getAuthentication();
 
-    if (!message) {
+    if (!apiKey) {
       console.warn(`No API key found for plugin ${pluginId}.`);
       return null;
     }
 
     const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
       method: "PUT",
-      headers: { "bitte-api-key": message },
+      headers: { authorization: apiKey },
     });
 
     if (!response.ok) {
@@ -72,16 +58,16 @@ export class PluginService {
   }
 
   async delete(pluginId: string): Promise<void> {
-    const message = await this.auth.getAuthentication();
+    const apiKey = await this.auth.getAuthentication();
 
-    if (!message) {
+    if (!apiKey) {
       console.error("No API key found. Unable to delete plugin.");
       return;
     }
 
     const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
       method: "DELETE",
-      headers: { "bitte-api-key": message },
+      headers: { authorization: apiKey },
     });
 
     if (response.ok) {
@@ -96,7 +82,6 @@ export class PluginService {
     email,
     repo,
     version,
-    accountId,
     categories,
     chains,
   }: {
@@ -104,12 +89,11 @@ export class PluginService {
     email: string;
     repo: string;
     version?: string;
-    accountId?: string;
     categories?: string[];
     chains?: number[];
   }): Promise<void> {
-    const message = await this.auth.getAuthentication(accountId);
-    if (!message) {
+    const apiKey = await this.auth.getAuthentication();
+    if (!apiKey) {
       console.error("No API key found. Unable to request plugin verification.");
       return;
     }
@@ -117,7 +101,7 @@ export class PluginService {
     try {
       const res = await fetch(`${this.bitteUrls.BASE_URL}/verify/${pluginId}`, {
         method: "POST",
-        headers: { "bitte-api-key": message },
+        headers: { authorization: apiKey },
         body: JSON.stringify({
           repo: repo,
           email: email,

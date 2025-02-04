@@ -65,7 +65,6 @@ export const verifyCommand = new Command()
 
     await new PluginService().verify({
       pluginId,
-      accountId,
       email: options.email,
       repo: options.repo,
       version: options.version,
