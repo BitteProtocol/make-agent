@@ -5,6 +5,7 @@
 main > div {
   width: 700px;
   margin: 0 auto;
+  height: 600px;
 }
 
 body {
@@ -117,4 +118,8 @@ p,
   color: #f8fafc;
   font-weight: 600;
   margin-bottom: 8px;
+}
+
+w3m-modal.open {
+  z-index: 99999 !important;
 }
