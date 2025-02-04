@@ -8,6 +8,7 @@ import { useBitteWallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
 
 import "@bitte-ai/chat/style.css";
+import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
 import { Header } from "./components/Header";
 import "./shims";
 
@@ -36,6 +37,10 @@ const Main: React.FC = (): JSX.Element => {
   const { selector } = useBitteWallet();
   const [wallet, setWallet] = useState<Wallet>();
   const [config, setConfig] = useState<AppConfig>();
+
+  const { address } = useAccount();
+  const { data: hash, sendTransaction } = useSendTransaction();
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     const fetchConfig = async (): Promise<void> => {
@@ -73,7 +78,15 @@ const Main: React.FC = (): JSX.Element => {
             localAgent: config.localAgent,
           }}
           agentId={config.localAgent.pluginId}
-          wallet={{ near: { wallet } }}
+          wallet={{
+            near: { wallet },
+            evm: {
+              sendTransaction,
+              switchChain,
+              address,
+              hash,
+            },
+          }}
           apiUrl={config.bitteApiUrl}
           apiKey={config.bitteApiKey}
           colors={{
