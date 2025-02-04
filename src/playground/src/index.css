@@ -123,6 +123,7 @@ p,
   margin-bottom: 8px;
 }
 
-w3m-modal.open {
-  z-index: 99999 !important;
+wcm-modal {
+  position: absolute !important;
+  z-index: 9999 !important;
 }
