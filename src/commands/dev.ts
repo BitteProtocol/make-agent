@@ -145,7 +145,6 @@ export const devCommand = new Command()
 
       await open(`http://localhost:${port}`);
 
-
       process.on("SIGINT", async () => {
         server.close();
         process.exit(0);
