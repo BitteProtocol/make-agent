@@ -8,7 +8,7 @@ export const Modal = ({
   children?: React.ReactNode;
   isOpen: boolean;
   closeModal: () => void;
-}):JSX.Element  => {
+}):JSX.Element | null  => {
   useEffect(() => {
     if (!isOpen) return;
     // Disable scrolling on the background (body) when the modal is open
