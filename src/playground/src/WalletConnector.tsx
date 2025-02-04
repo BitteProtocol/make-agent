@@ -21,11 +21,14 @@ export const NearWalletConnector = (): JSX.Element => {
   }
 
   return (
-    <div className="connected-wallet-container">
-      <p>{activeAccountId}</p>
-      <button className="connect-button" onClick={handleSignout}>
-        Disconnect
-      </button>
+    <div>
+      <p>You are connected as {activeAccountId}</p>
+      <div className="container">
+        <button className="disconnect-button" onClick={handleSignout}>
+          {" "}
+          Disconnect{" "}
+        </button>
+      </div>
     </div>
   );
 };
