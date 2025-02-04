@@ -1,0 +1,62 @@
+name: NPM Publish
+
+on:
+  push:
+    branches:
+      - 'main'  # or specify the branch you want to trigger the workflow on
+  pull_request:
+    branches:
+      - 'main'  # or specify the branch you want to trigger the workflow on
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install Bun
+        run: |
+          curl -fsSL https://bun.sh/install | bash
+          echo "$HOME/.bun/bin" >> $GITHUB_PATH
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            src/playground/node_modules
+            ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install & Build Root Project
+        run: bun install --frozen-lockfile
+
+      - name: Install & Build Playground
+        working-directory: src/playground
+        run: bun install --frozen-lockfile
+
+      - name: Build Full Project
+        run: bun run build
+
+      - name: Set Package Version to Tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          npm version $VERSION --no-git-tag-version
+
+      - name: Publish
+        run: |
+          if [[ "${GITHUB_REF#refs/tags/}" == *-* ]]; then
+            npm publish --access public --tag next
+          else
+            npm publish --access public
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
