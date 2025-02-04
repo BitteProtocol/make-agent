@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import dotenv from "dotenv";
 import isPortReachable from "is-port-reachable";
+import open from "open";
 
 import { startUIServer } from "../services/server";
 import { getDeployedUrl } from "../utils/deployed-url";
