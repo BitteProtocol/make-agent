@@ -46,9 +46,12 @@ jobs:
       - name: Build Full Project
         run: bun run build
 
-      - name: Set Package Version to Tag
+      - name: Set Version from Branch
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          BASE_VERSION="0.1.0" # Define a base version
+          VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
           npm version $VERSION --no-git-tag-version
 
       - name: Publish
