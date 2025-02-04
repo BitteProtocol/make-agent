@@ -39,7 +39,7 @@ const connectors =
       ]
     : [];
 
-export const config = createConfig({
+const config = createConfig({
   chains: [
     mainnet,
     sepolia,

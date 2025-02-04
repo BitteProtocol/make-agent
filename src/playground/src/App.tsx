@@ -7,6 +7,7 @@ import type { Wallet } from "@bitte-ai/react";
 import { useBitteWallet } from "@bitte-ai/react";
 import { useEffect, useState } from "react";
 import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
+
 import { Header } from "./components/Header";
 import "./shims";
 
