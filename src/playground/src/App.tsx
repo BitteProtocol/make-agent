@@ -1,15 +1,16 @@
 "use client";
 
-import { BitteAiChat } from "@bitte-ai/chat";
 import type { BitteOpenAPISpec } from "@bitte-ai/chat";
+import { BitteAiChat } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
-import { useBitteWallet } from "@mintbase-js/react";
 import type { Wallet } from "@mintbase-js/react";
+import { useBitteWallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
 
-import "./shims";
 import "@bitte-ai/chat/style.css";
-import { Header } from "./Header";
+import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
+import { Header } from "./components/Header";
+import "./shims";
 
 const bitteAgent = {
   id: "bitte-assistant",
@@ -36,6 +37,10 @@ const Main: React.FC = (): JSX.Element => {
   const { selector } = useBitteWallet();
   const [wallet, setWallet] = useState<Wallet>();
   const [config, setConfig] = useState<AppConfig>();
+
+  const { address } = useAccount();
+  const { data: hash, sendTransaction } = useSendTransaction();
+  const { switchChain } = useSwitchChain();
 
   useEffect(() => {
     const fetchConfig = async (): Promise<void> => {
@@ -73,7 +78,15 @@ const Main: React.FC = (): JSX.Element => {
             localAgent: config.localAgent,
           }}
           agentId={config.localAgent.pluginId}
-          wallet={{ near: { wallet } }}
+          wallet={{
+            near: { wallet },
+            evm: {
+              sendTransaction,
+              switchChain,
+              address,
+              hash,
+            },
+          }}
           apiUrl={config.bitteApiUrl}
           apiKey={config.bitteApiKey}
           colors={{
