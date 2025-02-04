@@ -13,9 +13,11 @@ import { coinbaseWallet, metaMask, walletConnect } from "wagmi/connectors";
 
 import {
   arbitrum,
+  avalanche,
   base,
   gnosis,
   mainnet,
+  mode,
   optimism,
   polygon,
   sepolia,
@@ -25,7 +27,6 @@ import {
 const queryClient = new QueryClient();
 
 export const walletConnectId = "bec9baf14520229bcb8871edf03d868e";
-
 
 if (!walletConnectId) {
   throw new Error("Wallet Connect ID is not defined");
@@ -41,7 +42,17 @@ const connectors =
     : [];
 
 export const config = createConfig({
-  chains: [mainnet, sepolia, arbitrum, base, polygon, optimism, gnosis],
+  chains: [
+    mainnet,
+    sepolia,
+    arbitrum,
+    base,
+    polygon,
+    optimism,
+    gnosis,
+    mode,
+    avalanche,
+  ],
   connectors,
   transports: {
     [mainnet.id]: http(),
@@ -51,6 +62,8 @@ export const config = createConfig({
     [polygon.id]: http(),
     [optimism.id]: http(),
     [gnosis.id]: http(),
+    [mode.id]: http(),
+    [avalanche.id]: http(),
   },
   storage: createStorage({
     storage: cookieStorage,
