@@ -1,15 +1,15 @@
 "use client";
 
-import { BitteAiChat } from "@bitte-ai/chat";
 import type { BitteOpenAPISpec } from "@bitte-ai/chat";
+import { BitteAiChat } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
-import { useBitteWallet } from "@mintbase-js/react";
 import type { Wallet } from "@mintbase-js/react";
+import { useBitteWallet } from "@mintbase-js/react";
 import { useEffect, useState } from "react";
 
-import "./shims";
 import "@bitte-ai/chat/style.css";
-import { Header } from "./Header";
+import { Header } from "./components/Header";
+import "./shims";
 
 const bitteAgent = {
   id: "bitte-assistant",
