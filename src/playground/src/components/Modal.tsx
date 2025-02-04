@@ -19,7 +19,7 @@ export const Modal = ({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen) return <></>;
 
   return (
     <div id="myModal" className="modal">
