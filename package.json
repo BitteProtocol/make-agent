@@ -1,7 +1,7 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.22-6",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -10,12 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mintbase/make-agent"
+    "url": "git+https://github.com/BitteProtocol/make-agent"
   },
   "bugs": {
-    "url": "https://github.com/mintbase/make-agent/issues"
+    "url": "https://github.com/BitteProtocol/make-agent/issues"
   },
-  "homepage": "https://github.com/mintbase/make-agent/repo#readme",
+  "homepage": "https://github.com/BitteProtocol/make-agent/repo#readme",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "bun run ./src/index.ts dev --port 3000",
