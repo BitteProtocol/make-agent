@@ -1,4 +1,4 @@
-import * as borsh from "borsh";
+import { serialize } from "borsh";
 import { sha256 } from "js-sha256";
 import { utils } from "near-api-js";
 
@@ -66,7 +66,7 @@ const getNonceBuffer = (nonce: string): Buffer => {
 };
 
 const hashPayload = (payload: Payload): Uint8Array => {
-  const borshPayload = borsh.serialize(payloadSchema, payload);
+  const borshPayload = serialize(payloadSchema, payload);
   const prefixNumber = 413 + 2 ** 31;
   const prefixBuffer = new Uint8Array([
     prefixNumber & 0xff,

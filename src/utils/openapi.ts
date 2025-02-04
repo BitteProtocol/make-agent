@@ -11,17 +11,49 @@ export async function validateAndParseOpenApiSpec(
     const specUrl = url.toString();
     const specContent = await fetchWithRetry(specUrl);
 
-    const apiResponse = JSON.parse(specContent);
-    await SwaggerParser.validate(apiResponse);
-    console.log("OpenAPI specification is valid.");
+    let apiResponse;
+    try {
+      apiResponse = JSON.parse(specContent);
+    } catch (error: unknown) {
+      console.error(
+        "Failed to parse OpenAPI spec JSON:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
+      return { isValid: false };
+    }
+
+    try {
+      await SwaggerParser.validate(apiResponse);
+      console.log("OpenAPI specification is valid.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("OpenAPI validation failed:", error.message);
+        if ("details" in error) {
+          interface ValidationDetail {
+            instancePath: string;
+            message: string;
+            params: Record<string, unknown>;
+          }
+          const details = (error as { details: ValidationDetail[] }).details;
+          console.error(
+            "Validation details:",
+            details.map((detail) => ({
+              path: detail.instancePath,
+              error: detail.message,
+              params: detail.params,
+            })),
+          );
+        }
+      }
+      return { isValid: false };
+    }
 
     const accountId = apiResponse["x-mb"]?.["account-id"];
-
     return { isValid: true, accountId: accountId };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(
-      "Error in OpenAPI specification fetch, validation, or parsing:",
-      error,
+      "Unexpected error:",
+      error instanceof Error ? error.message : "Unknown error",
     );
     return { isValid: false };
   }

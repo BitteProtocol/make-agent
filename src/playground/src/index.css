@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+main > div {
+  width: 700px;
+  margin: 0 auto;
+}
+
+body {
+  background-color: #242424;
+}
+
+header {
+  width: 100%;
+  text-align: center;
+  margin: 20px 0;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+p,
+.bitte-text-gray-40 {
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.connect-button {
+  background-color: white;
+  background-color: #fff;
+  color: #000;
+  border-radius: 6px;
+  padding: 8px;
+  transition: background-color 0.2s;
+  font-size: 12px;
+}
+
+.connect-button:hover {
+  background-color: #e1e1e1;
+}
+
+.connected-wallet-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+/* The Modal (background) */
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 100; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  color: white;
+  border-radius: 6px;
+  background-color: #000000;
+}
+
+/* The Close Button */
+.close {
+  color: #fff;
+  float: right;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.close:hover,
+.close:focus {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* EVM Wallet Options Styles */
+.wallet-option {
+  width: 100%;
+  background-color: #141414;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.wallet-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60px;
+  width: 60px;
+  background-color: black;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wallet-name {
+  font-size: 1.125rem;
+  color: #f8fafc;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
