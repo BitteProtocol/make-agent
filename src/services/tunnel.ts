@@ -174,12 +174,10 @@ export class TunnelService {
     }
 
     const specUrl = getSpecUrl(this.tunnelUrl);
-    const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
+    const { isValid } = await validateAndParseOpenApiSpec(specUrl);
 
-    if (!isValid || !accountId) {
-      throw new Error(
-        "OpenAPI specification validation failed or missing account ID.",
-      );
+    if (!isValid) {
+      throw new Error("OpenAPI specification validation failed.");
     }
 
     const result = await this.pluginService.register({
