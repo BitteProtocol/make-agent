@@ -34,11 +34,11 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install & Build Root Project
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Install & Build Playground
         working-directory: src/playground
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Build Full Project
         run: bun run build
