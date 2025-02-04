@@ -1,4 +1,4 @@
-import { useBitteWallet } from "@mintbase-js/react";
+import { useBitteWallet } from "@bitte-ai/react";
 
 export const NearWalletConnector = (): JSX.Element => {
   const { isConnected, selector, connect, activeAccountId } = useBitteWallet();

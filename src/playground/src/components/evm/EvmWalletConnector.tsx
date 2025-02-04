@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useAccount, useDisconnect } from "wagmi";
 import { Modal } from "../Modal";
 import { WalletOptions } from "./WalletOptions";

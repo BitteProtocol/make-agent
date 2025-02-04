@@ -3,11 +3,9 @@
 import type { BitteOpenAPISpec } from "@bitte-ai/chat";
 import { BitteAiChat } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
-import type { Wallet } from "@mintbase-js/react";
-import { useBitteWallet } from "@mintbase-js/react";
+import type { Wallet } from "@bitte-ai/react";
+import { useBitteWallet } from "@bitte-ai/react";
 import { useEffect, useState } from "react";
-
-import "@bitte-ai/chat/style.css";
 import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
 import { Header } from "./components/Header";
 import "./shims";

@@ -1,4 +1,4 @@
-import { BitteWalletContextProvider } from "@mintbase-js/react";
+import { BitteWalletContextProvider } from "@bitte-ai/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 

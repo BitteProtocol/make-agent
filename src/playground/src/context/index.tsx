@@ -1,5 +1,4 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
 import { type ReactNode } from "react";
 import {
   cookieStorage,
@@ -9,8 +8,6 @@ import {
   http,
   WagmiProvider,
 } from "wagmi";
-import { coinbaseWallet, metaMask, walletConnect } from "wagmi/connectors";
-
 import {
   arbitrum,
   avalanche,
@@ -22,6 +19,7 @@ import {
   polygon,
   sepolia,
 } from "wagmi/chains";
+import { coinbaseWallet, metaMask, walletConnect } from "wagmi/connectors";
 
 // Set up queryClient
 const queryClient = new QueryClient();
@@ -71,7 +69,7 @@ export const config = createConfig({
   }),
 });
 
-function ContextProvider({ children }: { children: ReactNode }) {
+function ContextProvider({ children }: { children: ReactNode }):JSX.Element {
   const initialState = cookieToInitialState(config);
 
   return (
