@@ -52,7 +52,11 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   try {
     console.log("[Dev] Validating OpenAPI spec...");
     const validation = await validateAndParseOpenApiSpec(specUrl);
-    ({ isValid, accountId } = validation);
+    if (!validation) {
+      throw new Error("Invalid OpenAPI spec");
+    }
+    isValid = true;
+    accountId = validation["account-id"];
     console.log("[Dev] Validation result:", { isValid, accountId });
   } catch (error) {
     console.error(

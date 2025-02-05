@@ -8,9 +8,9 @@ import open from "open";
 
 import { PluginService } from "./plugin";
 import { BITTE_CONFIG_ENV_KEY } from "../config/constants";
-import { appendToEnv, removeFromEnv } from "../utils/file-utils";
+import { appendToEnv, removeFromEnv } from "../utils/file";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { getSpecUrl } from "../utils/url-utils";
+import { getSpecUrl } from "../utils/url";
 
 interface BitteConfig {
   url?: string;

@@ -26,7 +26,6 @@ export const deployCommand = new Command()
       console.error("OpenAPI specification validation failed.");
       return;
     }
-    const accountId = xMbSpec["account-id"];
 
     const pluginService = new PluginService();
     try {
