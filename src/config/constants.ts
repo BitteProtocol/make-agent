@@ -1,5 +1,5 @@
-import os from "os";
-import { join } from "path";
+import os from "node:os";
+import { join } from "node:path";
 
 const getWalletUrl = (isTestnet: boolean = false): string =>
   isTestnet ? "https://testnet.wallet.bitte.ai" : "https://wallet.bitte.ai";
@@ -30,3 +30,5 @@ export const SIGN_MESSAGE_PORT = 6969;
 export const SIGN_MESSAGE = "Register Bitte Agent!";
 export const BITTE_CONFIG_ENV_KEY = "BITTE_CONFIG";
 export const BITTE_KEY_ENV_KEY = "BITTE_KEY";
+
+export const DEFAULT_PORT = 3000;
