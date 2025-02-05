@@ -14,6 +14,9 @@ jobs:
         with:
           node-version: '20' # Specify the Node.js version you want to use
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install Dependencies
         run: pnpm run ci
 
