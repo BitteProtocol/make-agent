@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import dotenv from "dotenv";
 import isPortReachable from "is-port-reachable";
+import open from "open";
 
 import { DEFAULT_PORT } from "../config/constants";
 import { startUIServer } from "../services/server";
@@ -138,6 +139,8 @@ export const devCommand = new Command()
       }
 
       const server = await startUIServer(API_CONFIG, agentSpec);
+
+      await open(`http://localhost:${serverPort}`);
 
       process.on("SIGINT", async () => {
         server.close();
