@@ -51,9 +51,10 @@ export async function validateAndParseOpenApiSpec(
     }
 
     const xMbSpec = apiResponse["x-mb"];
-    isXMbSpec(xMbSpec);
-
-    return xMbSpec;
+    if (isXMbSpec(xMbSpec)) {
+      return xMbSpec;
+    }
+    throw new Error("Invalid OpenAPI spec");
   } catch (error) {
     console.error(
       "Unexpected error:",
