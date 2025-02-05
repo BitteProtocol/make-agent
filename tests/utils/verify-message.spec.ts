@@ -4,7 +4,7 @@ import {
   Payload,
   verifyMessage,
   type KeySignMessageParams,
-} from "../src/utils/verify-msg-utils";
+} from "../../src/utils/verify-message";
 describe("verifyMessage", () => {
   const publicKey = "ed25519:6djYMWvkhKMEDCSTQ1LWB3tqLXRD8EX9YPifaTaeh1cb";
   const nonce = "base64EncodedNonce==";

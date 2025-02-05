@@ -101,9 +101,7 @@ export class Payload {
     const message = new Uint8Array(4 + borshPayload.length);
     message.set(prefixBuffer, 0);
     message.set(borshPayload, 4);
-  
+
     return Uint8Array.from(sha256.array(message));
   }
 }
-
-
