@@ -51,5 +51,6 @@ jobs:
             pnpm publish --access public --tag beta
           else
             pnpm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
