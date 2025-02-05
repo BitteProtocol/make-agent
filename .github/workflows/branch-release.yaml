@@ -37,7 +37,7 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Set Version from Branch
+     - name: Set Version from Branch
           run: |
             BRANCH_NAME=${GITHUB_REF#refs/heads/}
             BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
