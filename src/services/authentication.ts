@@ -13,7 +13,7 @@ import { appendToEnv } from "../utils/file-utils";
 import {
   verifyMessage,
   type KeySignMessageParams,
-} from "../utils/verify-msg-utils";
+} from "../utils/verify-message";
 
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
