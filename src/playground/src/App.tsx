@@ -76,6 +76,7 @@ const Main: React.FC = (): JSX.Element => {
             },
           }}
           apiUrl={config.bitteApiUrl}
+          historyApiUrl="/api/history"
           apiKey={config.bitteApiKey}
           colors={{
             generalBackground: "#18181A",
