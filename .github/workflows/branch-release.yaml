@@ -41,7 +41,7 @@ jobs:
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
           SHORT_SHA=$(git rev-parse --short HEAD)
-          BASE_VERSION="0.1.0" # Define a base version
+          BASE_VERSION="0.2.1" # Define a base version
           VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
           pnpm version $VERSION --no-git-tag-version
 
@@ -51,6 +51,5 @@ jobs:
             npm publish --access public --tag beta
           else
             npm publish --access public
-          fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
