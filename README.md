@@ -38,12 +38,11 @@ Currently, the CLI supports the following command:
    ```
 
    Options:
-
-   - `-p, --port <number>`: Specify the local port to expose (optional). \\
+   - `-p, --port <number>`: Specify the local port to expose (optional).
 
    If no port is provided, the command will search for a node instance running in the current directory and assume its port.
 
-2. ### **`deploy`**: Deploy your AI agent, making it discoverable and registering it as a plugin
+1. ### **`deploy`**: Register or update your AI agent, making it discoverable as a plugin
 
    Usage:
 
@@ -52,41 +51,11 @@ Currently, the CLI supports the following command:
    ```
 
    Options:
+   - `-u, --url <url>`: The URL where your agent is hosted (optional)
 
-   - `-u, --url <url>`: Specify the deployment URL (optional)
+   If no URL is provided, the command will attempt to determine the URL automatically through environment variables.
 
-   If no URL is provided, the command will attempt to determine the deployed URL automatically.
-
-3. ### **`register`**: Register a new plugin with a URL
-
-   Usage:
-
-   ```bash
-   npx make-agent register [options]
-   ```
-
-   Options:
-
-   - `-u, --url <url>`: Specify the deployment URL (optional)
-
-   If no URL is provided, the command will attempt to determine the deployed URL automatically.
-
-4. ### **`update`**: Update an existing AI agent plugin
-
-   Usage:
-
-   ```bash
-   npx make-agent update [options]
-   ```
-
-   Options:
-
-   - `-u, --url <url>`: Specify the deployment URL (optional)
-
-   If no URL is provided, the command will attempt to determine the deployed URL automatically.
-
-5. ### **`contract`**: Scaffold a basic agent from a NEAR contract that has an ABI
-
+1. ### **`contract`**: Scaffold a basic agent from a NEAR contract that has an ABI
    Usage:
 
    ```bash
@@ -95,7 +64,7 @@ Currently, the CLI supports the following command:
 
    You will be prompted to select a contractId, add a description with instructions on how the agent should use the contract and an output directory
 
-6. ### **`delete`**: Delete your AI agent plugin
+1. ### **`delete`**: Delete your AI agent plugin
 
    Usage:
 
@@ -109,12 +78,12 @@ Currently, the CLI supports the following command:
 
    If no URL is provided, the command will attempt to determine the deployed URL automatically.
 
-7. ### **`verify`**: Request your plugin's verification
+1. ### **`verify`**: Request your plugin's verification
 
    Usage:
 
    ```bash
-   npx make-agent verify -u <url> -e <email> -r <repoUrl> -v <versionNumber>
+   npx make-agent verify -u <url> -e <email> -r <repoUrl> -v <versionNumber> -c [cat1,cat2] -x [chainNum1,chainNum2]
    ```
 
    Options:
@@ -123,6 +92,12 @@ Currently, the CLI supports the following command:
    - `-e, --email <email>`: (required) Provide an email so we can contact you regarding the verification process
    - `-r, --repo <repoUrl>`: (required) To verify a plugin we need the url for a public repository containing the plugin's code
    - `-v, --version <versionNumber>`: (optional) Specify the version of the plugin in case of an update
+   - `-c, --categories <categories>`: (optional) List some categories that describe the type of plugin you're verifying.
+   - `-x, --chains <chainIds>`: (optional) If your plugin works on specific evm chains, you can specify them so your plugin is easier to find. 
+   
+   These options can also be defined in the agent spec in the `"x-mb"` object.
+   
+
 
 ## Development
 
