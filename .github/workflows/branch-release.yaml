@@ -14,11 +14,14 @@ jobs:
         with:
           node-version: '20' # Specify the Node.js version you want to use
 
+      - name: Install pnpm
+        run: npm install -g pnpm
+
       - name: Install Dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Set Version from Branch
         run: |
@@ -26,15 +29,15 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           BASE_VERSION="0.1.0" # Define a base version
           VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
-          npm version $VERSION --no-git-tag-version
+          pnpm version $VERSION --no-git-tag-version
 
       - name: Configure NPM Authentication
         run: |
           echo "@bitte-ai:registry=https://registry.npmjs.org/" > ~/.npmrc
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
-      - name: Publish with npm
+      - name: Publish with pnpm
         if: ${{ github.ref_name != 'main'}}
-        run: npm publish --access public --tag beta
+        run: pnpm publish --access public --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
