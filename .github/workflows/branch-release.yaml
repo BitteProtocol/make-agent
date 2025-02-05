@@ -1,57 +1,40 @@
 name: Branch Release
 
-on: push
+on:
+  push
 
 jobs:
-  branch-release:
+  branch_publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: "20"
-          registry-url: https://registry.npmjs.org/
+          node-version: '20' # Specify the Node.js version you want to use
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
+      - name: Install Dependencies
+        run: pnpm ci
 
-      - name: Cache pnpm modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.pnpm-store
-            node_modules
-            src/playground/node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      - name: Install Full Project
-        run: pnpm install --frozen-lockfile
-
-      - name: Build Full Project
+      - name: Build
         run: pnpm run build
 
       - name: Set Version from Branch
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
           SHORT_SHA=$(git rev-parse --short HEAD)
-          # TODO: make this dynamic https://github.com/BitteProtocol/make-agent/issues/56
-          BASE_VERSION="0.2.1" # Define a base version
+          BASE_VERSION="0.1.0" # Define a base version
           VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
-          pnpm version $VERSION --no-git-tag-version
+          npm version $VERSION --no-git-tag-version
 
-      - name: Publish
+      - name: Configure NPM Authentication
         run: |
-          if [[ "${GITHUB_REF#refs/tags/}" == *-* ]]; then
-            npm publish --access public --tag beta
-          else
-            npm publish --access public
-          fi
+          echo "@bitte-ai:registry=https://registry.npmjs.org/" > ~/.npmrc
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+
+      - name: Publish with npm
+        if: ${{ github.ref_name != 'main'}}
+        run: npm publish --access public --tag beta
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
