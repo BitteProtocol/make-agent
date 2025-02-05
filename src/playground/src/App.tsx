@@ -1,10 +1,8 @@
 "use client";
 
-import type { BitteOpenAPISpec } from "@bitte-ai/chat";
-import { BitteAiChat } from "@bitte-ai/chat";
+import { BitteAiChat, type BitteOpenAPISpec } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
-import type { Wallet } from "@bitte-ai/react";
-import { useBitteWallet } from "@bitte-ai/react";
+import { type Wallet, useBitteWallet } from "@bitte-ai/react";
 import { useEffect, useState } from "react";
 import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
 

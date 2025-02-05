@@ -1,8 +1,11 @@
+import { DEFAULT_PORT } from "../config/constants";
+
 export const {
   VERCEL_ENV,
   VERCEL_URL,
   VERCEL_BRANCH_URL,
   VERCEL_PROJECT_PRODUCTION_URL,
+  PORT,
 } = process.env;
 
 export const VERCEL_DEPLOYMENT_URL = (() => {
@@ -12,7 +15,7 @@ export const VERCEL_DEPLOYMENT_URL = (() => {
     case "preview":
       return `https://${VERCEL_BRANCH_URL || VERCEL_URL}`;
     default:
-      return "http://localhost:3000";
+      return `http://localhost:${PORT || DEFAULT_PORT}`;
   }
 })();
 
@@ -63,7 +66,7 @@ export const getDeployedUrl = (port?: number): string => {
   }
 
   // Fallback to localhost if no deployment URL is found
-  return `http://localhost:${port || 3000}`;
+  return `http://localhost:${port || DEFAULT_PORT}`;
 };
 
 export const deployedUrl = getDeployedUrl();

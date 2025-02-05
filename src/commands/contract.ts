@@ -1,9 +1,9 @@
-import { exec, spawn } from "child_process";
 import { Command } from "commander";
-import fs from "fs/promises";
 import inquirer from "inquirer";
-import path from "path";
-import { promisify } from "util";
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { promisify } from "node:util";
 
 const execAsync = promisify(exec);
 

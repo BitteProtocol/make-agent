@@ -1,10 +1,9 @@
 name: Branch Release
 
-on:
-  push
+on: push
 
 jobs:
-  publish-npm:
+  branch-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,40 +14,37 @@ jobs:
           node-version: "20"
           registry-url: https://registry.npmjs.org/
 
-      - name: Install Bun
-        run: |
-          curl -fsSL https://bun.sh/install | bash
-          echo "$HOME/.bun/bin" >> $GITHUB_PATH
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
 
-      - name: Cache node modules
+      - name: Cache pnpm modules
         uses: actions/cache@v4
         with:
           path: |
+            ~/.pnpm-store
             node_modules
             src/playground/node_modules
-            ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-bun-
+            ${{ runner.os }}-pnpm-
 
-      - name: Install & Build Root Project
-        run: bun install --frozen-lockfile
-
-      - name: Install & Build Playground
-        working-directory: src/playground
-        run: bun install --frozen-lockfile
+      - name: Install Full Project
+        run: pnpm install --frozen-lockfile
 
       - name: Build Full Project
-        run: bun run build
+        run: pnpm run build
 
       - name: Set Version from Branch
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
           SHORT_SHA=$(git rev-parse --short HEAD)
-          BASE_VERSION="0.1.0" # Define a base version
+          # TODO: make this dynamic https://github.com/BitteProtocol/make-agent/issues/56
+          BASE_VERSION="0.2.1" # Define a base version
           VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
-          npm version $VERSION --no-git-tag-version
+          pnpm version $VERSION --no-git-tag-version
 
       - name: Publish
         run: |

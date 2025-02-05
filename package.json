@@ -1,7 +1,7 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.22-6",
+  "version": "0.0.22-7",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -10,21 +10,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mintbase/make-agent"
+    "url": "git+https://github.com/bitteprotocol/make-agent"
   },
   "bugs": {
-    "url": "https://github.com/mintbase/make-agent/issues"
+    "url": "https://github.com/bitteprotocol/make-agent/issues"
   },
-  "homepage": "https://github.com/mintbase/make-agent/repo#readme",
+  "homepage": "https://github.com/bitteprotocol/make-agent/#readme",
   "scripts": {
+    "prepare": "cd ./src/playground && pnpm install",
     "typecheck": "tsc --noEmit",
-    "dev": "bun run ./src/index.ts dev --port 3000",
-    "build": "rm -rf ./dist && bun build --minify ./src/index.ts --outdir ./dist --target node && bun run build:ui",
-    "build:ui": "cd ./src/playground && bun i && rm -rf ./dist && bun run build && cp -r ./dist ../../dist/playground",
-    "prepublishOnly": "bun run build",
-    "build-binary": "bun run typecheck && bun build ./src/index.ts --compile --outfile make-agent",
+    "dev": "tsx ./src/index.ts",
+    "build": "tsup ./src/index.ts --format cjs,esm --dts --clean && pnpm run build:ui",
+    "build:ui": "cd ./src/playground && rm -rf ./dist && pnpm run build",
+    "prepublishOnly": "pnpm run build",
     "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
-    "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && yarn lint --fix"
+    "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && pnpm run lint --fix"
   },
   "keywords": [
     "ai",
@@ -33,23 +33,6 @@
   ],
   "author": "Micro",
   "license": "MIT",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/express": "^5.0.0",
-    "@types/inquirer": "^9.0.7",
-    "@types/localtunnel": "^2.0.4",
-    "@types/node": "^22.7.2",
-    "@types/open": "^6.2.1",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
-    "eslint": "^9.15.0",
-    "eslint-plugin-import": "^2.31.0",
-    "prettier": "^3.3.3",
-    "ajv": "^8.17.1",
-    "ajv-draft-04": "^1.0.0"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
     "borsh": "^0.7.0",
@@ -64,5 +47,21 @@
     "near-ca": "^0.8.1",
     "near-safe": "^0.9.6",
     "open": "^10.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/express": "^5.0.0",
+    "@types/inquirer": "^9.0.7",
+    "@types/localtunnel": "^2.0.4",
+    "@types/node": "^22.7.2",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.23.0",
+    "ajv": "^8.17.1",
+    "eslint": "^9.15.0",
+    "eslint-plugin-import": "^2.31.0",
+    "prettier": "^3.4.2",
+    "tsup": "^8.3.6",
+    "tsx": "^4.7.1",
+    "typescript": "^5.7.3"
   }
 }
