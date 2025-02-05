@@ -1,4 +1,4 @@
-import { serialize } from "borsh";
+import { serialize, type Schema } from "borsh";
 import { sha256 } from "js-sha256";
 import { utils } from "near-api-js";
 
@@ -12,13 +12,13 @@ export interface KeySignMessageParams {
   accountId?: string;
 }
 
-export const verifyMessage = async ({
+export const verifyMessage = ({
   params,
   accountIdToVerify,
 }: {
   params: KeySignMessageParams;
   accountIdToVerify?: string;
-}): Promise<boolean> => {
+}): boolean => {
   const {
     message,
     nonce,
@@ -42,10 +42,9 @@ export const verifyMessage = async ({
     recipient,
     callbackUrl,
   });
-  const hashedPayload = hashPayload(payload);
 
   return utils.PublicKey.from(publicKey).verify(
-    hashedPayload,
+    payload.hash(),
     Buffer.from(signature, "base64"),
   );
 };
@@ -57,28 +56,9 @@ const getNonceBuffer = (nonce: string): Buffer => {
 
   if (buffer.length > nonceLength) {
     throw Error("Expected nonce to be a 32 bytes buffer");
-  } else if (buffer.length < nonceLength) {
-    const padding = Buffer.alloc(nonceLength - buffer.length);
-    return Buffer.concat([buffer, padding], nonceLength);
   }
-
-  return buffer;
-};
-
-const hashPayload = (payload: Payload): Uint8Array => {
-  const borshPayload = serialize(payloadSchema, payload);
-  const prefixNumber = 413 + 2 ** 31;
-  const prefixBuffer = new Uint8Array([
-    prefixNumber & 0xff,
-    (prefixNumber >> 8) & 0xff,
-    (prefixNumber >> 16) & 0xff,
-    (prefixNumber >> 24) & 0xff,
-  ]);
-  const message = new Uint8Array(4 + borshPayload.length);
-  message.set(prefixBuffer, 0);
-  message.set(borshPayload, 4);
-
-  return Uint8Array.from(sha256.array(message));
+  const padding = Buffer.alloc(nonceLength - buffer.length);
+  return Buffer.concat([buffer, padding], nonceLength);
 };
 
 export class Payload {
@@ -86,6 +66,14 @@ export class Payload {
   nonce: Buffer;
   recipient: string;
   callbackUrl?: string;
+  schema: Schema = {
+    struct: {
+      message: "string",
+      nonce: { array: { type: "u8", len: 32 } },
+      recipient: "string",
+      callbackUrl: { option: "string" },
+    },
+  };
 
   constructor(args: {
     message: string;
@@ -100,19 +88,20 @@ export class Payload {
       this.callbackUrl = args.callbackUrl;
     }
   }
-}
 
-const payloadSchema = new Map([
-  [
-    Payload,
-    {
-      kind: "struct",
-      fields: [
-        ["message", "string"],
-        ["nonce", [32]],
-        ["recipient", "string"],
-        ["callbackUrl", { kind: "option", type: "string" }],
-      ],
-    },
-  ],
-]);
+  hash(): Uint8Array {
+    const borshPayload = serialize(this.schema, this);
+    const prefixNumber = 413 + 2 ** 31;
+    const prefixBuffer = new Uint8Array([
+      prefixNumber & 0xff,
+      (prefixNumber >> 8) & 0xff,
+      (prefixNumber >> 16) & 0xff,
+      (prefixNumber >> 24) & 0xff,
+    ]);
+    const message = new Uint8Array(4 + borshPayload.length);
+    message.set(prefixBuffer, 0);
+    message.set(borshPayload, 4);
+
+    return Uint8Array.from(sha256.array(message));
+  }
+}
