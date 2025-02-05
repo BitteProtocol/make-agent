@@ -87,6 +87,24 @@ export async function startUIServer(
     }
   });
 
+  const { BITTE_API_KEY, BITTE_API_URL = "https://wallet.bitte.ai/api/v1" } =
+    process.env;
+
+  app.get("/api/history", async (req, res) => {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const url = `${BITTE_API_URL}/history?id=${id}`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${BITTE_API_KEY}`,
+      },
+    });
+
+    const result = await response.json();
+    res.json(result);
+  });
+
   // Serve index.html for all routes
   app.get("*", async (req, res) => {
     console.log(req.path);
