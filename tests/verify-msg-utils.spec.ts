@@ -77,11 +77,12 @@ describe("hashPayload", () => {
       callbackUrl: "https://example.com/callback",
     });
     const result = hashPayload(payload);
-    expect(result).toStrictEqual(new Uint8Array([
-      121,  19,   8,  79, 179,  10, 206,   2,
-      107,   0, 134,  57,  44, 188, 164, 233,
-      148, 144, 233, 129, 124, 106, 220, 166,
-      102,  71, 171, 204, 149, 213,  42,  54
-    ]));
+    expect(result).toStrictEqual(
+      new Uint8Array([
+        121, 19, 8, 79, 179, 10, 206, 2, 107, 0, 134, 57, 44, 188, 164, 233,
+        148, 144, 233, 129, 124, 106, 220, 166, 102, 71, 171, 204, 149, 213, 42,
+        54,
+      ]),
+    );
   });
 });
