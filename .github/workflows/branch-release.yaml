@@ -14,14 +14,11 @@ jobs:
         with:
           node-version: '20' # Specify the Node.js version you want to use
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
       - name: Install Dependencies
-        run: pnpm ci
+        run: npm ci
 
       - name: Build
-        run: pnpm run build
+        run: npm run build
 
       - name: Set Version from Branch
         run: |
