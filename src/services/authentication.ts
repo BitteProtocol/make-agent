@@ -98,7 +98,7 @@ export class AuthenticationService {
         return null;
       }
 
-      const isVerified = await verifyMessage({ params: signedMessage });
+      const isVerified = verifyMessage({ params: signedMessage });
       if (!isVerified) {
         console.warn("Message verification failed");
       }
