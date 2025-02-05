@@ -15,7 +15,7 @@ const BitteWalletSetup = {
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BitteWalletContextProvider {...BitteWalletSetup} onlyBitteWallet={true}>
+    <BitteWalletContextProvider {...BitteWalletSetup}>
       <ContextProvider>
         <App />
       </ContextProvider>
