@@ -65,7 +65,8 @@ const getNonceBuffer = (nonce: string): Buffer => {
   return buffer;
 };
 
-const hashPayload = (payload: Payload): Uint8Array => {
+// TODO(bh2smith): this should be a class method (on Payload).
+export const hashPayload = (payload: Payload): Uint8Array => {
   const borshPayload = serialize(payloadSchema, payload);
   const prefixNumber = 413 + 2 ** 31;
   const prefixBuffer = new Uint8Array([
