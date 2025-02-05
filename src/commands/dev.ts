@@ -37,7 +37,9 @@ async function findAvailablePort(startPort: number): Promise<number> {
 
 const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
-  url: process.env.BITTE_API_URL || "https://wallet.bitte.ai/api/v1/chat",
+  url:
+    process.env.BITTE_API_URL ||
+    "https://ai-runtime-446257178793.europe-west1.run.app/chat",
   serverPort: DEFAULT_PORT,
 };
 
