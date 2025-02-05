@@ -2,6 +2,7 @@ import { Command } from "commander";
 import dotenv from "dotenv";
 import isPortReachable from "is-port-reachable";
 
+import { DEFAULT_PORT } from "../config/constants";
 import { startUIServer } from "../services/server";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
@@ -25,10 +26,6 @@ interface ValidationResult {
   spec: unknown;
 }
 
-const DEFAULT_PORTS = {
-  SERVER: 3000,
-} as const;
-
 async function findAvailablePort(startPort: number): Promise<number> {
   let port = startPort;
   while (await isPortReachable(port, { host: "localhost" })) {
@@ -39,8 +36,8 @@ async function findAvailablePort(startPort: number): Promise<number> {
 
 const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
-  url: process.env.BITTE_API_URL! || "https://api.bitte.ai/api/v1/chat",
-  serverPort: DEFAULT_PORTS.SERVER,
+  url: process.env.BITTE_API_URL || "https://wallet.bitte.ai/api/v1/chat",
+  serverPort: DEFAULT_PORT,
 };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
@@ -100,11 +97,11 @@ async function setupPorts(options: {
     if (detectedPort) {
       port = detectedPort;
     } else {
-      port = await findAvailablePort(3000);
+      port = await findAvailablePort(DEFAULT_PORT);
     }
   }
 
-  const serverPort = await findAvailablePort(DEFAULT_PORTS.SERVER);
+  const serverPort = await findAvailablePort(DEFAULT_PORT);
 
   return { port, serverPort };
 }

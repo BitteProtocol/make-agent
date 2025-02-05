@@ -1,6 +1,6 @@
-import crypto from "crypto";
 import dotenv from "dotenv";
-import { createServer, IncomingMessage, ServerResponse } from "http";
+import { randomBytes } from "node:crypto";
+import { createServer, IncomingMessage, ServerResponse } from "node:http";
 import open from "open";
 
 import type { BitteUrls } from "../config/constants";
@@ -27,12 +27,12 @@ export class AuthenticationService {
     this.apiKey = (() => {
       if (process?.env?.BITTE_KEY) {
         console.error(
-          "BITTE_KEY is now deprecated. Please use BITTE_API_KEY instead. You can get an api key here: https://key.bitte.ai/",
+          "BITTE_KEY is now deprecated. Please use BITTE_API_KEY instead. You can get an api key here: https://key.bitte.ai",
         );
       }
       if (!process?.env?.BITTE_API_KEY) {
         throw new Error(
-          "Missing api key. Please define BITTE_API_KEY in your environment variables. You can get an api key here: https://key.bitte.ai/",
+          "Missing api key. Please define BITTE_API_KEY in your environment variables. You can get an api key here: https://key.bitte.ai",
         );
       }
       return process.env.BITTE_API_KEY;
@@ -71,7 +71,7 @@ export class AuthenticationService {
 
       server.listen(SIGN_MESSAGE_PORT, () => {
         const postEndpoint = `http://localhost:${SIGN_MESSAGE_PORT}`;
-        const nonce = crypto.randomBytes(16).toString("hex");
+        const nonce = randomBytes(16).toString("hex");
         const signUrl = `${
           this.bitteUrls.SIGN_MESSAGE_URL
         }?message=${encodeURIComponent(

@@ -1,10 +1,10 @@
-import { spawn, type ChildProcess } from "child_process";
-import { promises as fs } from "fs";
-import { watch } from "fs/promises";
 import localtunnel from "localtunnel";
+import { spawn, type ChildProcess } from "node:child_process";
+import { promises as fs } from "node:fs";
+import { watch } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join, relative } from "node:path";
 import open from "open";
-import { homedir } from "os";
-import { relative, join } from "path";
 
 import { PluginService } from "./plugin";
 import { BITTE_CONFIG_ENV_KEY } from "../config/constants";

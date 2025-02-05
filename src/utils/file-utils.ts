@@ -5,7 +5,7 @@ import {
   readFileSync,
   writeFileSync,
   appendFileSync,
-} from "fs";
+} from "node:fs";
 
 export function readFile(filePath: string): string {
   return readFileSync(filePath, "utf-8");
