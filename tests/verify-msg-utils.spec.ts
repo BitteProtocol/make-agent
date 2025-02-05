@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 
 import {
-  hashPayload,
   Payload,
   verifyMessage,
   type KeySignMessageParams,
@@ -68,15 +67,15 @@ describe("verifyMessage", () => {
   });
 });
 
-describe("hashPayload", () => {
-  it("should deterministically hash the same payload", () => {
+describe("Payload", () => {
+  it("hash: should deterministically hash the same payload", () => {
     const payload = new Payload({
       message: "Hello World",
       nonce: "base64EncodedNonce==",
       recipient: "recipient.near",
       callbackUrl: "https://example.com/callback",
     });
-    const result = hashPayload(payload);
+    const result = payload.hash();
     expect(result).toStrictEqual(
       new Uint8Array([
         121, 19, 8, 79, 179, 10, 206, 2, 107, 0, 134, 57, 44, 188, 164, 233,
@@ -84,5 +83,15 @@ describe("hashPayload", () => {
         54,
       ]),
     );
+  });
+
+  it("constructor: reverts on nonce length > 32 bytes", () => {
+    expect(() => new Payload({
+      message: "Hello World",
+      nonce: "SuperLongBase64EncodedNonceHavingLotsOfCharactersAndHopfullyMoreThan32Bytes",
+      recipient: "recipient.near",
+        callbackUrl: "https://example.com/callback",
+      }),
+    ).toThrow("Expected nonce to be a 32 bytes buffer");
   });
 });
