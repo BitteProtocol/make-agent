@@ -1,8 +1,19 @@
 # Make Agent CLI
 
+
 **The swiss army knife for multi-chain AI agents**
 
 Make Agent CLI is a powerful command-line tool designed to streamline the management and deployment of AI agents across multiple chains. This tool simplifies the process of making your AI agents discoverable and registering them as plugins.
+
+
+## Quick Start:
+
+### Read the docs:
+
+https://docs.bitte.ai/agents/quick-start
+
+### Next.js Starter project:
+https://github.com/BitteProtocol/agent-next-boilerplate
 
 ## Usage
 

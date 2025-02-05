@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/bitteprotocol/make-agent/issues"
   },
-  "homepage": "https://github.com/bitteprotocol/make-agent/#readme",
+  "homepage": "https://docs.bitte.ai/agents/make-agent",
   "scripts": {
     "prepare": "cd ./src/playground && pnpm install",
     "typecheck": "tsc --noEmit",
