@@ -86,12 +86,15 @@ describe("Payload", () => {
   });
 
   it("constructor: reverts on nonce length > 32 bytes", () => {
-    expect(() => new Payload({
-      message: "Hello World",
-      nonce: "SuperLongBase64EncodedNonceHavingLotsOfCharactersAndHopfullyMoreThan32Bytes",
-      recipient: "recipient.near",
-        callbackUrl: "https://example.com/callback",
-      }),
+    expect(
+      () =>
+        new Payload({
+          message: "Hello World",
+          nonce:
+            "SuperLongBase64EncodedNonceHavingLotsOfCharactersAndHopfullyMoreThan32Bytes",
+          recipient: "recipient.near",
+          callbackUrl: "https://example.com/callback",
+        }),
     ).toThrow("Expected nonce to be a 32 bytes buffer");
   });
 });
