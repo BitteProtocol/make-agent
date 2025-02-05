@@ -36,8 +36,8 @@ jobs:
           echo "@bitte-ai:registry=https://registry.npmjs.org/" > ~/.npmrc
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
-      - name: Publish with pnpm
+      - name: Publish with npm
         if: ${{ github.ref_name != 'main'}}
-        run: pnpm publish --access public --tag beta
+        run: npm publish --access public --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
