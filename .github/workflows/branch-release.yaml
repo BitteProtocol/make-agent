@@ -30,32 +30,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build
         run: pnpm run build
 
-     - name: Set Version from Branch
-          run: |
-            BRANCH_NAME=${GITHUB_REF#refs/heads/}
-            BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
-            SHORT_SHA=$(git rev-parse --short HEAD)
+      - name: Set Version from Branch
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
+          SHORT_SHA=$(git rev-parse --short HEAD)
 
-            # Get the latest version tag and increment patch
-            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
-            LATEST_VERSION=${LATEST_TAG#v} # Remove 'v' prefix
+          # Get the latest version tag and increment patch
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_VERSION=${LATEST_TAG#v} # Remove 'v' prefix
 
-            # Split version into major.minor.patch
-            IFS='.' read -r major minor patch <<< "$LATEST_VERSION"
+          # Split version into major.minor.patch
+          IFS='.' read -r major minor patch <<< "$LATEST_VERSION"
 
-            # Increment patch version
-            patch=$((patch + 1))
-            BASE_VERSION="${major}.${minor}.${patch}"
+          # Increment patch version
+          patch=$((patch + 1))
+          BASE_VERSION="${major}.${minor}.${patch}"
 
-            VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
-            pnpm version $VERSION --no-git-tag-version
+          VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
+          pnpm version $VERSION --no-git-tag-version
 
       - name: Configure NPM Authentication
         run: |
@@ -63,7 +62,7 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Publish with npm
-        if: ${{ github.ref_name != 'main'}}
+        if: ${{ github.ref_name != 'main' }}
         run: npm publish --access public --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
