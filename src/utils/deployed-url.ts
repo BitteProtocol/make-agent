@@ -1,28 +1,23 @@
 import { DEFAULT_PORT } from "../config/constants";
 
-export const {
-  VERCEL_ENV,
-  VERCEL_URL,
-  VERCEL_BRANCH_URL,
-  VERCEL_PROJECT_PRODUCTION_URL,
-  PORT,
-} = process.env;
-
-export const VERCEL_DEPLOYMENT_URL = (() => {
-  switch (VERCEL_ENV) {
+export function getVercelDeploymentUrl(): string {
+  switch (process.env.VERCEL_ENV) {
     case "production":
-      return `https://${VERCEL_PROJECT_PRODUCTION_URL}`;
+      return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
     case "preview":
-      return `https://${VERCEL_BRANCH_URL || VERCEL_URL}`;
+      return `https://${process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL}`;
     default:
-      return `http://localhost:${PORT || DEFAULT_PORT}`;
+      console.warn(
+        `Unrecognized VERCEL_ENV=${process.env.VERCEL_ENV} using fallback url (localhost)`,
+      );
+      return `http://localhost:${process.env.PORT || DEFAULT_PORT}`;
   }
-})();
+}
 
 export const getDeployedUrl = (port?: number): string => {
   // Vercel
-  if (VERCEL_ENV) {
-    return VERCEL_DEPLOYMENT_URL;
+  if (process.env.VERCEL_ENV) {
+    return getVercelDeploymentUrl();
   }
 
   // Netlify
