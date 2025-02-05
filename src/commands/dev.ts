@@ -140,7 +140,7 @@ export const devCommand = new Command()
 
       const server = await startUIServer(API_CONFIG, agentSpec);
 
-      await open(`http://localhost:${port}`);
+      await open(`http://localhost:${serverPort}`);
 
       process.on("SIGINT", async () => {
         server.close();
