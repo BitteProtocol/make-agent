@@ -1,4 +1,3 @@
-import { KeyPair } from "near-api-js";
 import { describe, it, expect } from "vitest";
 
 import {
@@ -29,10 +28,9 @@ describe("verifyMessage", () => {
     accountId: "sender.near",
     callbackUrl: payload.callbackUrl,
   };
-  console.log(mockParams);
 
-  it("should return false when accountIdToVerify does not match accountId", async () => {
-    const result = await verifyMessage({
+  it("should return false when accountIdToVerify does not match accountId", () => {
+    const result = verifyMessage({
       params: mockParams,
       accountIdToVerify: "different.near",
     });
@@ -40,8 +38,8 @@ describe("verifyMessage", () => {
     expect(result).toBe(false);
   });
 
-  it("should verify signature when accountIds match", async () => {
-    const result = await verifyMessage({
+  it("should verify signature when accountIds match", () => {
+    const result = verifyMessage({
       params: mockParams,
       accountIdToVerify: "sender.near",
     });
@@ -50,22 +48,40 @@ describe("verifyMessage", () => {
   });
 
   it("should verify signature when no accountIdToVerify is provided", async () => {
-    const result = await verifyMessage({
+    const result = verifyMessage({
       params: mockParams,
     });
 
     expect(result).toBe(true);
   });
 
-  it("should return false with invalid signature", async () => {
-    const invalidSignature = signature.replace("0", "1");
-    const result = await verifyMessage({
+  it("should return false with invalid signature", () => {
+    const result = verifyMessage({
       params: {
         ...mockParams,
-        signature: invalidSignature,
+        // Invalid signature
+        signature: signature.replace("0", "1"),
       },
     });
 
     expect(result).toBe(false);
+  });
+});
+
+describe("hashPayload", () => {
+  it("should deterministically hash the same payload", () => {
+    const payload = new Payload({
+      message: "Hello World",
+      nonce: "base64EncodedNonce==",
+      recipient: "recipient.near",
+      callbackUrl: "https://example.com/callback",
+    });
+    const result = hashPayload(payload);
+    expect(result).toStrictEqual(new Uint8Array([
+      121,  19,   8,  79, 179,  10, 206,   2,
+      107,   0, 134,  57,  44, 188, 164, 233,
+      148, 144, 233, 129, 124, 106, 220, 166,
+      102,  71, 171, 204, 149, 213,  42,  54
+    ]));
   });
 });

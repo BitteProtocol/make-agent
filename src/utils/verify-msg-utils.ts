@@ -12,13 +12,13 @@ export interface KeySignMessageParams {
   accountId?: string;
 }
 
-export const verifyMessage = async ({
+export const verifyMessage = ({
   params,
   accountIdToVerify,
 }: {
   params: KeySignMessageParams;
   accountIdToVerify?: string;
-}): Promise<boolean> => {
+}): boolean => {
   const {
     message,
     nonce,
