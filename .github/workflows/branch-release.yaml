@@ -48,9 +48,9 @@ jobs:
       - name: Publish
         run: |
           if [[ "${GITHUB_REF#refs/tags/}" == *-* ]]; then
-            pnpm publish --access public --tag beta
+            npm publish --access public --tag beta
           else
-            pnpm publish --access public
+            npm publish --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
