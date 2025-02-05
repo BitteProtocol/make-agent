@@ -103,17 +103,11 @@ export class Payload {
   }
 }
 
-const payloadSchema = new Map([
-  [
-    Payload,
-    {
-      kind: "struct",
-      fields: [
-        ["message", "string"],
-        ["nonce", [32]],
-        ["recipient", "string"],
-        ["callbackUrl", { kind: "option", type: "string" }],
-      ],
-    },
-  ],
-]);
+const payloadSchema = {
+  struct: {
+    message: "string",
+    nonce: { array: { type: "u8", len: 32 } },
+    recipient: "string",
+    callbackUrl: { option: "string" },
+  },
+};
