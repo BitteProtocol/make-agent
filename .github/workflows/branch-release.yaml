@@ -10,15 +10,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '20' # Specify the Node.js version you want to use
+          node-version: '20'
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
 
       - name: Install Dependencies
-        run: pnpm install
+        run: pnpm install --froze
 
       - name: Build
         run: pnpm run build
@@ -27,7 +29,7 @@ jobs:
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           SHORT_SHA=$(git rev-parse --short HEAD)
-          BASE_VERSION="0.1.0" # Define a base version
+          BASE_VERSION=$(node -p "require('./package.json').version")
           VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
           pnpm version $VERSION --no-git-tag-version
 
