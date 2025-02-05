@@ -9,7 +9,7 @@ import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { detectPort } from "../utils/port-detector";
-import { getHostname, getSpecUrl } from "../utils/url-utils";
+import { getHostname, getSpecUrl } from "../utils/url";
 
 dotenv.config();
 validateEnv();

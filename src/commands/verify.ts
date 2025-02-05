@@ -4,7 +4,7 @@ import type { VerifyData, XMbSpec } from "../config/types";
 import { PluginService } from "../services/plugin";
 import { deployedUrl } from "../utils/deployed-url";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { getHostname, getSpecUrl } from "../utils/url-utils";
+import { getHostname, getSpecUrl } from "../utils/url";
 
 export const verifyCommand = new Command()
   .name("verify")

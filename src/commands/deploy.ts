@@ -3,7 +3,7 @@ import { Command } from "commander";
 import { PluginService } from "../services/plugin";
 import { deployedUrl } from "../utils/deployed-url";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { getSpecUrl, getHostname } from "../utils/url-utils";
+import { getSpecUrl, getHostname } from "../utils/url";
 
 export const deployCommand = new Command()
   .name("deploy")
