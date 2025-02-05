@@ -19,7 +19,6 @@ describe("verifyMessage", () => {
   });
   const signature =
     "q+8077M6dwQV69zKoIXpR6PTfi7HLLgnIChgoSgh3qzybizDqImfSs/b7DtHjtYpnv5vsW44PrYo0pPsGc3iAA==";
-  console.log(signature);
 
   const mockParams: KeySignMessageParams = {
     message: payload.message,

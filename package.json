@@ -45,7 +45,7 @@
     "is-port-reachable": "^4.0.0",
     "js-sha256": "^0.11.0",
     "localtunnel": "^2.0.2",
-    "near-api-js": "^4.0.3",
+    "near-api-js": "^5.0.1",
     "open": "^10.1.0"
   },
   "devDependencies": {
