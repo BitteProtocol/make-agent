@@ -4,7 +4,7 @@ on:
   push
 
 jobs:
-  branch_publish:
+  branch_release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -37,11 +37,23 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Set Version from Branch
+     - name: Set Version from Branch
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
           SHORT_SHA=$(git rev-parse --short HEAD)
-          BASE_VERSION=$(node -p "require('./package.json').version")
+
+          # Get the latest version tag and increment patch
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_VERSION=${LATEST_TAG#v} # Remove 'v' prefix
+
+          # Split version into major.minor.patch
+          IFS='.' read -r major minor patch <<< "$LATEST_VERSION"
+
+          # Increment patch version
+          patch=$((patch + 1))
+          BASE_VERSION="${major}.${minor}.${patch}"
+
           VERSION="${BASE_VERSION}-${BRANCH_NAME}-${SHORT_SHA}"
           pnpm version $VERSION --no-git-tag-version
 
