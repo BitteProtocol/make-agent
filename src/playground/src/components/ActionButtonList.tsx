@@ -4,6 +4,7 @@ import {
   useAppKitNetwork,
   useDisconnect,
 } from "@reown/appkit/react";
+
 import { useEffect } from "react";
 import { parseGwei, type Address } from "viem";
 import {
@@ -30,10 +31,10 @@ export const ActionButtonList = ({
   sendHash,
   sendSignMsg,
   sendBalance,
-}: ActionButtonListProps) => {
+}: ActionButtonListProps): JSX.Element => {
   const { disconnect } = useDisconnect(); // AppKit hook to disconnect
   const { open } = useAppKit(); // AppKit hook to open the modal
-  const { switchNetwork } = useAppKitNetwork(); // AppKithook to switch network
+  const { switchNetwork } = useAppKitNetwork(); // AppKit hook to switch network
   const { address, isConnected } = useAppKitAccount(); // AppKit hook to get the address and check if the user is connected
 
   const { data: gas } = useEstimateGas({ ...TEST_TX }); // Wagmi hook to estimate gas
@@ -50,7 +51,7 @@ export const ActionButtonList = ({
   }, [hash]);
 
   // function to send a tx
-  const handleSendTx = () => {
+  const handleSendTx = (): void => {
     try {
       sendTransaction({
         ...TEST_TX,
@@ -61,8 +62,8 @@ export const ActionButtonList = ({
     }
   };
 
-  // function to sing a msg
-  const handleSignMsg = async () => {
+  // function to sign a msg
+  const handleSignMsg = async (): Promise<void> => {
     const msg = "Hello Reown AppKit!"; // message to sign
     const sig = await signMessageAsync({
       message: msg,
@@ -72,14 +73,14 @@ export const ActionButtonList = ({
   };
 
   // function to get the balance
-  const handleGetBalance = async () => {
+  const handleGetBalance = async (): Promise<void> => {
     const balance = await refetch();
     sendBalance(
       balance?.data?.value.toString() + " " + balance?.data?.symbol.toString()
     );
   };
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = async (): Promise<void> => {
     try {
       await disconnect();
     } catch (error) {

@@ -1,14 +1,13 @@
-import { createAppKit } from "@reown/appkit/react";
-
 import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InfoList } from "./components/InfoList";
-
-import "./App.css";
 import { ActionButtonList } from "./components/ActionButtonList";
 import { metadata, networks, projectId, wagmiAdapter } from "./config";
+
+import { createAppKit } from "@reown/appkit/react";
+import "./App.css";
 
 const queryClient = new QueryClient();
 
@@ -31,22 +30,22 @@ createAppKit({
   },
 });
 
-export function App() {
+export function App(): JSX.Element {
   const [transactionHash, setTransactionHash] = useState<
     `0x${string}` | undefined
   >(undefined);
-  const [signedMsg, setSignedMsg] = useState("");
-  const [balance, setBalance] = useState("");
+  const [signedMsg, setSignedMsg] = useState<string>("");
+  const [balance, setBalance] = useState<string>("");
 
-  const receiveHash = (hash: `0x${string}`) => {
+  const receiveHash = (hash: `0x${string}`): void => {
     setTransactionHash(hash); // Update the state with the transaction hash
   };
 
-  const receiveSignedMsg = (signedMsg: string) => {
+  const receiveSignedMsg = (signedMsg: string): void => {
     setSignedMsg(signedMsg); // Update the state with the transaction hash
   };
 
-  const receivebalance = (balance: string) => {
+  const receivebalance = (balance: string): void => {
     setBalance(balance);
   };
 

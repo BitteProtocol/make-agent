@@ -1,6 +1,6 @@
-import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import type { AppKitNetwork } from "@reown/appkit/networks";
 import { arbitrum, mainnet, sepolia } from "@reown/appkit/networks";
+import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 
 // Get projectId from https://cloud.reown.com
 export const projectId =
