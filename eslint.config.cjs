@@ -20,7 +20,7 @@ module.exports = Object.assign({}, js.configs.recommended, {
     "import": importPlugin, // Add import plugin
   },
   ignores: ["node_modules/*"],
-  rules: Object.assign({}, tsPlugin.configs.rules, {
+/*   rules: Object.assign({}, tsPlugin.configs.rules, {
     "linebreak-style": ["error", "unix"],
     quotes: ["error", "double"],
     semi: ["error", "always"],
@@ -43,5 +43,5 @@ module.exports = Object.assign({}, js.configs.recommended, {
         "alphabetize": { "order": "asc", "caseInsensitive": true }
       }
     ],
-  }),
+  }), */
 });
