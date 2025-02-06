@@ -67,7 +67,7 @@ const Main: React.FC = (): JSX.Element => {
   return (
     <main>
       <Header />
-      <div>
+      <div id="ai-chat">
         <BitteAiChat
           options={{
             agentImage: bitteAgent.image,
