@@ -28,6 +28,8 @@ export const EvmWalletConnector = (): JSX.Element => {
       >
         Connect EVM Wallet
       </button>
+      <appkit-connect-button label="EVM Account" />
+
       <Modal
         isOpen={isEVMConnectModalOpen}
         closeModal={() => setIsEVMConnectModalOpen(false)}

@@ -13,6 +13,8 @@
     "@bitte-ai/chat": "^0.0.18",
     "@bitte-ai/react": "^0.6.6-beta-prerelease.40",
     "@near-wallet-selector/modal-ui": "^8.9.15",
+    "@reown/appkit": "^1.6.6",
+    "@reown/appkit-adapter-wagmi": "^1.6.6",
     "@tanstack/react-query": "^5.66.0",
     "buffer": "^6.0.3",
     "react": "^18.3.1",
