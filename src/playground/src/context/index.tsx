@@ -69,7 +69,6 @@ const config = createConfig({
     [mode.id]: http(),
     [avalanche.id]: http(),
   },
-  
   storage: createStorage({
     storage: cookieStorage,
     key: "wagmi",
