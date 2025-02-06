@@ -52,6 +52,7 @@ p,
   align-items: center;
   gap: 12px;
   font-size: 14px;
+  padding: 0 8px;
 }
 
 /* The Modal (background) */

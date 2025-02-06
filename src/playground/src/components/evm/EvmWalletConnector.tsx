@@ -12,7 +12,7 @@ export const EvmWalletConnector = (): JSX.Element => {
   if (isConnected) {
     return (
       <div className="connected-wallet-container">
-        <p className="break-all">{address}</p>
+        <p>{address}</p>
         <button className="connect-button" onClick={() => disconnect()}>
           Disconnect
         </button>
