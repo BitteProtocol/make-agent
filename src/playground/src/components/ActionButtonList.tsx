@@ -4,7 +4,6 @@ import {
   useAppKitNetwork,
   useDisconnect,
 } from "@reown/appkit/react";
-
 import { useEffect } from "react";
 import { parseGwei, type Address } from "viem";
 import {
@@ -13,6 +12,7 @@ import {
   useSendTransaction,
   useSignMessage,
 } from "wagmi";
+
 import { networks } from "../config";
 
 // test transaction
