@@ -1,7 +1,10 @@
 name: Branch Release
 
 on:
-  push
+  push:
+    branches:
+      - '**'
+      - '!main'
 
 jobs:
   branch-release:
