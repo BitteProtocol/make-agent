@@ -19,7 +19,7 @@
   "scripts": {
     "prepare": "cd ./src/playground && pnpm install",
     "typecheck": "tsc --noEmit",
-    "dev": "tsx ./src/index.ts",
+    "dev": "tsx ./src/index.ts dev -p 3000",
     "build": "tsup ./src/index.ts --format cjs,esm --dts --clean && pnpm run build:ui",
     "build:ui": "cd ./src/playground && rm -rf ./dist && pnpm run build",
     "prepublishOnly": "pnpm run build",
