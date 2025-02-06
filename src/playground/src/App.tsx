@@ -1,14 +1,14 @@
 import { createAppKit } from "@reown/appkit/react";
 
-import { WagmiProvider } from "wagmi";
 import { useState } from "react";
+import { WagmiProvider } from "wagmi";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InfoList } from "./components/InfoList";
 
 import "./App.css";
-import { metadata, networks, projectId, wagmiAdapter } from "./config";
 import { ActionButtonList } from "./components/ActionButtonList";
+import { metadata, networks, projectId, wagmiAdapter } from "./config";
 
 const queryClient = new QueryClient();
 
@@ -67,7 +67,6 @@ export function App() {
             sendBalance={receivebalance}
           />
           <div className="advice">
-            
             <p>
               This projectId only works on localhost. <br />
               Go to{" "}
