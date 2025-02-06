@@ -36,8 +36,10 @@ const Main: React.FC = (): JSX.Element => {
   const [config, setConfig] = useState<AppConfig>();
 
   const { address } = useAccount();
-  const { data: hash, sendTransaction } = useSendTransaction();
+  const { data: hash, sendTransaction, error } = useSendTransaction();
   const { switchChain } = useSwitchChain();
+
+  console.log({ error });
 
   useEffect(() => {
     const fetchConfig = async (): Promise<void> => {
