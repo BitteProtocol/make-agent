@@ -1,7 +1,10 @@
 name: Branch Release
 
 on:
-  push
+  push:
+    branches:
+      - '**'
+      - '!main'
 
 jobs:
   branch-release:
@@ -64,7 +67,6 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       - name: Publish with npm
-        if: ${{ github.ref_name != 'main' }}
         run: npm publish --access public --tag beta
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
