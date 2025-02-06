@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { createAppKit } from "@reown/appkit/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import { WagmiProvider } from "wagmi";
 
-import { InfoList } from "./components/InfoList";
 import { ActionButtonList } from "./components/ActionButtonList";
+import { InfoList } from "./components/InfoList";
 import { metadata, networks, projectId, wagmiAdapter } from "./config";
 
-import { createAppKit } from "@reown/appkit/react";
 import "./App.css";
 
 const queryClient = new QueryClient();
