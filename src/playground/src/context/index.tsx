@@ -19,7 +19,12 @@ import {
   polygon,
   sepolia,
 } from "wagmi/chains";
-import { coinbaseWallet, metaMask, walletConnect } from "wagmi/connectors";
+import {
+  coinbaseWallet,
+  metaMask,
+  walletConnect,
+  injected,
+} from "wagmi/connectors";
 
 // Set up queryClient
 const queryClient = new QueryClient();
@@ -36,6 +41,7 @@ const connectors =
         metaMask(),
         coinbaseWallet({ appName: "Bitte AI" }),
         walletConnect({ projectId: walletConnectId }),
+        injected(),
       ]
     : [];
 
@@ -69,7 +75,7 @@ const config = createConfig({
   }),
 });
 
-function ContextProvider({ children }: { children: ReactNode }):JSX.Element {
+function ContextProvider({ children }: { children: ReactNode }): JSX.Element {
   const initialState = cookieToInitialState(config);
 
   return (
