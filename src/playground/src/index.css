@@ -1,10 +1,15 @@
 @import "tailwindcss";
 
-main > div {
-  width: 700px;
-
+#ai-chat {
+  width: 100%;
   margin: 0 auto;
   height: 540px;
+}
+
+@media (min-width: 768px) {
+  #ai-chat {
+    width: 700px;
+  }
 }
 
 body {
