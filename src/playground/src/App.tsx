@@ -67,6 +67,7 @@ export function App() {
             sendBalance={receivebalance}
           />
           <div className="advice">
+            
             <p>
               This projectId only works on localhost. <br />
               Go to{" "}
