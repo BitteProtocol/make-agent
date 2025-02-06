@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 
 import "@near-wallet-selector/modal-ui/styles.css";
 import App from "./App.tsx";
-import ContextProvider from "./context/index.tsx";
 import "./index.css";
 
 const BitteWalletSetup = {
@@ -16,9 +15,7 @@ const BitteWalletSetup = {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BitteWalletContextProvider {...BitteWalletSetup}>
-      <ContextProvider>
-        <App />
-      </ContextProvider>
+      <App />
     </BitteWalletContextProvider>
   </StrictMode>
 );
