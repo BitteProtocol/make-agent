@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history to get the latest tag
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -41,9 +43,9 @@ jobs:
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           BRANCH_NAME=${BRANCH_NAME//\//-} # Replace slashes with dashes
           SHORT_SHA=$(git rev-parse --short HEAD)
-
+          
           # Get the latest version tag and increment patch
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          LATEST_TAG=$(git tag -l 'v*' --sort=-v:refname | head -n1 || echo "v0.0.0")
           LATEST_VERSION=${LATEST_TAG#v} # Remove 'v' prefix
 
           # Split version into major.minor.patch
