@@ -54,6 +54,7 @@ Currently, the CLI supports the following command:
    - `-u, --url <url>`: The URL where your agent is hosted (optional)
 
    If no URL is provided, the command will attempt to determine the URL automatically through environment variables.
+   In particular, see [deployed-url.ts](src/utils/deployed-url.ts) for various deployment configurations.
 
 1. ### **`contract`**: Scaffold a basic agent from a NEAR contract that has an ABI
    Usage:

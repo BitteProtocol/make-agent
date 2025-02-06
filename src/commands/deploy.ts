@@ -17,6 +17,8 @@ export const deployCommand = new Command()
     if (!url) {
       console.error("Deployed URL could not be determined.");
       return;
+    } else {
+      console.log("Using deployment URL:", url);
     }
 
     const id = getHostname(url);
