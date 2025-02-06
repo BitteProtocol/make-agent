@@ -71,7 +71,7 @@ const Main: React.FC = (): JSX.Element => {
         <BitteAiChat
           options={{
             agentImage: bitteAgent.image,
-            agentName: bitteAgent.name,
+            agentName: config.localAgent.spec["x-mb"].assistant?.name,
             localAgent: config.localAgent,
           }}
           agentId={config.localAgent.pluginId}
