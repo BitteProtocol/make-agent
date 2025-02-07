@@ -118,10 +118,6 @@ describe("deployed-url utilities", () => {
       "should return $name URL when in $name environment",
       ({ env, expected }) => {
         Object.assign(process.env, env);
-        console.log("process.env", process.env.VERCEL_ENV);
-        console.log("process.env", env);
-        console.log("expected", expected);
-        console.log("getDeployedUrl", getDeployedUrl());
         expect(getDeployedUrl()).toBe(expected);
       },
     );

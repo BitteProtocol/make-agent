@@ -1,10 +1,8 @@
 import { Command } from "commander";
 
+import { setup } from "./setup.ts";
 import type { VerifyData, XMbSpec } from "../config/types";
 import { PluginService } from "../services/plugin";
-import { deployedUrl } from "../utils/deployed-url";
-import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { getHostname, getSpecUrl } from "../utils/url";
 
 export const verifyCommand = new Command()
   .name("verify")
@@ -43,20 +41,7 @@ export const verifyCommand = new Command()
     },
   )
   .action(async (options) => {
-    const url = options.url || deployedUrl;
-
-    if (!url) {
-      console.error("Deployed URL could not be determined.");
-      return;
-    }
-
-    const pluginId = getHostname(url);
-    const specUrl = getSpecUrl(url);
-    const xMbSpec = await validateAndParseOpenApiSpec(specUrl);
-    if (!xMbSpec) {
-      console.error("OpenAPI specification validation failed.");
-      return;
-    }
+    const { pluginId, xMbSpec } = await setup(options.url);
 
     try {
       const agentData = formVerifyData(options, xMbSpec);
@@ -71,7 +56,7 @@ export const verifyCommand = new Command()
   });
 
 function formVerifyData(options: unknown, spec: XMbSpec): VerifyData {
-  const verifyData: VerifyData = {
+  return {
     accountId: spec["account-id"],
     email:
       ((options as { email?: string }).email ?? spec.email) ||
@@ -91,5 +76,4 @@ function formVerifyData(options: unknown, spec: XMbSpec): VerifyData {
     chainIds:
       (options as { chains?: number[] }).chains ?? spec.assistant.chainIds,
   };
-  return verifyData;
 }
