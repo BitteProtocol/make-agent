@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@bitte-ai/chat':
-        specifier: ^0.0.18
-        version: 0.0.18(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        specifier: 0.0.19
+        version: 0.0.19(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@bitte-ai/react':
         specifier: ^0.6.6-beta-prerelease.40
         version: 0.6.6-beta-prerelease.40(bn.js@5.2.1)(borsh@1.0.0)(graphql@16.10.0)(near-api-js@4.0.3)
@@ -236,8 +236,8 @@ packages:
     resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
     engines: {node: '>=6.9.0'}
 
-  '@bitte-ai/chat@0.0.18':
-    resolution: {integrity: sha512-ISm/9DDir0FKap72zxwoc7Huc3AJFBDs7uHM4b0ytGWOtwrzWlw67hAhqwg8A6D+NtiTec2Q97lKw0GEltH0Tw==}
+  '@bitte-ai/chat@0.0.19':
+    resolution: {integrity: sha512-952EwQNMz0K+qgA8f9aSdfoAY69VMy+ojBk9GWpJ7W0Pvq7bcDZBYv9XCZsbMaw4M9JemCoI9avp0SSixJnYkg==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -4194,7 +4194,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@bitte-ai/chat@0.0.18(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@bitte-ai/chat@0.0.19(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@ai-sdk/anthropic': 1.1.6(zod@3.24.1)
       '@ai-sdk/openai': 1.1.9(zod@3.24.1)
