@@ -1,5 +1,4 @@
 export type XMbSpec = {
-  "account-id": string;
   assistant: {
     name: string;
     description: string;
@@ -11,8 +10,10 @@ export type XMbSpec = {
     repo?: string;
   };
   email?: string;
+  "account-id"?: string;
 };
 
+// TODO(bh2smith): Should this be an enum? Or union of all supported tools?
 type XMbSpecTools = {
   type: string;
 };

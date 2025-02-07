@@ -58,7 +58,7 @@ export async function validateAndParseOpenApiSpec(
     if (isXMbSpec(xMbSpec)) {
       return xMbSpec;
     }
-    console.error("Invalid OpenAPI spec: ", getXMbSpecValidationError(xMbSpec));
+    console.error("Invalid x-mb spec: ", getXMbSpecValidationError(xMbSpec));
     return undefined;
   } catch (error) {
     console.error(
