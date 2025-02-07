@@ -1,34 +1,19 @@
 import { Command } from "commander";
 
+import { setup } from "./setup.ts";
 import { PluginService } from "../services/plugin";
-import { deployedUrl } from "../utils/deployed-url";
-import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { getSpecUrl, getHostname } from "../utils/url";
 
 export const deleteCommand = new Command()
   .name("delete")
   .description("Delete your AI agent plugin")
   .option("-u, --url <url>", "Specify the deployment URL")
   .action(async (options) => {
-    const url = options.url || deployedUrl;
-
-    if (!url) {
-      console.error("Deployed URL could not be determined.");
-      return;
-    }
-
-    const pluginId = getHostname(url);
-    const specUrl = getSpecUrl(url);
-    const xMbSpec = await validateAndParseOpenApiSpec(specUrl);
-
-    if (!xMbSpec) {
-      console.error("OpenAPI specification validation failed.");
-      return;
-    }
-    const accountId = xMbSpec["account-id"];
-
     const pluginService = new PluginService();
-    const authentication = await pluginService.auth.getAuthentication();
+    const [{ pluginId }, authentication] = await Promise.all([
+      setup(options.url),
+      pluginService.auth.getAuthentication(),
+    ]);
+
     if (!authentication) {
       console.error("Authentication failed. Unable to delete the plugin.");
       return;
