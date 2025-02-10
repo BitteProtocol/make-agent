@@ -79,11 +79,31 @@ export async function startUIServer(
           spec: agentSpec,
         },
         bitteApiKey: apiConfig.key,
-        bitteApiUrl: apiConfig.url,
+        bitteApiUrl: `${apiConfig.url}/chat`,
       };
       res.json(serverConfig);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch AI plugin spec" });
+    }
+  });
+
+  app.get("/api/history", async (req, res) => {
+    try {
+      const id = req.query.id;
+      if (!id) {
+        throw new Error("No history id on request.");
+      }
+      const url = `${apiConfig.url}/history?id=${id}`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${apiConfig.key}`,
+        },
+      });
+      const result = await response.json();
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: `Failed to fetch chat history: ${err}` });
     }
   });
 

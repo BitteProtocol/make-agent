@@ -9,15 +9,6 @@ import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
 import { Header } from "./components/Header";
 import "./shims";
 
-const bitteAgent = {
-  id: "bitte-assistant",
-  name: "Bitte Assistant",
-  description:
-    "Bitte assistant for interacting with NFTs and Fungible Tokens (FTs) on NEAR Protocol.  Users can query, mint, transfer NFTs, transfer FTs, create drops, and swap tokens.",
-  verified: true,
-  image: "/bitte.svg",
-};
-
 type AppConfig = {
   localAgent: {
     pluginId: string;
@@ -67,11 +58,11 @@ const Main: React.FC = (): JSX.Element => {
   return (
     <main>
       <Header />
-      <div>
+      <div id="ai-chat">
         <BitteAiChat
           options={{
-            agentImage: bitteAgent.image,
-            agentName: bitteAgent.name,
+            agentImage: "/bitte.svg",
+            agentName: config.localAgent.spec["x-mb"]?.assistant?.name,
             localAgent: config.localAgent,
           }}
           agentId={config.localAgent.pluginId}
@@ -85,6 +76,7 @@ const Main: React.FC = (): JSX.Element => {
             },
           }}
           apiUrl={config.bitteApiUrl}
+          historyApiUrl="/api/history"
           apiKey={config.bitteApiKey}
           colors={{
             generalBackground: "#18181A",
