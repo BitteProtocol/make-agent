@@ -49,7 +49,12 @@ export class PluginService {
     });
 
     if (!response.ok) {
-      console.error(`Failed to update plugin: ${await response.text()}`);
+      const responseText = await response.text();
+      if (responseText.includes("Plugin not found")) {
+        console.warn(`Plugin with ID ${pluginId} not found/registered.`);
+      } else {
+        console.error("Failed to update plugin", responseText);
+      }
       return null;
     }
 
