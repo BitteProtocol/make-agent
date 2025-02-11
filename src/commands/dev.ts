@@ -39,7 +39,7 @@ const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
   url:
     process.env.BITTE_API_URL ||
-    "https://ai-runtime-446257178793.europe-west1.run.app/chat",
+    "https://ai-runtime-446257178793.europe-west1.run.app",
   serverPort: DEFAULT_PORT,
 };
 
