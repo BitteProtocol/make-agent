@@ -1,19 +1,18 @@
 import { Command } from "commander";
 
+import { setup } from "./setup.ts";
+import type { VerifyData, XMbSpec } from "../config/types";
 import { PluginService } from "../services/plugin";
-import { deployedUrl } from "../utils/deployed-url";
-import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { getHostname, getSpecUrl } from "../utils/url-utils";
 
 export const verifyCommand = new Command()
   .name("verify")
   .description("Request verification of your deployed AI agent plugin")
-  .requiredOption("-u, --url <url>", "Specify the url of the deployed plugin")
-  .requiredOption(
+  .option("-u, --url <url>", "Specify the url of the deployed plugin")
+  .option(
     "-e, --email <email>",
     "Provide an email so we can contact you regarding the verification process",
   )
-  .requiredOption(
+  .option(
     "-r, --repo <repoUrl>",
     "To verify a plugin we need the url for a public repository containing the plugin's code",
   )
@@ -42,33 +41,39 @@ export const verifyCommand = new Command()
     },
   )
   .action(async (options) => {
-    const url = options.url || deployedUrl;
+    const { pluginId, xMbSpec } = await setup(options.url);
 
-    if (!url) {
-      console.error("Deployed URL could not be determined.");
-      return;
+    try {
+      const agentData = formVerifyData(options, xMbSpec);
+
+      await new PluginService().verify({
+        pluginId,
+        ...agentData,
+      });
+    } catch (error) {
+      console.error(`Failed to send verification request: ${error}`);
     }
-
-    const pluginId = getHostname(url);
-    const specUrl = getSpecUrl(url);
-    const { isValid, accountId } = await validateAndParseOpenApiSpec(specUrl);
-
-    if (!isValid) {
-      console.error("OpenAPI specification validation failed.");
-      return;
-    }
-
-    if (!accountId) {
-      console.error("Failed to parse account ID from OpenAPI specification.");
-      return;
-    }
-
-    await new PluginService().verify({
-      pluginId,
-      email: options.email,
-      repo: options.repo,
-      version: options.version,
-      categories: options.categories,
-      chains: options.chains,
-    });
   });
+
+function formVerifyData(options: unknown, spec: XMbSpec): VerifyData {
+  return {
+    accountId: spec["account-id"],
+    email:
+      ((options as { email?: string }).email ?? spec.email) ||
+      (() => {
+        throw new Error("Email is required");
+      })(),
+    repo:
+      ((options as { repo?: string }).repo ?? spec.assistant.repo) ||
+      (() => {
+        throw new Error("Repository URL is required");
+      })(),
+    version:
+      (options as { version?: string }).version ?? spec.assistant.version,
+    categories:
+      (options as { categories?: string[] }).categories ??
+      spec.assistant.categories,
+    chainIds:
+      (options as { chains?: number[] }).chains ?? spec.assistant.chainIds,
+  };
+}

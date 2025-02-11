@@ -9,7 +9,7 @@ import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
 import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { detectPort } from "../utils/port-detector";
-import { getHostname, getSpecUrl } from "../utils/url-utils";
+import { getHostname, getSpecUrl } from "../utils/url";
 
 dotenv.config();
 validateEnv();
@@ -54,7 +54,11 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   try {
     console.log("[Dev] Validating OpenAPI spec...");
     const validation = await validateAndParseOpenApiSpec(specUrl);
-    ({ isValid, accountId } = validation);
+    if (!validation) {
+      throw new Error("Invalid OpenAPI spec");
+    }
+    isValid = true;
+    accountId = validation["account-id"];
     console.log("[Dev] Validation result:", { isValid, accountId });
   } catch (error) {
     console.error(

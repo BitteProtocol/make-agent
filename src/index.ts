@@ -7,7 +7,6 @@ import { contractCommand } from "./commands/contract";
 import { deleteCommand } from "./commands/delete";
 import { deployCommand } from "./commands/deploy";
 import { devCommand } from "./commands/dev";
-import { devDeprecatedCommand } from "./commands/dev-deprecated";
 import { registerCommand } from "./commands/register";
 import { updateCommand } from "./commands/update";
 import { verifyCommand } from "./commands/verify";
@@ -25,7 +24,6 @@ program
   .addCommand(contractCommand)
   .addCommand(deleteCommand)
   .addCommand(verifyCommand)
-  .addCommand(devDeprecatedCommand)
   .addCommand(registerCommand)
   .addCommand(updateCommand);
 

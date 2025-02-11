@@ -5,5 +5,7 @@ export function getHostname(url: string): string {
 }
 
 export function getSpecUrl(baseUrl: string): URL {
-  return new URL(`${baseUrl}/${AI_PLUGIN_PATH}`);
+  // Removes trailing slash from baseUrl:
+  const normalised = new URL(baseUrl);
+  return new URL(`${normalised.origin}/${AI_PLUGIN_PATH}`);
 }

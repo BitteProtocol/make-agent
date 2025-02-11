@@ -1,7 +1,7 @@
 {
   "name": "make-agent",
   "type": "module",
-  "version": "0.0.22-7",
+  "version": "0.0.0",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -15,11 +15,11 @@
   "bugs": {
     "url": "https://github.com/bitteprotocol/make-agent/issues"
   },
-  "homepage": "https://github.com/bitteprotocol/make-agent/#readme",
+  "homepage": "https://docs.bitte.ai/agents/make-agent",
   "scripts": {
     "prepare": "cd ./src/playground && pnpm install",
     "typecheck": "tsc --noEmit",
-    "dev": "tsx ./src/index.ts",
+    "dev": "tsx ./src/index.ts dev -p 3000",
     "build": "tsup ./src/index.ts --format cjs,esm --dts --clean && pnpm run build:ui",
     "build:ui": "cd ./src/playground && rm -rf ./dist && pnpm run build",
     "prepublishOnly": "pnpm run build",
@@ -33,10 +33,12 @@
     "agent",
     "cli"
   ],
-  "author": "Micro",
+  "author": "Bitte Team",
   "license": "MIT",
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
+    "ajv": "^8.17.1",
+    "ajv-draft-04": "^1.0.0",
     "borsh": "^2.0.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
@@ -44,7 +46,6 @@
     "inquirer": "^12.0.0",
     "is-port-reachable": "^4.0.0",
     "js-sha256": "^0.11.0",
-    "localtunnel": "^2.0.2",
     "near-api-js": "^5.0.1",
     "open": "^10.1.0"
   },
@@ -52,12 +53,10 @@
     "@eslint/js": "^9.19.0",
     "@types/express": "^5.0.0",
     "@types/inquirer": "^9.0.7",
-    "@types/localtunnel": "^2.0.4",
     "@types/node": "^22.7.2",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@typescript-eslint/parser": "^8.23.0",
     "@vitest/coverage-v8": "^3.0.5",
-    "ajv": "^8.17.1",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0",
     "prettier": "^3.4.2",
@@ -65,5 +64,12 @@
     "tsx": "^4.7.1",
     "typescript": "^5.7.3",
     "vitest": "^3.0.5"
+  },
+  "pnpm": {
+    "overrides": {
+      "secp256k1": "^5.0.1",
+      "elliptic": "^6.6.0",
+      "crypto-js": "^4.2.0"
+    }
   }
 }

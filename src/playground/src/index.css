@@ -1,10 +1,15 @@
 @import "tailwindcss";
 
-main > div {
-  width: 700px;
-
+#ai-chat {
+  width: 100%;
   margin: 0 auto;
   height: 540px;
+}
+
+@media (min-width: 768px) {
+  #ai-chat {
+    width: 700px;
+  }
 }
 
 body {
@@ -47,6 +52,7 @@ p,
   align-items: center;
   gap: 12px;
   font-size: 14px;
+  padding: 0 8px;
 }
 
 /* The Modal (background) */
@@ -62,7 +68,6 @@ p,
 
 /* Modal Content/Box */
 .modal-content {
-  margin: 15% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 80%;

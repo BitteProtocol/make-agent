@@ -9,7 +9,7 @@ import {
   SIGN_MESSAGE,
   SIGN_MESSAGE_PORT,
 } from "../config/constants";
-import { appendToEnv } from "../utils/file-utils";
+import { appendToEnv } from "../utils/file";
 import {
   verifyMessage,
   type KeySignMessageParams,
