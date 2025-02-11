@@ -1,6 +1,10 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 
-import { isXMbSpec, type XMbSpec } from "../config/types";
+import {
+  getXMbSpecValidationError,
+  isXMbSpec,
+  type XMbSpec,
+} from "../config/types";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -54,7 +58,8 @@ export async function validateAndParseOpenApiSpec(
     if (isXMbSpec(xMbSpec)) {
       return xMbSpec;
     }
-    throw new Error("Invalid OpenAPI spec");
+    console.error("Invalid x-mb spec: ", getXMbSpecValidationError(xMbSpec));
+    return undefined;
   } catch (error) {
     console.error(
       "Unexpected error:",
