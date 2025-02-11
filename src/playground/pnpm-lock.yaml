@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@bitte-ai/chat':
-        specifier: ^0.0.17
-        version: 0.0.17(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
+        specifier: ^0.0.21
+        version: 0.0.21(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       '@bitte-ai/react':
         specifier: ^0.6.6-beta-prerelease.40
         version: 0.6.6-beta-prerelease.40(bn.js@5.2.1)(borsh@1.0.0)(graphql@16.10.0)(near-api-js@4.0.3)
@@ -236,8 +236,8 @@ packages:
     resolution: {integrity: sha512-t8kDRGrKXyp6+tjUh7hw2RLyclsW4TRoRvRHtSyAX9Bb5ldlFh+90YAYY6awRXrlB4G5G2izNeGySpATlFzmOg==}
     engines: {node: '>=6.9.0'}
 
-  '@bitte-ai/chat@0.0.17':
-    resolution: {integrity: sha512-JcbZpwDc1RqehuKfK+yYOxG/HNR7VxcHUA2A540qLk0yAKBNh8Sn2bcQjuGMsqHGOr5yeay9/kwRcURQEhSPgw==}
+  '@bitte-ai/chat@0.0.21':
+    resolution: {integrity: sha512-lpQS8pVQCXPCw5mCeQgvvWlUGzJVGHlpvB285RMV3KAsTa5Xo3EHAbhkh7XEUxWK1Im9g7aHHvCylNsCq6vGcA==}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
@@ -1710,6 +1710,7 @@ packages:
 
   '@walletconnect/web3wallet@1.16.1':
     resolution: {integrity: sha512-l6jVoLEh/UtRfvYUDs52fN+LYXsBgx3F9WfErJuCSCFfpbxDKIzM2Y9sI0WI1/5dWN5sh24H1zNCXnQ4JJltZw==}
+    deprecated: Web3Wallet is now Reown WalletKit. Please follow the upgrade guide at https://docs.reown.com/walletkit/upgrade/from-web3wallet-web
 
   '@walletconnect/window-getters@1.0.1':
     resolution: {integrity: sha512-vHp+HqzGxORPAN8gY03qnbTMnhqIwjeRJNOMOAzePRg4xVEEE2WvYsI9G2NMjOknA8hnuYbU3/hwLcKbjhc8+Q==}
@@ -4194,7 +4195,7 @@ snapshots:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
 
-  '@bitte-ai/chat@0.0.17(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
+  '@bitte-ai/chat@0.0.21(@tanstack/query-core@5.66.0)(@tanstack/react-query@5.66.0(react@18.3.1))(@types/react-dom@18.3.5(@types/react@18.3.18))(@types/react@18.3.18)(bufferutil@4.0.9)(graphql@16.10.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@4.0.3)(typescript@5.6.3)(utf-8-validate@5.0.10)(ws@8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))':
     dependencies:
       '@ai-sdk/anthropic': 1.1.6(zod@3.24.1)
       '@ai-sdk/openai': 1.1.9(zod@3.24.1)
@@ -4818,7 +4819,7 @@ snapshots:
 
   '@mintbase-js/sdk@0.6.2':
     dependencies:
-      near-api-js: 4.0.3
+      near-api-js: 4.0.4
     transitivePeerDependencies:
       - encoding
 
@@ -7522,7 +7523,7 @@ snapshots:
 
   isomorphic-unfetch@3.1.0:
     dependencies:
-      node-fetch: 2.6.7
+      node-fetch: 2.7.0
       unfetch: 4.2.0
     transitivePeerDependencies:
       - encoding
