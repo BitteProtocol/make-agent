@@ -41,8 +41,9 @@ describe("validateEnv", () => {
     requiredEnvVars.forEach((key) => delete process.env[key]);
 
     expect(() => validateEnv()).toThrow(
-      `Missing required environment variables: ${requiredEnvVars.join(", ")}\n` +
-        "Please ensure these are set in your .env file",
+      `Missing required environment variables: ${requiredEnvVars.join(
+        ", ",
+      )}\n` + "Please ensure these are set in your .env file",
     );
   });
 });
