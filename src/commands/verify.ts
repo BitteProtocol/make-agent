@@ -1,8 +1,17 @@
+import type { BitteExtensionSchema } from "bitte-ai-spec";
 import { Command } from "commander";
 
 import { setup } from "./setup.ts";
-import type { VerifyData, XMbSpec } from "../config/types";
 import { PluginService } from "../services/plugin";
+
+type VerifyData = {
+  accountId: string;
+  email: string;
+  repo: string;
+  version?: string;
+  categories?: string[];
+  chainIds?: number[];
+};
 
 export const verifyCommand = new Command()
   .name("verify")
@@ -44,7 +53,7 @@ export const verifyCommand = new Command()
     const { pluginId, xMbSpec } = await setup(options.url);
 
     try {
-      const agentData = formVerifyData(options, xMbSpec);
+      const agentData = formVerifyData(xMbSpec, options);
 
       await new PluginService().verify({
         pluginId,
@@ -55,25 +64,35 @@ export const verifyCommand = new Command()
     }
   });
 
-function formVerifyData(options: unknown, spec: XMbSpec): VerifyData {
+function formVerifyData(
+  xMbSpec: BitteExtensionSchema,
+  options?: {
+    version?: string;
+    categories?: string[];
+    chains?: number[];
+  },
+): VerifyData {
+  const accountId = xMbSpec["account-id"];
+  const email = (options as { email?: string }).email ?? xMbSpec.email;
+  const repo = (options as { repo?: string }).repo ?? xMbSpec.assistant.repo;
+
+  if (!accountId || !email || !repo) {
+    const missing = [
+      !accountId && "[account-id] in OpenAPI spec",
+      !email && "email",
+      !repo && "repository URL",
+    ]
+      .filter(Boolean)
+      .join(", ");
+    throw new Error(`Missing required fields: ${missing}`);
+  }
+
   return {
-    accountId: spec["account-id"],
-    email:
-      ((options as { email?: string }).email ?? spec.email) ||
-      (() => {
-        throw new Error("Email is required");
-      })(),
-    repo:
-      ((options as { repo?: string }).repo ?? spec.assistant.repo) ||
-      (() => {
-        throw new Error("Repository URL is required");
-      })(),
-    version:
-      (options as { version?: string }).version ?? spec.assistant.version,
-    categories:
-      (options as { categories?: string[] }).categories ??
-      spec.assistant.categories,
-    chainIds:
-      (options as { chains?: number[] }).chains ?? spec.assistant.chainIds,
+    accountId,
+    email,
+    repo,
+    version: options?.version || xMbSpec.assistant.version,
+    categories: options?.categories || xMbSpec.assistant.categories,
+    chainIds: options?.chains || xMbSpec.assistant.chainIds,
   };
 }

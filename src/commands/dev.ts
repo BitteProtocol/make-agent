@@ -1,3 +1,4 @@
+import { validateBittePluginSpec, type BitteOpenAPISpec } from "bitte-ai-spec";
 import { Command } from "commander";
 import dotenv from "dotenv";
 import isPortReachable from "is-port-reachable";
@@ -7,7 +8,6 @@ import { DEFAULT_PORT } from "../config/constants";
 import { startUIServer } from "../services/server";
 import { getDeployedUrl } from "../utils/deployed-url";
 import { validateEnv } from "../utils/env";
-import { validateAndParseOpenApiSpec } from "../utils/openapi";
 import { detectPort } from "../utils/port-detector";
 import { getHostname, getSpecUrl } from "../utils/url";
 
@@ -22,9 +22,16 @@ export interface ApiConfig {
 }
 
 interface ValidationResult {
-  pluginId: string;
-  accountId: string;
-  spec: unknown;
+  spec?: BitteOpenAPISpec;
+  errorMessage?: string;
+}
+
+// Muted error that only prints necessary text when thrown
+class DevCommandError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "DevCommandError";
+  }
 }
 
 async function findAvailablePort(startPort: number): Promise<number> {
@@ -42,53 +49,34 @@ const API_CONFIG: ApiConfig = {
 };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
-  console.log("[Dev] Getting plugin ID and spec URL");
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
-  console.log("[Dev] Plugin ID:", pluginId);
-  console.log("[Dev] Spec URL:", specUrl);
+  console.log(`[Dev] Plugin ID: ${pluginId}`);
+  console.log(`[Dev] Spec URL: ${specUrl}`);
 
-  let isValid, accountId;
-  try {
-    console.log("[Dev] Validating OpenAPI spec...");
-    const validation = await validateAndParseOpenApiSpec(specUrl);
-    if (!validation) {
-      throw new Error("Invalid OpenAPI spec");
-    }
-    isValid = true;
-    accountId = validation["account-id"];
-    console.log("[Dev] Validation result:", { isValid, accountId });
-  } catch (error) {
-    console.error(
-      "Failed to validate OpenAPI spec:",
-      error instanceof Error ? error.message : "Unknown error",
-    );
-    isValid = false;
-    accountId = undefined;
+  console.log(`[Dev] Validating OpenAPI spec at ${specUrl}`);
+  const { valid, schema, errorMessage, errors } =
+    await validateBittePluginSpec(specUrl);
+  if (!valid || !schema) {
+    return {
+      errorMessage:
+        errorMessage || errors?.join("\n") || "Unknown error validating spec",
+    };
   }
+  const devAccountId = schema["x-mb"]["account-id"] || "anon";
 
-  console.log("[Dev] Fetching spec content...");
-  const specContent = await fetch(specUrl).then((res) => res.text());
-  let spec = JSON.parse(specContent);
-  console.log("[Dev] Successfully parsed spec content");
-
-  console.log("[Dev] Spec validation status:", isValid);
-
-  console.log("[Dev] Updating spec with server URL and account ID");
-  spec = {
-    ...spec,
+  const devSpec = {
+    ...schema,
     servers: [{ url }],
     "x-mb": {
-      ...spec["x-mb"],
-      "account-id": accountId || "anon",
+      ...schema["x-mb"],
+      "account-id": devAccountId,
     },
   };
-  console.log("[Dev] Updated spec servers URL:", spec.servers[0].url);
+  console.log("[Dev] Updated spec servers URL:", devSpec.servers[0]?.url);
 
   return {
-    pluginId,
-    accountId: accountId || "anon",
-    spec,
+    spec: devSpec,
   };
 }
 
@@ -110,7 +98,6 @@ async function setupPorts(options: {
 
   return { port, serverPort };
 }
-
 export const devCommand = new Command()
   .name("dev")
   .description("Start a local playground for your AI agent")
@@ -125,24 +112,25 @@ export const devCommand = new Command()
 
       const deployedUrl = getDeployedUrl(port);
       if (!deployedUrl) {
-        throw new Error("Deployed URL could not be determined.");
+        throw new DevCommandError("Deployed URL could not be determined.");
       }
 
-      let agentSpec;
-      try {
-        console.log(
-          "[Dev] Fetching and validating OpenAPI spec from:",
-          deployedUrl,
+      console.log(
+        "[Dev] Fetching and validating OpenAPI spec from:",
+        deployedUrl,
+      );
+      const { spec: validatedSpec, errorMessage } =
+        await fetchAndValidateSpec(deployedUrl);
+
+      if (!validatedSpec || errorMessage) {
+        throw new DevCommandError(
+          `[Dev] Spec validation failed: ❌ ${errorMessage || "Unknown validation error"}`,
         );
-        const { spec } = await fetchAndValidateSpec(deployedUrl);
-        console.log("[Dev] OpenAPI spec validation successful");
-        agentSpec = spec;
-      } catch (error) {
-        console.error("[Dev] Error validating OpenAPI spec:", error);
-        throw error;
       }
 
-      const server = await startUIServer(API_CONFIG, agentSpec);
+      console.log("[Dev] Bitte OpenAPI spec validation successful ✅");
+
+      const server = await startUIServer(API_CONFIG, validatedSpec);
 
       await open(`http://localhost:${serverPort}`);
 
@@ -151,6 +139,11 @@ export const devCommand = new Command()
         process.exit(0);
       });
     } catch (error) {
+      if (error instanceof DevCommandError) {
+        console.error("\x1b[31m%s\x1b[0m", `Error: ${error.message}`);
+      } else {
+        console.error("\x1b[31m%s\x1b[0m", `Unexpected error: ${error}`);
+      }
       process.exit(1);
     }
   });

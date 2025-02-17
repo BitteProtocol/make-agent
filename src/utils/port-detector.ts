@@ -74,8 +74,8 @@ export async function detectPort(): Promise<number | null> {
         }
       } catch (winError) {
         console.error(
-          `Attempt ${attempt}/${maxAttempts}: Error detecting port:`,
-          winError,
+          `Attempt ${attempt}/${maxAttempts}: Error detecting port.`,
+          // winError, mute winError to prevent large, unneccesary console output
         );
         if (attempt < maxAttempts) {
           await sleep(1000);

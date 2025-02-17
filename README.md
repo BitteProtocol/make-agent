@@ -1,19 +1,14 @@
 # Make Agent CLI
 
+**The swiss army knife for multi-chain AI agents.** Make Agent CLI is a powerful command-line tool designed to streamline the management and deployment of AI agents across multiple chains. This tool simplifies the process of making your AI agents discoverable and registering them as plugins.
 
-**The swiss army knife for multi-chain AI agents**
+## Docs Quick Start
 
-Make Agent CLI is a powerful command-line tool designed to streamline the management and deployment of AI agents across multiple chains. This tool simplifies the process of making your AI agents discoverable and registering them as plugins.
+[https://docs.bitte.ai/agents/quick-start](https://docs.bitte.ai/agents/quick-start)
 
+### Next.js Starter project
 
-## Quick Start:
-
-### Read the docs:
-
-https://docs.bitte.ai/agents/quick-start
-
-### Next.js Starter project:
-https://github.com/BitteProtocol/agent-next-boilerplate
+[https://github.com/BitteProtocol/agent-next-boilerplate](https://github.com/BitteProtocol/agent-next-boilerplate)
 
 ## Usage
 
@@ -56,7 +51,20 @@ Currently, the CLI supports the following command:
    If no URL is provided, the command will attempt to determine the URL automatically through environment variables.
    In particular, see [deployed-url.ts](src/utils/deployed-url.ts) for various deployment configurations.
 
+1. ### **`validate`**: Validate an agent spec using a local json file or a remote url (for testing purposes)
+
+   Usage:
+
+   ```bash
+   npx make-agent validate [source]
+
+   # Example:
+   npx make-agent validate ./ai-plugin.json
+   npx make-agent validate https://coingecko-demo.vercel.app/.well-known/ai-plugin.json
+   ```
+
 1. ### **`contract`**: Scaffold a basic agent from a NEAR contract that has an ABI
+
    Usage:
 
    ```bash
@@ -94,11 +102,9 @@ Currently, the CLI supports the following command:
    - `-r, --repo <repoUrl>`: (required) To verify a plugin we need the url for a public repository containing the plugin's code
    - `-v, --version <versionNumber>`: (optional) Specify the version of the plugin in case of an update
    - `-c, --categories <categories>`: (optional) List some categories that describe the type of plugin you're verifying.
-   - `-x, --chains <chainIds>`: (optional) If your plugin works on specific evm chains, you can specify them so your plugin is easier to find. 
-   
-   These options can also be defined in the agent spec in the `"x-mb"` object.
-   
+   - `-x, --chains <chainIds>`: (optional) If your plugin works on specific evm chains, you can specify them so your plugin is easier to find.
 
+   These options can also be defined in the agent spec in the `"x-mb"` object.
 
 ## Development
 

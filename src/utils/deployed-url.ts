@@ -6,6 +6,8 @@ export function getVercelDeploymentUrl(): string {
       return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
     case "preview":
       return `https://${process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL}`;
+    case "development":
+      return `http://localhost:${process.env.PORT || DEFAULT_PORT}`;
     default:
       console.warn(
         `Unrecognized VERCEL_ENV=${process.env.VERCEL_ENV} using fallback url (localhost)`,
