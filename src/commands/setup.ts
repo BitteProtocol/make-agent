@@ -1,11 +1,14 @@
-import type { XMbSpec } from "../config/types.ts";
+import {
+  validateBittePluginSpec,
+  type BitteExtensionSchema,
+} from "bitte-ai-spec";
+
 import { deployedUrl } from "../utils/deployed-url.ts";
-import { validateAndParseOpenApiSpec } from "../utils/openapi.ts";
 import { getHostname, getSpecUrl } from "../utils/url.ts";
 
 export async function setup(
   optionsUrl?: string,
-): Promise<{ pluginId: string; xMbSpec: XMbSpec }> {
+): Promise<{ pluginId: string; xMbSpec: BitteExtensionSchema }> {
   const url = optionsUrl || deployedUrl;
 
   if (!url) {
@@ -14,9 +17,14 @@ export async function setup(
 
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
-  const xMbSpec = await validateAndParseOpenApiSpec(specUrl);
-  if (!xMbSpec) {
-    throw new Error("OpenAPI specification validation failed.");
+
+  const { valid, schema, errorMessage } =
+    await validateBittePluginSpec(specUrl);
+
+  if (!valid || !schema) {
+    console.error(errorMessage);
+    throw new Error(errorMessage);
   }
-  return { pluginId, xMbSpec };
+
+  return { pluginId, xMbSpec: schema["x-mb"] };
 }

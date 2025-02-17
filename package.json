@@ -5,6 +5,13 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "bin": {
     "make-agent": "./dist/index.js"
   },
@@ -36,10 +43,7 @@
   "author": "Bitte Team",
   "license": "MIT",
   "dependencies": {
-    "@apidevtools/swagger-parser": "^10.1.0",
-    "@scalar/openapi-parser": "^0.10.6",
-    "ajv": "^8.17.1",
-    "ajv-draft-04": "^1.0.0",
+    "bitte-ai-spec": "0.0.12",
     "borsh": "^2.0.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",
@@ -48,12 +52,10 @@
     "is-port-reachable": "^4.0.0",
     "js-sha256": "^0.11.0",
     "near-api-js": "^5.0.1",
-    "open": "^10.1.0",
-    "zod": "^3.24.2"
+    "open": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "@scalar/openapi-types": "^0.1.7",
     "@types/express": "^5.0.0",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^22.7.2",
