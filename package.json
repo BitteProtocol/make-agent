@@ -43,7 +43,7 @@
   "author": "Bitte Team",
   "license": "MIT",
   "dependencies": {
-    "bitte-ai-spec": "0.0.12",
+    "bitte-ai-spec": "0.0.13",
     "borsh": "^2.0.0",
     "commander": "^12.1.0",
     "dotenv": "^16.4.5",

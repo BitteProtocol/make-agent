@@ -14,8 +14,8 @@ importers:
   .:
     dependencies:
       bitte-ai-spec:
-        specifier: 0.0.12
-        version: 0.0.12
+        specifier: 0.0.13
+        version: 0.0.13
       borsh:
         specifier: ^2.0.0
         version: 2.0.0
@@ -1017,8 +1017,8 @@ packages:
     engines: {node: '>=4.5.0'}
     deprecated: use 3.0.0 instead, safe-buffer has been merged and release for compatability
 
-  bitte-ai-spec@0.0.12:
-    resolution: {integrity: sha512-cVnU6rDYjA1ywQxZO24xrMpl0iQ2eRuChvm5CR0lKTzWCHtvKc4fAnRZkg2gw1C2ifXCvg0kfYWfcmNMbdFN0w==}
+  bitte-ai-spec@0.0.13:
+    resolution: {integrity: sha512-hnojwUC4xRwbtxPocVeibxfFqslRJSJUC9eMSGDqV/XngILpg8nlXij33VRPEUoWTUlrcWR3rSbPfz7O5Hp7fQ==}
 
   bn.js@4.12.1:
     resolution: {integrity: sha512-k8TVBiPkPJT9uHLdOKfFpqcfprwBFOAAXXozRubr7R7PfIuKvQlzcI4M0pALeqXN09vdaMbUdUj+pass+uULAg==}
@@ -3515,7 +3515,7 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  bitte-ai-spec@0.0.12:
+  bitte-ai-spec@0.0.13:
     dependencies:
       '@scalar/openapi-parser': 0.10.6
       openapi-types: 12.1.3
