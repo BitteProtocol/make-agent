@@ -21,6 +21,5 @@ export const deployCommand = new Command()
       }
     } catch (error) {
       console.error(`Failed to deploy plugin ${pluginId}. Error: ${error}`);
-      process.exit(1);
     }
   });
