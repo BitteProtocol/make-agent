@@ -1,5 +1,7 @@
+import chokidar from "chokidar";
 import { Command } from "commander";
 import dotenv from "dotenv";
+import type { Server, IncomingMessage, ServerResponse } from "http";
 import isPortReachable from "is-port-reachable";
 import open from "open";
 
@@ -116,6 +118,11 @@ export const devCommand = new Command()
   .description("Start a local playground for your AI agent")
   .option("-p, --port <port>", "Port to run playground on")
   .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
+  .option(
+    "--no-watch",
+    "Disable watcher that restarts the server on code changes",
+    false,
+  )
   .action(async (options) => {
     try {
       const { port, serverPort } = await setupPorts(options);
@@ -142,9 +149,15 @@ export const devCommand = new Command()
         throw error;
       }
 
-      const server = await startUIServer(API_CONFIG, agentSpec);
-
+      let server = await startUIServer(API_CONFIG, agentSpec);
       await open(`http://localhost:${serverPort}`);
+
+      if (options.watch) {
+        chokidar.watch("./src").on("change", async (path) => {
+          console.log(`[Dev] Changes detected in: "./${path}"`);
+          server = await restartServer(server, deployedUrl, serverPort);
+        });
+      }
 
       process.on("SIGINT", async () => {
         server.close();
@@ -154,3 +167,15 @@ export const devCommand = new Command()
       process.exit(1);
     }
   });
+
+async function restartServer(
+  server: Server<typeof IncomingMessage, typeof ServerResponse>,
+  deployedUrl: string,
+  serverPort: number,
+): Promise<Server<typeof IncomingMessage, typeof ServerResponse>> {
+  server.close();
+  const { spec } = await fetchAndValidateSpec(deployedUrl);
+  const newServer = await startUIServer(API_CONFIG, spec);
+  await open(`http://localhost:${serverPort}`);
+  return newServer;
+}
