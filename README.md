@@ -6,6 +6,16 @@
 Make Agent CLI is a powerful command-line tool designed to streamline the management and deployment of AI agents across multiple chains. This tool simplifies the process of making your AI agents discoverable and registering them as plugins.
 
 
+<p align="center">
+<img src="https://img.shields.io/github/v/release/BitteProtocol/make-agent" />
+<img src="https://img.shields.io/github/release-date/BitteProtocol/make-agent" />
+ <img src="https://img.shields.io/npm/l/make-agent"/>
+<img src="https://img.shields.io/github/commit-activity/m/BitteProtocol/make-agent" />
+
+<img src='https://img.shields.io/npm/dw/make-agent' />
+</p>
+
+
 ## Quick Start:
 
 ### Read the docs:
