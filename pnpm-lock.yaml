@@ -25,6 +25,9 @@ importers:
       borsh:
         specifier: ^2.0.0
         version: 2.0.0
+      chokidar:
+        specifier: ^4.0.3
+        version: 4.0.3
       commander:
         specifier: ^12.1.0
         version: 12.1.0
