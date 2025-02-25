@@ -21,7 +21,6 @@ type AppConfig = {
   network: string;
 };
 
-// Main App component that fetches config and sets up the wallet provider
 const Main: React.FC = (): JSX.Element => {
   const [config, setConfig] = useState<AppConfig>();
   const { address } = useAccount();

@@ -1,7 +1,7 @@
 import { BitteAiChat, type BitteOpenAPISpec } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
-import { type Wallet } from "@bitte-ai/react";
-import React from "react";
+import { type Wallet, useBitteWallet } from "@bitte-ai/react";
+import React, { useEffect, useState } from "react";
 import { UseSendTransactionReturnType, UseSwitchChainReturnType } from "wagmi";
 
 import { Header } from "./Header";
@@ -21,7 +21,6 @@ type AppConfig = {
 
 interface ChatContentProps {
   config: AppConfig;
-  wallet?: Wallet;
   address?: string;
   sendTransaction?: UseSendTransactionReturnType["sendTransaction"];
   switchChain?: UseSwitchChainReturnType["switchChain"];
@@ -30,12 +29,24 @@ interface ChatContentProps {
 
 export const ChatContent: React.FC<ChatContentProps> = ({
   config,
-  wallet,
   address,
   sendTransaction,
   switchChain,
   hash,
 }) => {
+  const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
+  const { selector } = useBitteWallet();
+
+  useEffect(() => {
+    const fetchWallet = async (): Promise<void> => {
+      if (selector) {
+        const walletInstance = await selector.wallet();
+        setWallet(walletInstance);
+      }
+    };
+    fetchWallet();
+  }, [selector]);
+
   return (
     <main>
       <Header />
