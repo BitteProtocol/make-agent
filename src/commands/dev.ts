@@ -65,7 +65,7 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   } catch (error) {
     console.error(
       "Failed to validate OpenAPI spec:",
-      error instanceof Error ? error.message : "Unknown error"
+      error instanceof Error ? error.message : "Unknown error",
     );
     isValid = false;
     accountId = undefined;
@@ -140,7 +140,7 @@ export const devCommand = new Command()
       try {
         console.log(
           "[Dev] Fetching and validating OpenAPI spec from:",
-          deployedUrl
+          deployedUrl,
         );
         const { spec } = await fetchAndValidateSpec(deployedUrl);
         console.log("[Dev] OpenAPI spec validation successful");

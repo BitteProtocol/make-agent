@@ -2,9 +2,9 @@ import { BitteAiChat, type BitteOpenAPISpec } from "@bitte-ai/chat";
 import "@bitte-ai/chat/style.css";
 import { type Wallet } from "@bitte-ai/react";
 import React from "react";
+import { UseSendTransactionReturnType, UseSwitchChainReturnType } from "wagmi";
 
 import { Header } from "./Header";
-import { UseSendTransactionReturnType, UseSwitchChainReturnType } from "wagmi";
 
 type AppConfig = {
   localAgent: {

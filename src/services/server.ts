@@ -6,14 +6,14 @@ import { type ApiConfig } from "../commands/dev";
 
 export async function startUIServer(
   apiConfig: ApiConfig,
-  agentSpec: unknown
+  agentSpec: unknown,
 ): Promise<ReturnType<typeof express.application.listen>> {
   const app = express();
 
   app.use(
     express.json({
       limit: "2mb",
-    })
+    }),
   );
 
   // Try multiple possible paths for the static files
@@ -26,7 +26,7 @@ export async function startUIServer(
       "node_modules",
       "make-agent",
       "dist",
-      "playground"
+      "playground",
     ),
     // When running from the node_modules/.bin directory
     path.resolve(process.cwd(), "..", "make-agent", "dist", "playground"),
@@ -64,7 +64,7 @@ export async function startUIServer(
           res.setHeader("Content-Type", "text/css");
         }
       },
-    })
+    }),
   );
 
   // Serve config endpoint
@@ -126,7 +126,7 @@ export async function startUIServer(
     try {
       const server = app.listen(apiConfig.serverPort, () => {
         console.log(
-          `[Server] UI server listening http://localhost:${apiConfig.serverPort}`
+          `[Server] UI server listening http://localhost:${apiConfig.serverPort}`,
         );
         console.log("[Server] Ready to handle requests");
         resolve(server);
