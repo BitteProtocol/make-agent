@@ -1,12 +1,11 @@
 "use client";
 
-import { BitteAiChat, type BitteOpenAPISpec } from "@bitte-ai/chat";
-import "@bitte-ai/chat/style.css";
-import { type Wallet, useBitteWallet } from "@bitte-ai/react";
+import { type BitteOpenAPISpec } from "@bitte-ai/chat";
+import { BitteWalletContextProvider } from "@bitte-ai/react";
 import { useEffect, useState } from "react";
 import { useAccount, useSendTransaction, useSwitchChain } from "wagmi";
 
-import { Header } from "./components/Header";
+import { ChatContent } from "./components/ChatContent";
 import "./shims";
 
 type AppConfig = {
@@ -19,16 +18,15 @@ type AppConfig = {
   environment: string;
   bitteApiKey: string;
   bitteApiUrl: string;
+  network: string;
 };
 
+// Main App component that fetches config and sets up the wallet provider
 const Main: React.FC = (): JSX.Element => {
-  const { selector } = useBitteWallet();
-  const [wallet, setWallet] = useState<Wallet>();
   const [config, setConfig] = useState<AppConfig>();
-
   const { address } = useAccount();
   const { data: hash, sendTransaction } = useSendTransaction();
-  const { switchChain } = useSwitchChain();
+  const { switchChainAsync } = useSwitchChain();
 
   useEffect(() => {
     const fetchConfig = async (): Promise<void> => {
@@ -43,51 +41,26 @@ const Main: React.FC = (): JSX.Element => {
     fetchConfig();
   }, []);
 
-  useEffect(() => {
-    const fetchWallet = async (): Promise<void> => {
-      const walletInstance = await selector.wallet();
-      setWallet(walletInstance);
-    };
-    if (selector) fetchWallet();
-  }, [selector]);
-
   if (!config) {
     return <div>Loading...</div>;
   }
 
+  const BitteWalletSetup = {
+    network: config.network,
+    callbackUrl: typeof window !== "undefined" ? window.location.origin : "",
+    contractAddress: "",
+  };
+
   return (
-    <main>
-      <Header />
-      <div id="ai-chat">
-        <BitteAiChat
-          options={{
-            agentImage: "/bitte.svg",
-            agentName: config.localAgent.spec["x-mb"]?.assistant?.name,
-            localAgent: config.localAgent,
-          }}
-          agentId={config.localAgent.pluginId}
-          wallet={{
-            near: { wallet },
-            evm: {
-              sendTransaction,
-              switchChain,
-              address,
-              hash,
-            },
-          }}
-          apiUrl={config.bitteApiUrl}
-          historyApiUrl="/api/history"
-          apiKey={config.bitteApiKey}
-          colors={{
-            generalBackground: "#18181A",
-            messageBackground: "#0A0A0A",
-            textColor: "#FAFAFA",
-            buttonColor: "#000000",
-            borderColor: "#334155",
-          }}
-        />
-      </div>
-    </main>
+    <BitteWalletContextProvider {...BitteWalletSetup}>
+      <ChatContent
+        config={config}
+        address={address}
+        sendTransaction={sendTransaction}
+        switchChain={switchChainAsync}
+        hash={hash}
+      />
+    </BitteWalletContextProvider>
   );
 };
 
