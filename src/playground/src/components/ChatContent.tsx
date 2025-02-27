@@ -36,15 +36,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
 }) => {
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
   const { selector, isConnected } = useBitteWallet();
-  const [evmWallet, setEvmWallet] = useState<
-    | {
-        address: string;
-        sendTransaction: UseSendTransactionReturnType["sendTransaction"];
-        switchChain: UseSwitchChainReturnType["switchChain"];
-        hash?: string;
-      }
-    | undefined
-  >(undefined);
 
   useEffect(() => {
     const fetchWallet = async (): Promise<void> => {
@@ -57,19 +48,6 @@ export const ChatContent: React.FC<ChatContentProps> = ({
     };
     fetchWallet();
   }, [selector, isConnected, config]);
-
-  useEffect(() => {
-    if (address && sendTransaction && switchChain) {
-      setEvmWallet({
-        address,
-        sendTransaction,
-        switchChain,
-        hash,
-      });
-    } else {
-      setEvmWallet(undefined);
-    }
-  }, [address, sendTransaction, switchChain, hash]);
 
   return (
     <main>
@@ -86,12 +64,20 @@ export const ChatContent: React.FC<ChatContentProps> = ({
               textColor: "#FAFAFA",
               buttonColor: "#000000",
               borderColor: "#334155",
-            },
+            }
           }}
           agentId={config.localAgent.pluginId}
           wallet={{
             near: { wallet },
-            evm: evmWallet,
+            evm:
+              address && sendTransaction && switchChain
+                ? {
+                    address,
+                    sendTransaction,
+                    switchChain,
+                    hash,
+                  }
+                : undefined,
           }}
           apiUrl={config.bitteApiUrl}
           historyApiUrl="/api/history"
