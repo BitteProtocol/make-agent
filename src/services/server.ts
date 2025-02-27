@@ -80,6 +80,7 @@ export async function startUIServer(
         },
         bitteApiKey: apiConfig.key,
         bitteApiUrl: `${apiConfig.url}/chat`,
+        network: apiConfig.network,
       };
       res.json(serverConfig);
     } catch (error) {

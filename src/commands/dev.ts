@@ -19,6 +19,7 @@ export interface ApiConfig {
   url: string;
   localAgentUrl?: string;
   serverPort: number;
+  network: string;
 }
 
 interface ValidationResult {
@@ -39,8 +40,9 @@ const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
   url:
     process.env.BITTE_API_URL ||
-    "https://ai-runtime-446257178793.europe-west1.run.app",
+    "https://wallet.bitte.ai/api/v1",
   serverPort: DEFAULT_PORT,
+  network: "mainnet",
 };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
@@ -120,10 +122,14 @@ export const devCommand = new Command()
   .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
   .action(async (options) => {
     try {
+      // Set the network environment variable
+      process.env.NEXT_PUBLIC_NETWORK = options.testnet ? "testnet" : "mainnet";
+
       const { port, serverPort } = await setupPorts(options);
 
       API_CONFIG.serverPort = serverPort;
       API_CONFIG.localAgentUrl = `http://localhost:${port}`;
+      API_CONFIG.network = options.testnet ? "testnet" : "mainnet";
 
       const deployedUrl = getDeployedUrl(port);
       if (!deployedUrl) {
