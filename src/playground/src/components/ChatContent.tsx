@@ -3,6 +3,7 @@ import "@bitte-ai/chat/style.css";
 import { type Wallet, useBitteWallet } from "@bitte-ai/react";
 import React, { useEffect, useState } from "react";
 import { UseSendTransactionReturnType, UseSwitchChainReturnType } from "wagmi";
+
 import { Header } from "./Header";
 
 type AppConfig = {
