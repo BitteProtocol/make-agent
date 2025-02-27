@@ -35,17 +35,41 @@ export const ChatContent: React.FC<ChatContentProps> = ({
   hash,
 }) => {
   const [wallet, setWallet] = useState<Wallet | undefined>(undefined);
-  const { selector } = useBitteWallet();
+  const { selector, isConnected } = useBitteWallet();
+  const [evmWallet, setEvmWallet] = useState<
+    | {
+        address: string;
+        sendTransaction: UseSendTransactionReturnType["sendTransaction"];
+        switchChain: UseSwitchChainReturnType["switchChain"];
+        hash?: string;
+      }
+    | undefined
+  >(undefined);
 
   useEffect(() => {
     const fetchWallet = async (): Promise<void> => {
-      if (selector) {
+      if (selector && isConnected) {
         const walletInstance = await selector.wallet();
         setWallet(walletInstance);
+      } else {
+        setWallet(undefined);
       }
     };
     fetchWallet();
-  }, [selector]);
+  }, [selector, isConnected, config]);
+
+  useEffect(() => {
+    if (address && sendTransaction && switchChain) {
+      setEvmWallet({
+        address,
+        sendTransaction,
+        switchChain,
+        hash,
+      });
+    } else {
+      setEvmWallet(undefined);
+    }
+  }, [address, sendTransaction, switchChain, hash]);
 
   return (
     <main>
@@ -56,30 +80,22 @@ export const ChatContent: React.FC<ChatContentProps> = ({
             agentImage: "/bitte.svg",
             agentName: config.localAgent.spec["x-mb"]?.assistant?.name,
             localAgent: config.localAgent,
+            colors: {
+              generalBackground: "#18181A",
+              messageBackground: "#0A0A0A",
+              textColor: "#FAFAFA",
+              buttonColor: "#000000",
+              borderColor: "#334155",
+            },
           }}
           agentId={config.localAgent.pluginId}
           wallet={{
             near: { wallet },
-            evm:
-              address && sendTransaction && switchChain
-                ? {
-                    address,
-                    sendTransaction,
-                    switchChain,
-                    hash,
-                  }
-                : undefined,
+            evm: evmWallet,
           }}
           apiUrl={config.bitteApiUrl}
           historyApiUrl="/api/history"
           apiKey={config.bitteApiKey}
-          colors={{
-            generalBackground: "#18181A",
-            messageBackground: "#0A0A0A",
-            textColor: "#FAFAFA",
-            buttonColor: "#000000",
-            borderColor: "#334155",
-          }}
         />
       </div>
     </main>
