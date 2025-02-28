@@ -44,7 +44,15 @@ export const verifyCommand = new Command()
     const { pluginId, xMbSpec } = await setup(options.url);
 
     try {
-      const agentData = formVerifyData(options, xMbSpec);
+      if (!xMbSpec["account-id"]) {
+        throw new Error("Account ID is required");
+      }
+
+      // Type assertion since we checked that account-id exists
+      const agentData = formVerifyData(
+        options,
+        xMbSpec as XMbSpec & { "account-id": string },
+      );
 
       await new PluginService().verify({
         pluginId,
@@ -55,7 +63,10 @@ export const verifyCommand = new Command()
     }
   });
 
-function formVerifyData(options: unknown, spec: XMbSpec): VerifyData {
+function formVerifyData(
+  options: unknown,
+  spec: XMbSpec & { "account-id": string },
+): VerifyData {
   return {
     accountId: spec["account-id"],
     email:
