@@ -48,7 +48,7 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
   console.log("[Dev] Plugin ID:", pluginId);
-  console.log("[Dev] Spec URL:", specUrl);
+  console.log("[Dev] Spec URL:", specUrl.href);
 
   let isValid, accountId;
   try {
