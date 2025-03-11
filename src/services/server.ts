@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 import { type ApiConfig } from "../commands/dev";
+import { BITTE_HISTORY_API_URL } from "../config/constants";
 
 export async function startUIServer(
   apiConfig: ApiConfig,
@@ -93,7 +94,7 @@ export async function startUIServer(
       if (!id) {
         throw new Error("No history id on request.");
       }
-      const url = `${apiConfig.url}/history?id=${id}`;
+      const url = `${BITTE_HISTORY_API_URL}?id=${id}`;
 
       const response = await fetch(url, {
         headers: {
