@@ -23,7 +23,7 @@
     "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
     "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/ --fix",
     "test": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage"
   },
   "keywords": [
     "ai",
@@ -39,7 +39,7 @@
     "ajv": "^8.17.1",
     "ajv-draft-04": "^1.0.0",
     "borsh": "^2.0.0",
-    "commander": "^12.1.0",
+    "commander": "^14",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "inquirer": "^12.9.4",
