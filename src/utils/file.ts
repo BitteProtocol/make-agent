@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
 import {
+  appendFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
-  appendFileSync,
 } from "node:fs";
 
 export function readFile(filePath: string): string {
@@ -45,7 +45,7 @@ export async function appendToEnv(key: string, value: string): Promise<void> {
 export async function removeFromEnv(key: string): Promise<void> {
   for (const envPath of ENV_FILES) {
     if (existsSync(envPath)) {
-      let envContent = readFileSync(envPath, "utf-8");
+      const envContent = readFileSync(envPath, "utf-8");
       const regex = new RegExp(`^${key}=.*\n?`, "gm");
 
       let updatedContent = envContent.replace(regex, "");

@@ -2,7 +2,7 @@ import express from "express";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { type ApiConfig } from "../commands/dev";
+import type { ApiConfig } from "../commands/dev";
 import { BITTE_HISTORY_API_URL } from "../config/constants";
 
 export async function startUIServer(
@@ -48,8 +48,10 @@ export async function startUIServer(
         staticPath = testPath;
         break;
       }
-    } catch {
-      continue;
+    } catch (error) {
+      console.error(
+        `[Server] Could not find static files directory with index.html in ${testPath}: ${error}`,
+      );
     }
   }
 

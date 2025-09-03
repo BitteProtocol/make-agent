@@ -37,7 +37,7 @@ export const verifyCommand = new Command()
         return null;
       }
       const strArray = str.split(",");
-      return strArray.map((num) => parseInt(num));
+      return strArray.map((num) => Number.parseInt(num));
     },
   )
   .action(async (options) => {

@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
+  type KeySignMessageParams,
   Payload,
   verifyMessage,
-  type KeySignMessageParams,
 } from "../../src/utils/verify-message";
 describe("verifyMessage", () => {
   const publicKey = "ed25519:6djYMWvkhKMEDCSTQ1LWB3tqLXRD8EX9YPifaTaeh1cb";

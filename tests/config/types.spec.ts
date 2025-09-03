@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { isXMbSpec, validateXMbSpec } from "../../src/config/types";
 
@@ -7,12 +7,12 @@ describe("src/config", () => {
   it("validateXMbSpec complete flow", () => {
     expect(() => validateXMbSpec(null)).toThrow("x-mb spec must be an object");
     // Start with empty spec
-    let spec: ArbitraryObject = {};
+    const spec: ArbitraryObject = {};
     expect(() => validateXMbSpec(spec)).toThrow(
       "x-mb spec must contain assistant object",
     );
 
-    let assistant: ArbitraryObject = {};
+    const assistant: ArbitraryObject = {};
     spec.assistant = assistant;
     expect(() => validateXMbSpec(spec)).toThrow(
       "assistant must contain name as string",

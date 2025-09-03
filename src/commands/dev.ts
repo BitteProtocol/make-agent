@@ -97,7 +97,7 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
 async function setupPorts(options: {
   port?: string;
 }): Promise<{ port: number; serverPort: number }> {
-  let port = parseInt(options.port || "") || 0;
+  let port = Number.parseInt(options.port || "") || 0;
 
   if (port === 0) {
     const detectedPort = await detectPort();

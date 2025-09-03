@@ -22,7 +22,6 @@ module.exports = Object.assign({}, js.configs.recommended, {
   ignores: ["node_modules/*"],
   rules: Object.assign({}, tsPlugin.configs.rules, {
     "linebreak-style": ["error", "unix"],
-    quotes: ["error", "double"],
     semi: ["error", "always"],
     "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/explicit-function-return-type": [

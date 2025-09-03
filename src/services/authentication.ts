@@ -1,6 +1,10 @@
 import dotenv from "dotenv";
 import { randomBytes } from "node:crypto";
-import { createServer, IncomingMessage, ServerResponse } from "node:http";
+import {
+  type IncomingMessage,
+  type ServerResponse,
+  createServer,
+} from "node:http";
 import open from "open";
 
 import type { BitteUrls } from "../config/constants";
@@ -11,8 +15,8 @@ import {
 } from "../config/constants";
 import { appendToEnv } from "../utils/file";
 import {
-  verifyMessage,
   type KeySignMessageParams,
+  verifyMessage,
 } from "../utils/verify-message";
 
 dotenv.config();

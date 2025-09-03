@@ -9,6 +9,7 @@ import { deployCommand } from "./commands/deploy";
 import { devCommand } from "./commands/dev";
 import { registerCommand } from "./commands/register";
 import { updateCommand } from "./commands/update";
+import { validateCommand } from "./commands/validate";
 import { verifyCommand } from "./commands/verify";
 
 dotenv.config();
@@ -25,6 +26,7 @@ program
   .addCommand(deleteCommand)
   .addCommand(verifyCommand)
   .addCommand(registerCommand)
-  .addCommand(updateCommand);
+  .addCommand(updateCommand)
+  .addCommand(validateCommand);
 
 program.parse();

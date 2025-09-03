@@ -1,17 +1,17 @@
 import { AuthenticationService } from "./authentication";
-import { getBitteUrls, type BitteUrls } from "../config/constants";
+import { type BitteUrls, getBitteUrls } from "../config/constants";
 
 export class PluginService {
   readonly bitteUrls: BitteUrls;
   readonly auth: AuthenticationService;
 
-  constructor(testnet: boolean = false) {
+  constructor(testnet = false) {
     this.bitteUrls = getBitteUrls(testnet);
     this.auth = new AuthenticationService(this.bitteUrls);
   }
 
   async register({ pluginId }: { pluginId: string }): Promise<string | null> {
-    let apiKey = await this.auth.getAuthentication();
+    const apiKey = await this.auth.getAuthentication();
     try {
       const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
         method: "POST",
@@ -75,10 +75,10 @@ export class PluginService {
       headers: { authorization: apiKey },
     });
 
-    if (response.ok) {
-      console.log("Plugin deleted successfully");
-    } else {
-      console.error(`Error deleting plugin: ${await response.text()}`);
+    if (!response.ok) {
+      const error = (await response.text()) || response.statusText;
+      console.error(`Error deleting plugin: ${error}`);
+      throw new Error(error);
     }
   }
 

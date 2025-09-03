@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import { AI_PLUGIN_PATH } from "../../src/config/constants";
 import { getHostname, getSpecUrl } from "../../src/utils/url";

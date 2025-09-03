@@ -1,9 +1,9 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 
 import {
+  type XMbSpec,
   getXMbSpecValidationError,
   isXMbSpec,
-  type XMbSpec,
 } from "../config/types";
 
 const MAX_RETRIES = 3;

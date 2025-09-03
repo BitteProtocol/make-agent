@@ -1,8 +1,10 @@
 import os from "node:os";
 import { join } from "node:path";
 
-const getWalletUrl = (isTestnet: boolean = false): string =>
+const getWalletUrl = (isTestnet = false): string =>
   isTestnet ? "https://testnet.wallet.bitte.ai" : "https://wallet.bitte.ai";
+
+const REGISTRY_URL = "https://registry.bitte.ai";
 
 export interface BitteUrls {
   BITTE_WALLET_URL: string;
@@ -12,11 +14,11 @@ export interface BitteUrls {
   SIGN_MESSAGE_SUCCESS_URL: string;
 }
 
-export const getBitteUrls = (isTestnet: boolean = false): BitteUrls => {
+export const getBitteUrls = (isTestnet = false): BitteUrls => {
   const BITTE_WALLET_URL = getWalletUrl(isTestnet);
   return {
     BITTE_WALLET_URL,
-    BASE_URL: `${BITTE_WALLET_URL}/api/ai-plugins`,
+    BASE_URL: `${REGISTRY_URL}/api/plugins`,
     PLAYGROUND_URL: `${BITTE_WALLET_URL}/smart-actions/prompt/what%20can%20you%20help%20me%20with%3F?mode=debug&agentId=`,
     SIGN_MESSAGE_URL: `${BITTE_WALLET_URL}/sign-message`,
     SIGN_MESSAGE_SUCCESS_URL: `${BITTE_WALLET_URL}/success`,

@@ -1,4 +1,4 @@
-import { serialize, type Schema } from "borsh";
+import { type Schema, serialize } from "borsh";
 import { sha256 } from "js-sha256";
 import { utils } from "near-api-js";
 

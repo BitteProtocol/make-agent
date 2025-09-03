@@ -1,18 +1,18 @@
 import dotenv from "dotenv";
 import {
+  appendFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
   writeFileSync,
-  appendFileSync,
 } from "node:fs";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
-  readFile,
-  writeFile,
   appendToEnv,
+  readFile,
   removeFromEnv,
+  writeFile,
 } from "../../src/utils/file";
 
 // Mock all the fs functions and dotenv
