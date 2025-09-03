@@ -1,12 +1,12 @@
-import { Command } from "commander";
+import { Command } from 'commander';
 
-import { setup } from "./setup.ts";
-import { PluginService } from "../services/plugin";
+import { PluginService } from '../services/plugin';
+import { setup } from './setup.ts';
 
 export const deleteCommand = new Command()
-  .name("delete")
-  .description("Delete your AI agent plugin")
-  .option("-u, --url <url>", "Specify the deployment URL")
+  .name('delete')
+  .description('Delete your AI agent plugin')
+  .option('-u, --url <url>', 'Specify the deployment URL')
   .action(async (options) => {
     const pluginService = new PluginService();
     const [{ pluginId }, authentication] = await Promise.all([
@@ -15,7 +15,7 @@ export const deleteCommand = new Command()
     ]);
 
     if (!authentication) {
-      console.error("Authentication failed. Unable to delete the plugin.");
+      console.error('Authentication failed. Unable to delete the plugin.');
       return;
     }
 
@@ -23,6 +23,6 @@ export const deleteCommand = new Command()
       await pluginService.delete(pluginId);
       console.log(`Plugin ${pluginId} deleted successfully.`);
     } catch (error) {
-      console.error("Failed to delete the plugin:", error);
+      console.error('Failed to delete the plugin:', error);
     }
   });

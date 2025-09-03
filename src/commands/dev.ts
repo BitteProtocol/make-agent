@@ -1,15 +1,15 @@
-import { Command } from "commander";
-import dotenv from "dotenv";
-import isPortReachable from "is-port-reachable";
-import open from "open";
+import { Command } from 'commander';
+import dotenv from 'dotenv';
+import isPortReachable from 'is-port-reachable';
+import open from 'open';
 
-import { DEFAULT_PORT } from "../config/constants";
-import { startUIServer } from "../services/server";
-import { getDeployedUrl } from "../utils/deployed-url";
-import { validateEnv } from "../utils/env";
-import { validateAndParseOpenApiSpec } from "../utils/openapi";
-import { detectPort } from "../utils/port-detector";
-import { getHostname, getSpecUrl } from "../utils/url";
+import { DEFAULT_PORT } from '../config/constants';
+import { startUIServer } from '../services/server';
+import { getDeployedUrl } from '../utils/deployed-url';
+import { validateEnv } from '../utils/env';
+import { validateAndParseOpenApiSpec } from '../utils/openapi';
+import { detectPort } from '../utils/port-detector';
+import { getHostname, getSpecUrl } from '../utils/url';
 
 dotenv.config();
 validateEnv();
@@ -29,7 +29,7 @@ interface ValidationResult {
 
 async function findAvailablePort(startPort: number): Promise<number> {
   let port = startPort;
-  while (await isPortReachable(port, { host: "localhost" })) {
+  while (await isPortReachable(port, { host: 'localhost' })) {
     port++;
   }
   return port;
@@ -39,57 +39,57 @@ const API_CONFIG: ApiConfig = {
   key: process.env.BITTE_API_KEY!,
   url:
     process.env.BITTE_API_URL ||
-    "https://ai-runtime-446257178793.europe-west1.run.app",
+    'https://ai-runtime-446257178793.europe-west1.run.app',
   serverPort: DEFAULT_PORT,
 };
 
 async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
-  console.log("[Dev] Getting plugin ID and spec URL");
+  console.log('[Dev] Getting plugin ID and spec URL');
   const pluginId = getHostname(url);
   const specUrl = getSpecUrl(url);
-  console.log("[Dev] Plugin ID:", pluginId);
-  console.log("[Dev] Spec URL:", specUrl.href);
+  console.log('[Dev] Plugin ID:', pluginId);
+  console.log('[Dev] Spec URL:', specUrl.href);
 
   let isValid, accountId;
   try {
-    console.log("[Dev] Validating OpenAPI spec...");
+    console.log('[Dev] Validating OpenAPI spec...');
     const validation = await validateAndParseOpenApiSpec(specUrl);
     if (!validation) {
-      throw new Error("Invalid OpenAPI spec");
+      throw new Error('Invalid OpenAPI spec');
     }
     isValid = true;
-    accountId = validation["account-id"];
-    console.log("[Dev] Validation result:", { isValid, accountId });
+    accountId = validation['account-id'];
+    console.log('[Dev] Validation result:', { isValid, accountId });
   } catch (error) {
     console.error(
-      "Failed to validate OpenAPI spec:",
-      error instanceof Error ? error.message : "Unknown error",
+      'Failed to validate OpenAPI spec:',
+      error instanceof Error ? error.message : 'Unknown error',
     );
     isValid = false;
     accountId = undefined;
   }
 
-  console.log("[Dev] Fetching spec content...");
+  console.log('[Dev] Fetching spec content...');
   const specContent = await fetch(specUrl).then((res) => res.text());
   let spec = JSON.parse(specContent);
-  console.log("[Dev] Successfully parsed spec content");
+  console.log('[Dev] Successfully parsed spec content');
 
-  console.log("[Dev] Spec validation status:", isValid);
+  console.log('[Dev] Spec validation status:', isValid);
 
-  console.log("[Dev] Updating spec with server URL and account ID");
+  console.log('[Dev] Updating spec with server URL and account ID');
   spec = {
     ...spec,
     servers: [{ url }],
-    "x-mb": {
-      ...spec["x-mb"],
-      "account-id": accountId || "anon",
+    'x-mb': {
+      ...spec['x-mb'],
+      'account-id': accountId || 'anon',
     },
   };
-  console.log("[Dev] Updated spec servers URL:", spec.servers[0].url);
+  console.log('[Dev] Updated spec servers URL:', spec.servers[0].url);
 
   return {
     pluginId,
-    accountId: accountId || "anon",
+    accountId: accountId || 'anon',
     spec,
   };
 }
@@ -97,7 +97,7 @@ async function fetchAndValidateSpec(url: string): Promise<ValidationResult> {
 async function setupPorts(options: {
   port?: string;
 }): Promise<{ port: number; serverPort: number }> {
-  let port = parseInt(options.port || "") || 0;
+  let port = Number.parseInt(options.port || '') || 0;
 
   if (port === 0) {
     const detectedPort = await detectPort();
@@ -114,10 +114,10 @@ async function setupPorts(options: {
 }
 
 export const devCommand = new Command()
-  .name("dev")
-  .description("Start a local playground for your AI agent")
-  .option("-p, --port <port>", "Port to run playground on")
-  .option("-t, --testnet", "Use Testnet instead of Mainnet", false)
+  .name('dev')
+  .description('Start a local playground for your AI agent')
+  .option('-p, --port <port>', 'Port to run playground on')
+  .option('-t, --testnet', 'Use Testnet instead of Mainnet', false)
   .action(async (options) => {
     try {
       const { port, serverPort } = await setupPorts(options);
@@ -127,20 +127,20 @@ export const devCommand = new Command()
 
       const deployedUrl = getDeployedUrl(port);
       if (!deployedUrl) {
-        throw new Error("Deployed URL could not be determined.");
+        throw new Error('Deployed URL could not be determined.');
       }
 
       let agentSpec;
       try {
         console.log(
-          "[Dev] Fetching and validating OpenAPI spec from:",
+          '[Dev] Fetching and validating OpenAPI spec from:',
           deployedUrl,
         );
         const { spec } = await fetchAndValidateSpec(deployedUrl);
-        console.log("[Dev] OpenAPI spec validation successful");
+        console.log('[Dev] OpenAPI spec validation successful');
         agentSpec = spec;
       } catch (error) {
-        console.error("[Dev] Error validating OpenAPI spec:", error);
+        console.error('[Dev] Error validating OpenAPI spec:', error);
         throw error;
       }
 
@@ -148,7 +148,7 @@ export const devCommand = new Command()
 
       await open(`http://localhost:${serverPort}`);
 
-      process.on("SIGINT", async () => {
+      process.on('SIGINT', async () => {
         server.close();
         process.exit(0);
       });

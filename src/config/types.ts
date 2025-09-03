@@ -10,7 +10,7 @@ export type XMbSpec = {
     repo?: string;
   };
   email?: string;
-  "account-id"?: string;
+  'account-id'?: string;
 };
 
 // TODO(bh2smith): Should this be an enum? Or union of all supported tools?
@@ -30,23 +30,23 @@ export type VerifyData = {
 type ValidationResult = { valid: true } | { valid: false; error: string };
 
 function validateXMbSpecHelper(xMbSpec: unknown): ValidationResult {
-  if (!xMbSpec || typeof xMbSpec !== "object") {
-    return { valid: false, error: "x-mb spec must be an object" };
+  if (!xMbSpec || typeof xMbSpec !== 'object') {
+    return { valid: false, error: 'x-mb spec must be an object' };
   }
 
   const spec = xMbSpec as Record<string, unknown>;
 
   // Validate required fields
-  if (!spec.assistant || typeof spec.assistant !== "object") {
-    return { valid: false, error: "x-mb spec must contain assistant object" };
+  if (!spec.assistant || typeof spec.assistant !== 'object') {
+    return { valid: false, error: 'x-mb spec must contain assistant object' };
   }
 
   const assistant = spec.assistant as Record<string, unknown>;
 
   // Validate required assistant fields
-  const requiredStringFields = ["name", "description", "instructions"] as const;
+  const requiredStringFields = ['name', 'description', 'instructions'] as const;
   for (const field of requiredStringFields) {
-    if (!assistant[field] || typeof assistant[field] !== "string") {
+    if (!assistant[field] || typeof assistant[field] !== 'string') {
       return {
         valid: false,
         error: `assistant must contain ${field} as string`,
@@ -57,14 +57,14 @@ function validateXMbSpecHelper(xMbSpec: unknown): ValidationResult {
   // Validate optional fields
   if (assistant.tools !== undefined) {
     if (!Array.isArray(assistant.tools)) {
-      return { valid: false, error: "tools must be an array" };
+      return { valid: false, error: 'tools must be an array' };
     }
     for (const tool of assistant.tools) {
-      if (!tool || typeof tool !== "object") {
-        return { valid: false, error: "each tool must be an object" };
+      if (!tool || typeof tool !== 'object') {
+        return { valid: false, error: 'each tool must be an object' };
       }
-      if (!("type" in tool) || typeof tool.type !== "string") {
-        return { valid: false, error: "each tool must have a type string" };
+      if (!('type' in tool) || typeof tool.type !== 'string') {
+        return { valid: false, error: 'each tool must have a type string' };
       }
     }
   }
@@ -72,34 +72,34 @@ function validateXMbSpecHelper(xMbSpec: unknown): ValidationResult {
   if (assistant.chainIds !== undefined) {
     if (
       !Array.isArray(assistant.chainIds) ||
-      !assistant.chainIds.every((id) => typeof id === "number")
+      !assistant.chainIds.every((id) => typeof id === 'number')
     ) {
-      return { valid: false, error: "chainIds must be an array of numbers" };
+      return { valid: false, error: 'chainIds must be an array of numbers' };
     }
   }
 
   if (assistant.categories !== undefined) {
     if (
       !Array.isArray(assistant.categories) ||
-      !assistant.categories.every((cat) => typeof cat === "string")
+      !assistant.categories.every((cat) => typeof cat === 'string')
     ) {
-      return { valid: false, error: "categories must be an array of strings" };
+      return { valid: false, error: 'categories must be an array of strings' };
     }
   }
 
   // Validate optional string fields
-  const optionalStringFields = ["version", "repo"] as const;
+  const optionalStringFields = ['version', 'repo'] as const;
   for (const field of optionalStringFields) {
     if (
       assistant[field] !== undefined &&
-      typeof assistant[field] !== "string"
+      typeof assistant[field] !== 'string'
     ) {
       return { valid: false, error: `${field} must be a string` };
     }
   }
 
-  if (spec.email !== undefined && typeof spec.email !== "string") {
-    return { valid: false, error: "email must be a string" };
+  if (spec.email !== undefined && typeof spec.email !== 'string') {
+    return { valid: false, error: 'email must be a string' };
   }
 
   return { valid: true };

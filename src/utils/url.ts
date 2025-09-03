@@ -1,4 +1,4 @@
-import { AI_PLUGIN_PATH } from "../config/constants";
+import { AI_PLUGIN_PATH } from '../config/constants';
 
 export function getHostname(url: string): string {
   return new URL(url).hostname;

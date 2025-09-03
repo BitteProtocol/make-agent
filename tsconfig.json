@@ -32,6 +32,7 @@
 
     // Loose flags (disabled)
     "noPropertyAccessFromIndexSignature": false,
-    "exactOptionalPropertyTypes": false,
-  }
+    "exactOptionalPropertyTypes": false
+  },
+  "exclude": ["node_modules", "dist"]
 }

@@ -1,6 +1,6 @@
-import { serialize, type Schema } from "borsh";
-import { sha256 } from "js-sha256";
-import { utils } from "near-api-js";
+import { type Schema, serialize } from 'borsh';
+import { sha256 } from 'js-sha256';
+import { utils } from 'near-api-js';
 
 export interface KeySignMessageParams {
   message: string;
@@ -45,17 +45,17 @@ export const verifyMessage = ({
 
   return utils.PublicKey.from(publicKey).verify(
     payload.hash(),
-    Buffer.from(signature, "base64"),
+    Buffer.from(signature, 'base64'),
   );
 };
 
 const getNonceBuffer = (nonce: string): Buffer => {
   const nonceLength = 32;
 
-  const buffer = Buffer.from(nonce, "base64");
+  const buffer = Buffer.from(nonce, 'base64');
 
   if (buffer.length > nonceLength) {
-    throw Error("Expected nonce to be a 32 bytes buffer");
+    throw Error('Expected nonce to be a 32 bytes buffer');
   }
   const padding = Buffer.alloc(nonceLength - buffer.length);
   return Buffer.concat([buffer, padding], nonceLength);
@@ -68,10 +68,10 @@ export class Payload {
   callbackUrl?: string;
   schema: Schema = {
     struct: {
-      message: "string",
-      nonce: { array: { type: "u8", len: 32 } },
-      recipient: "string",
-      callbackUrl: { option: "string" },
+      message: 'string',
+      nonce: { array: { type: 'u8', len: 32 } },
+      recipient: 'string',
+      callbackUrl: { option: 'string' },
     },
   };
 

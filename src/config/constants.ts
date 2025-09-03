@@ -1,8 +1,10 @@
-import os from "node:os";
-import { join } from "node:path";
+import os from 'node:os';
+import { join } from 'node:path';
 
-const getWalletUrl = (isTestnet: boolean = false): string =>
-  isTestnet ? "https://testnet.wallet.bitte.ai" : "https://wallet.bitte.ai";
+const getWalletUrl = (isTestnet = false): string =>
+  isTestnet ? 'https://testnet.wallet.bitte.ai' : 'https://wallet.bitte.ai';
+
+const REGISTRY_URL = 'https://registry.bitte.ai';
 
 export interface BitteUrls {
   BITTE_WALLET_URL: string;
@@ -12,24 +14,24 @@ export interface BitteUrls {
   SIGN_MESSAGE_SUCCESS_URL: string;
 }
 
-export const getBitteUrls = (isTestnet: boolean = false): BitteUrls => {
+export const getBitteUrls = (isTestnet = false): BitteUrls => {
   const BITTE_WALLET_URL = getWalletUrl(isTestnet);
   return {
     BITTE_WALLET_URL,
-    BASE_URL: `${BITTE_WALLET_URL}/api/ai-plugins`,
+    BASE_URL: `${REGISTRY_URL}/api/plugins`,
     PLAYGROUND_URL: `${BITTE_WALLET_URL}/smart-actions/prompt/what%20can%20you%20help%20me%20with%3F?mode=debug&agentId=`,
     SIGN_MESSAGE_URL: `${BITTE_WALLET_URL}/sign-message`,
     SIGN_MESSAGE_SUCCESS_URL: `${BITTE_WALLET_URL}/success`,
   };
 };
 
-export const CONFIG_DIR = join(os.homedir(), ".ai-agent-cli");
-export const CONFIG_FILE = join(CONFIG_DIR, "config.json");
-export const AI_PLUGIN_PATH = ".well-known/ai-plugin.json";
+export const CONFIG_DIR = join(os.homedir(), '.ai-agent-cli');
+export const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
+export const AI_PLUGIN_PATH = '.well-known/ai-plugin.json';
 export const SIGN_MESSAGE_PORT = 6969;
-export const SIGN_MESSAGE = "Register Bitte Agent!";
-export const BITTE_CONFIG_ENV_KEY = "BITTE_CONFIG";
-export const BITTE_KEY_ENV_KEY = "BITTE_KEY";
-export const BITTE_HISTORY_API_URL = "https://api.bitte.ai/v1/history";
+export const SIGN_MESSAGE = 'Register Bitte Agent!';
+export const BITTE_CONFIG_ENV_KEY = 'BITTE_CONFIG';
+export const BITTE_KEY_ENV_KEY = 'BITTE_KEY';
+export const BITTE_HISTORY_API_URL = 'https://api.bitte.ai/v1/history';
 
 export const DEFAULT_PORT = 3000;
