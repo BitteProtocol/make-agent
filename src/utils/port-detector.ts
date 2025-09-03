@@ -87,7 +87,7 @@ async function detectPortLinux(attempt: number): Promise<number | null> {
   try {
     // Use ss to find listening ports for node/next-server processes
     const { stdout } = await execAsync(
-      "ss -tulpn | grep -E \"(node|next-server)\"",
+      'ss -tulpn | grep -E "(node|next-server)"',
     );
 
     const match = stdout.match(/:(\d+)/);

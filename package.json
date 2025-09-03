@@ -21,7 +21,7 @@
     "build": "tsup ./src/index.ts --format cjs,esm --dts --clean",
     "typecheck": "tsc --noEmit",
     "lint": "prettier --check '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/",
-    "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && pnpm run lint --fix",
+    "fmt": "prettier --write '{src,tests}/**/*.{js,ts}' && eslint . --ignore-pattern dist/ --fix",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
