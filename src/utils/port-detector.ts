@@ -1,5 +1,5 @@
-import { exec } from 'node:child_process';
-import { promisify } from 'node:util';
+import { exec } from "node:child_process";
+import { promisify } from "node:util";
 
 const execAsync = promisify(exec);
 
@@ -20,11 +20,11 @@ export async function detectPort(): Promise<number | null> {
 }
 
 async function tryDetectPort(attempt: number): Promise<number | null> {
-  if (process.platform === 'darwin') {
+  if (process.platform === "darwin") {
     return detectPortMacOS(attempt);
-  } else if (process.platform === 'linux') {
+  } else if (process.platform === "linux") {
     return detectPortLinux(attempt);
-  } else if (process.platform === 'win32') {
+  } else if (process.platform === "win32") {
     return detectPortWindows(attempt);
   }
   return null;
@@ -36,7 +36,7 @@ async function detectPortMacOS(attempt: number): Promise<number | null> {
     const { stdout: pidOutput } = await execAsync(
       `lsof -n | grep '${process.cwd()}' | grep node | awk '{print $2}' | uniq`,
     );
-    const pids = pidOutput.trim().split('\n');
+    const pids = pidOutput.trim().split("\n");
 
     if (pids.length === 0) {
       console.log(
@@ -47,9 +47,9 @@ async function detectPortMacOS(attempt: number): Promise<number | null> {
 
     // Get ports for all node processes
     const { stdout: portOutput } = await execAsync(
-      'lsof -n -i -P | grep LISTEN | grep node',
+      "lsof -n -i -P | grep LISTEN | grep node",
     );
-    const portLines = portOutput.trim().split('\n');
+    const portLines = portOutput.trim().split("\n");
 
     // Filter port lines by pid and then extract ports
     const ports = portLines
@@ -69,7 +69,7 @@ async function detectPortMacOS(attempt: number): Promise<number | null> {
 
     if (ports.length > 1) {
       console.log(
-        `Multiple ports found: ${ports.join(', ')}. Using the first one.`,
+        `Multiple ports found: ${ports.join(", ")}. Using the first one.`,
       );
     }
 
@@ -87,7 +87,7 @@ async function detectPortLinux(attempt: number): Promise<number | null> {
   try {
     // Use ss to find listening ports for node/next-server processes
     const { stdout } = await execAsync(
-      'ss -tulpn | grep -E "(node|next-server)"',
+      "ss -tulpn | grep -E \"(node|next-server)\"",
     );
 
     const match = stdout.match(/:(\d+)/);
@@ -112,7 +112,7 @@ async function detectPortWindows(attempt: number): Promise<number | null> {
   try {
     // Use netstat to find listening ports for node.exe
     const { stdout } = await execAsync(
-      'netstat -ano | findstr :LISTENING | findstr node.exe',
+      "netstat -ano | findstr :LISTENING | findstr node.exe",
     );
 
     const match = stdout.match(/:(\d+)/);

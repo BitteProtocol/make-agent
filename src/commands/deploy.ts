@@ -1,14 +1,14 @@
-import { Command } from 'commander';
+import { Command } from "commander";
 
-import { PluginService } from '../services/plugin';
-import { setup } from './setup.ts';
+import { setup } from "./setup.ts";
+import { PluginService } from "../services/plugin";
 
 export const deployCommand = new Command()
-  .name('deploy')
+  .name("deploy")
   .description(
-    'Deploy your AI agent, making it discoverable and registering it as a plugin',
+    "Deploy your AI agent, making it discoverable and registering it as a plugin",
   )
-  .option('-u, --url <url>', 'Specify the deployment URL')
+  .option("-u, --url <url>", "Specify the deployment URL")
   .action(async (options) => {
     const { pluginId } = await setup(options.url);
 
@@ -16,7 +16,7 @@ export const deployCommand = new Command()
     try {
       const updateRes = await pluginService.update(pluginId);
       if (!updateRes) {
-        console.log('Attempting to register plugin...');
+        console.log("Attempting to register plugin...");
         await pluginService.register({ pluginId });
       }
     } catch (error) {

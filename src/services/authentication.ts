@@ -1,26 +1,26 @@
-import { randomBytes } from 'node:crypto';
+import dotenv from "dotenv";
+import { randomBytes } from "node:crypto";
 import {
   type IncomingMessage,
   type ServerResponse,
   createServer,
-} from 'node:http';
-import dotenv from 'dotenv';
-import open from 'open';
+} from "node:http";
+import open from "open";
 
-import type { BitteUrls } from '../config/constants';
+import type { BitteUrls } from "../config/constants";
 import {
   BITTE_KEY_ENV_KEY,
   SIGN_MESSAGE,
   SIGN_MESSAGE_PORT,
-} from '../config/constants';
-import { appendToEnv } from '../utils/file';
+} from "../config/constants";
+import { appendToEnv } from "../utils/file";
 import {
   type KeySignMessageParams,
   verifyMessage,
-} from '../utils/verify-message';
+} from "../utils/verify-message";
 
 dotenv.config();
-dotenv.config({ path: '.env.local', override: true });
+dotenv.config({ path: ".env.local", override: true });
 
 export class AuthenticationService {
   private readonly bitteUrls: BitteUrls;
@@ -31,12 +31,12 @@ export class AuthenticationService {
     this.apiKey = (() => {
       if (process?.env?.BITTE_KEY) {
         console.error(
-          'BITTE_KEY is now deprecated. Please use BITTE_API_KEY instead. You can get an api key here: https://key.bitte.ai',
+          "BITTE_KEY is now deprecated. Please use BITTE_API_KEY instead. You can get an api key here: https://key.bitte.ai",
         );
       }
       if (!process?.env?.BITTE_API_KEY) {
         throw new Error(
-          'Missing api key. Please define BITTE_API_KEY in your environment variables. You can get an api key here: https://key.bitte.ai',
+          "Missing api key. Please define BITTE_API_KEY in your environment variables. You can get an api key here: https://key.bitte.ai",
         );
       }
       return process.env.BITTE_API_KEY;
@@ -50,19 +50,19 @@ export class AuthenticationService {
   async authenticateOrCreateKey(): Promise<string | null> {
     const authentication = await this.getAuthentication();
     if (authentication) {
-      console.log('Already authenticated.');
+      console.log("Already authenticated.");
       return authentication;
     }
 
     console.log(
-      'Not authenticated. Redirecting to Bitte wallet for signing...',
+      "Not authenticated. Redirecting to Bitte wallet for signing...",
     );
     const newKey = await this.createAndStoreKey();
     if (newKey) {
-      console.log('New key created and stored successfully.');
+      console.log("New key created and stored successfully.");
       return JSON.stringify(newKey);
     } else {
-      console.log('Failed to create and store new key.');
+      console.log("Failed to create and store new key.");
       return null;
     }
   }
@@ -75,7 +75,7 @@ export class AuthenticationService {
 
       server.listen(SIGN_MESSAGE_PORT, () => {
         const postEndpoint = `http://localhost:${SIGN_MESSAGE_PORT}`;
-        const nonce = randomBytes(16).toString('hex');
+        const nonce = randomBytes(16).toString("hex");
         const signUrl = `${
           this.bitteUrls.SIGN_MESSAGE_URL
         }?message=${encodeURIComponent(
@@ -86,7 +86,7 @@ export class AuthenticationService {
           postEndpoint,
         )}`;
         open(signUrl).catch((error) => {
-          console.error('Failed to open the browser:', error);
+          console.error("Failed to open the browser:", error);
           server.close();
           reject(error);
         });
@@ -98,19 +98,19 @@ export class AuthenticationService {
     try {
       const signedMessage = await this.getSignedMessage();
       if (!signedMessage) {
-        console.error('Failed to get signed message');
+        console.error("Failed to get signed message");
         return null;
       }
 
       const isVerified = verifyMessage({ params: signedMessage });
       if (!isVerified) {
-        console.warn('Message verification failed');
+        console.warn("Message verification failed");
       }
 
       await appendToEnv(BITTE_KEY_ENV_KEY, JSON.stringify(signedMessage));
       return signedMessage;
     } catch (error) {
-      console.error('Error creating and storing key:', error);
+      console.error("Error creating and storing key:", error);
       return null;
     }
   }
@@ -124,27 +124,27 @@ export class AuthenticationService {
   ): void {
     this.setCORSHeaders(res);
 
-    if (req.method === 'OPTIONS') {
+    if (req.method === "OPTIONS") {
       this.handlePreflight(res);
       return;
     }
 
-    if (req.method === 'POST') {
-      let body = '';
-      req.on('data', (chunk) => {
+    if (req.method === "POST") {
+      let body = "";
+      req.on("data", (chunk) => {
         body += chunk.toString();
       });
-      req.on('end', () => {
+      req.on("end", () => {
         try {
           const jsonBody = JSON.parse(body);
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ message: 'Signed message received' }));
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ message: "Signed message received" }));
           resolve(jsonBody);
-          server.close(() => console.log('Temporary server closed'));
+          server.close(() => console.log("Temporary server closed"));
         } catch (error) {
-          console.error('Error parsing JSON:', error);
-          res.writeHead(400, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+          console.error("Error parsing JSON:", error);
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Invalid JSON" }));
           reject(error as Error);
         }
       });
@@ -154,9 +154,9 @@ export class AuthenticationService {
   }
 
   private setCORSHeaders(res: ServerResponse): void {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   }
 
   private handlePreflight(res: ServerResponse): void {
@@ -168,8 +168,8 @@ export class AuthenticationService {
     res: ServerResponse,
     reject: (reason: Error) => void,
   ): void {
-    res.writeHead(405, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-    reject(new Error('Method Not Allowed'));
+    res.writeHead(405, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: "Method Not Allowed" }));
+    reject(new Error("Method Not Allowed"));
   }
 }

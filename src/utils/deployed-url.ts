@@ -1,10 +1,10 @@
-import { DEFAULT_PORT } from '../config/constants';
+import { DEFAULT_PORT } from "../config/constants";
 
 export function getVercelDeploymentUrl(): string {
   switch (process.env.VERCEL_ENV) {
-    case 'production':
+    case "production":
       return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-    case 'preview':
+    case "preview":
       return `https://${
         process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL
       }`;

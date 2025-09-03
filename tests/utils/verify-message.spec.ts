@@ -1,22 +1,22 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
 import {
   type KeySignMessageParams,
   Payload,
   verifyMessage,
-} from '../../src/utils/verify-message';
-describe('verifyMessage', () => {
-  const publicKey = 'ed25519:6djYMWvkhKMEDCSTQ1LWB3tqLXRD8EX9YPifaTaeh1cb';
-  const nonce = 'base64EncodedNonce==';
+} from "../../src/utils/verify-message";
+describe("verifyMessage", () => {
+  const publicKey = "ed25519:6djYMWvkhKMEDCSTQ1LWB3tqLXRD8EX9YPifaTaeh1cb";
+  const nonce = "base64EncodedNonce==";
   // Create the payload
   const payload = new Payload({
-    message: 'Hello World',
+    message: "Hello World",
     nonce,
-    recipient: 'recipient.near',
-    callbackUrl: 'https://example.com/callback',
+    recipient: "recipient.near",
+    callbackUrl: "https://example.com/callback",
   });
   const signature =
-    'q+8077M6dwQV69zKoIXpR6PTfi7HLLgnIChgoSgh3qzybizDqImfSs/b7DtHjtYpnv5vsW44PrYo0pPsGc3iAA==';
+    "q+8077M6dwQV69zKoIXpR6PTfi7HLLgnIChgoSgh3qzybizDqImfSs/b7DtHjtYpnv5vsW44PrYo0pPsGc3iAA==";
 
   const mockParams: KeySignMessageParams = {
     message: payload.message,
@@ -24,29 +24,29 @@ describe('verifyMessage', () => {
     publicKey,
     recipient: payload.recipient,
     signature,
-    accountId: 'sender.near',
+    accountId: "sender.near",
     callbackUrl: payload.callbackUrl,
   };
 
-  it('should return false when accountIdToVerify does not match accountId', () => {
+  it("should return false when accountIdToVerify does not match accountId", () => {
     const result = verifyMessage({
       params: mockParams,
-      accountIdToVerify: 'different.near',
+      accountIdToVerify: "different.near",
     });
 
     expect(result).toBe(false);
   });
 
-  it('should verify signature when accountIds match', () => {
+  it("should verify signature when accountIds match", () => {
     const result = verifyMessage({
       params: mockParams,
-      accountIdToVerify: 'sender.near',
+      accountIdToVerify: "sender.near",
     });
 
     expect(result).toBe(true);
   });
 
-  it('should verify signature when no accountIdToVerify is provided', async () => {
+  it("should verify signature when no accountIdToVerify is provided", async () => {
     const result = verifyMessage({
       params: mockParams,
     });
@@ -54,12 +54,12 @@ describe('verifyMessage', () => {
     expect(result).toBe(true);
   });
 
-  it('should return false with invalid signature', () => {
+  it("should return false with invalid signature", () => {
     const result = verifyMessage({
       params: {
         ...mockParams,
         // Invalid signature
-        signature: signature.replace('0', '1'),
+        signature: signature.replace("0", "1"),
       },
     });
 
@@ -67,13 +67,13 @@ describe('verifyMessage', () => {
   });
 });
 
-describe('Payload', () => {
-  it('hash: should deterministically hash the same payload', () => {
+describe("Payload", () => {
+  it("hash: should deterministically hash the same payload", () => {
     const payload = new Payload({
-      message: 'Hello World',
-      nonce: 'base64EncodedNonce==',
-      recipient: 'recipient.near',
-      callbackUrl: 'https://example.com/callback',
+      message: "Hello World",
+      nonce: "base64EncodedNonce==",
+      recipient: "recipient.near",
+      callbackUrl: "https://example.com/callback",
     });
     const result = payload.hash();
     expect(result).toStrictEqual(
@@ -85,16 +85,16 @@ describe('Payload', () => {
     );
   });
 
-  it('constructor: reverts on nonce length > 32 bytes', () => {
+  it("constructor: reverts on nonce length > 32 bytes", () => {
     expect(
       () =>
         new Payload({
-          message: 'Hello World',
+          message: "Hello World",
           nonce:
-            'SuperLongBase64EncodedNonceHavingLotsOfCharactersAndHopfullyMoreThan32Bytes',
-          recipient: 'recipient.near',
-          callbackUrl: 'https://example.com/callback',
+            "SuperLongBase64EncodedNonceHavingLotsOfCharactersAndHopfullyMoreThan32Bytes",
+          recipient: "recipient.near",
+          callbackUrl: "https://example.com/callback",
         }),
-    ).toThrow('Expected nonce to be a 32 bytes buffer');
+    ).toThrow("Expected nonce to be a 32 bytes buffer");
   });
 });

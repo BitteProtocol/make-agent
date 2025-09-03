@@ -1,5 +1,5 @@
-import { type BitteUrls, getBitteUrls } from '../config/constants';
-import { AuthenticationService } from './authentication';
+import { AuthenticationService } from "./authentication";
+import { type BitteUrls, getBitteUrls } from "../config/constants";
 
 export class PluginService {
   readonly bitteUrls: BitteUrls;
@@ -14,13 +14,13 @@ export class PluginService {
     const apiKey = await this.auth.getAuthentication();
     try {
       const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
-        method: 'POST',
+        method: "POST",
         headers: { authorization: apiKey },
       });
 
       if (response.ok) {
         await response.json();
-        console.log('Plugin registered successfully');
+        console.log("Plugin registered successfully");
         return pluginId;
       } else {
         const errorMessage = `Failed to register plugin (ID: ${pluginId}). HTTP Status: ${response.status} - ${response.statusText}.`;
@@ -44,21 +44,21 @@ export class PluginService {
     }
 
     const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: { authorization: apiKey },
     });
 
     if (!response.ok) {
       const responseText = await response.text();
-      if (responseText.includes('Plugin not found')) {
+      if (responseText.includes("Plugin not found")) {
         console.warn(`Plugin with ID ${pluginId} not found/registered.`);
       } else {
-        console.error('Failed to update plugin', responseText);
+        console.error("Failed to update plugin", responseText);
       }
       return null;
     }
 
-    console.log('Plugin updated successfully.');
+    console.log("Plugin updated successfully.");
     return pluginId;
   }
 
@@ -66,12 +66,12 @@ export class PluginService {
     const apiKey = await this.auth.getAuthentication();
 
     if (!apiKey) {
-      console.error('No API key found. Unable to delete plugin.');
+      console.error("No API key found. Unable to delete plugin.");
       return;
     }
 
     const response = await fetch(`${this.bitteUrls.BASE_URL}/${pluginId}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: { authorization: apiKey },
     });
 
@@ -99,13 +99,13 @@ export class PluginService {
   }): Promise<void> {
     const apiKey = await this.auth.getAuthentication();
     if (!apiKey) {
-      console.error('No API key found. Unable to request plugin verification.');
+      console.error("No API key found. Unable to request plugin verification.");
       return;
     }
 
     try {
       const res = await fetch(`${this.bitteUrls.BASE_URL}/verify/${pluginId}`, {
-        method: 'POST',
+        method: "POST",
         headers: { authorization: apiKey },
         body: JSON.stringify({
           repo: repo,
@@ -118,7 +118,7 @@ export class PluginService {
 
       if (res.ok) {
         console.log(
-          'Your verification request has been uploaded and will be processed in the following days.',
+          "Your verification request has been uploaded and will be processed in the following days.",
         );
       } else {
         console.error(

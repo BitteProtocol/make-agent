@@ -1,10 +1,10 @@
-import SwaggerParser from '@apidevtools/swagger-parser';
+import SwaggerParser from "@apidevtools/swagger-parser";
 
 import {
   type XMbSpec,
   getXMbSpecValidationError,
   isXMbSpec,
-} from '../config/types';
+} from "../config/types";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -22,19 +22,19 @@ export async function validateAndParseOpenApiSpec(
       apiResponse = JSON.parse(specContent);
     } catch (error: unknown) {
       console.error(
-        'Failed to parse OpenAPI spec JSON:',
-        error instanceof Error ? error.message : 'Unknown error',
+        "Failed to parse OpenAPI spec JSON:",
+        error instanceof Error ? error.message : "Unknown error",
       );
       return undefined;
     }
 
     try {
       await SwaggerParser.validate(apiResponse);
-      console.log('OpenAPI specification is valid.');
+      console.log("OpenAPI specification is valid.");
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error('OpenAPI validation failed:', error.message);
-        if ('details' in error) {
+        console.error("OpenAPI validation failed:", error.message);
+        if ("details" in error) {
           interface ValidationDetail {
             instancePath: string;
             message: string;
@@ -42,7 +42,7 @@ export async function validateAndParseOpenApiSpec(
           }
           const details = (error as { details: ValidationDetail[] }).details;
           console.error(
-            'Validation details:',
+            "Validation details:",
             details.map((detail) => ({
               path: detail.instancePath,
               error: detail.message,
@@ -54,16 +54,16 @@ export async function validateAndParseOpenApiSpec(
       return undefined;
     }
 
-    const xMbSpec = apiResponse['x-mb'];
+    const xMbSpec = apiResponse["x-mb"];
     if (isXMbSpec(xMbSpec)) {
       return xMbSpec;
     }
-    console.error('Invalid x-mb spec: ', getXMbSpecValidationError(xMbSpec));
+    console.error("Invalid x-mb spec: ", getXMbSpecValidationError(xMbSpec));
     return undefined;
   } catch (error) {
     console.error(
-      'Unexpected error:',
-      error instanceof Error ? error.message : 'Unknown error',
+      "Unexpected error:",
+      error instanceof Error ? error.message : "Unknown error",
     );
     return undefined;
   }
@@ -83,7 +83,7 @@ async function fetchWithRetry(
     return text;
   } catch (error) {
     if (retries > 0) {
-      console.log('Retrying...');
+      console.log("Retrying...");
       await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
       return fetchWithRetry(url, retries - 1);
     }

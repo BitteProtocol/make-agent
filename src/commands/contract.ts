@@ -1,15 +1,15 @@
-import { exec, spawn } from 'node:child_process';
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { promisify } from 'node:util';
-import { Command } from 'commander';
-import inquirer from 'inquirer';
+import { Command } from "commander";
+import inquirer from "inquirer";
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { promisify } from "node:util";
 
 const execAsync = promisify(exec);
 
 export const contractCommand = new Command()
-  .name('contract')
-  .description('Generate an AI agent from a Near Protocol contract')
+  .name("contract")
+  .description("Generate an AI agent from a Near Protocol contract")
   .action(async () => {
     try {
       const answers = await promptQuestions();
@@ -20,11 +20,11 @@ export const contractCommand = new Command()
       await writeFiles(outputDir, code, answers.contract);
       await setupAndRunAgent(outputDir);
 
-      console.log('AI agent execution completed successfully.');
+      console.log("AI agent execution completed successfully.");
       console.log(`AI agent generated successfully in ${answers.output}`);
     } catch (error) {
-      console.error('Error generating AI agent');
-      console.error('Error details:', error);
+      console.error("Error generating AI agent");
+      console.error("Error details:", error);
     }
   });
 
@@ -43,32 +43,32 @@ async function promptQuestions(): Promise<PromptAnswers> {
   // @ts-expect-error: Cannot find namespace 'inquirer'.ts(2503)
   const questions: inquirer.QuestionCollection<PromptAnswers> = [
     {
-      type: 'input',
-      name: 'contract',
-      message: 'Enter the Near Protocol contract name:',
+      type: "input",
+      name: "contract",
+      message: "Enter the Near Protocol contract name:",
       validate: (input: string) =>
-        input.length > 0 || 'Contract name is required',
+        input.length > 0 || "Contract name is required",
     },
     {
-      type: 'input',
-      name: 'description',
-      message: 'Enter the contract description (agent instructions):',
+      type: "input",
+      name: "description",
+      message: "Enter the contract description (agent instructions):",
       validate: (input: string) =>
-        input.length > 0 || 'Contract description is required',
+        input.length > 0 || "Contract description is required",
     },
     {
-      type: 'input',
-      name: 'output',
+      type: "input",
+      name: "output",
       message:
-        'Enter the output directory (press Enter for current directory):',
-      default: '.',
+        "Enter the output directory (press Enter for current directory):",
+      default: ".",
     },
     {
-      type: 'input',
-      name: 'accountId',
-      message: 'Enter your near account ID to generate an API key:',
+      type: "input",
+      name: "accountId",
+      message: "Enter your near account ID to generate an API key:",
       validate: (input: string) =>
-        input.length > 0 || 'Near account ID is required',
+        input.length > 0 || "Near account ID is required",
     },
   ];
 
@@ -80,7 +80,7 @@ async function generateTypes(
   contract: string,
 ): Promise<void> {
   process.chdir(outputDir);
-  showLoadingMessage('Generating types');
+  showLoadingMessage("Generating types");
   await execAsync(`npx near2ts ${contract}`);
 }
 
@@ -92,13 +92,13 @@ async function generateAIAgent(
   },
   outputDir: string,
 ): Promise<string> {
-  const apiUrl = 'https://contract-to-agent.vercel.app/api/generate';
+  const apiUrl = "https://contract-to-agent.vercel.app/api/generate";
 
-  showLoadingMessage('Generating AI agent');
+  showLoadingMessage("Generating AI agent");
 
   const typesContent = await fs.readFile(
-    path.join(outputDir, 'contract_types.ts'),
-    'utf-8',
+    path.join(outputDir, "contract_types.ts"),
+    "utf-8",
   );
 
   const postData = {
@@ -109,21 +109,21 @@ async function generateAIAgent(
   };
 
   const response = await fetch(apiUrl, {
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(postData),
   });
 
   if (response.status === 429) {
     throw new Error(
-      'You have reached the daily prompt limit. Please try again tomorrow.',
+      "You have reached the daily prompt limit. Please try again tomorrow.",
     );
   }
 
   if (!response.ok) {
-    console.error('Failed to generate AI agent');
+    console.error("Failed to generate AI agent");
     throw new Error(`HTTP error! status: ${response.status}`);
   }
 
@@ -138,47 +138,47 @@ async function writeFiles(
 ): Promise<void> {
   await fs.mkdir(outputDir, { recursive: true });
 
-  await fs.writeFile(path.join(outputDir, 'index.ts'), code);
+  await fs.writeFile(path.join(outputDir, "index.ts"), code);
 
   const tsConfig = {
     compilerOptions: {
-      target: 'es2018',
-      module: 'commonjs',
+      target: "es2018",
+      module: "commonjs",
       strict: true,
       esModuleInterop: true,
       skipLibCheck: true,
       forceConsistentCasingInFileNames: true,
-      outDir: './dist',
+      outDir: "./dist",
     },
-    include: ['*.ts'],
-    exclude: ['node_modules'],
+    include: ["*.ts"],
+    exclude: ["node_modules"],
   };
   await fs.writeFile(
-    path.join(outputDir, 'tsconfig.json'),
+    path.join(outputDir, "tsconfig.json"),
     JSON.stringify(tsConfig, null, 2),
   );
 
   const packageJson = {
     name: `near-contract-agent-${contract}`,
-    version: '1.0.0',
+    version: "1.0.0",
     description: `AI agent for Near Protocol contract: ${contract}`,
-    main: 'dist/index.js',
+    main: "dist/index.js",
     scripts: {
-      build: 'npx tsc ./index.ts',
-      start: 'node dist/index.js',
+      build: "npx tsc ./index.ts",
+      start: "node dist/index.js",
     },
     dependencies: {
-      express: '^4.17.1',
-      '@types/express': '^4.17.13',
-      'make-agent': 'latest',
-      dotenv: '^10.0.0',
+      express: "^4.17.1",
+      "@types/express": "^4.17.13",
+      "make-agent": "latest",
+      dotenv: "^10.0.0",
     },
     devDependencies: {
-      typescript: '^4.5.4',
+      typescript: "^4.5.4",
     },
   };
   await fs.writeFile(
-    path.join(outputDir, 'package.json'),
+    path.join(outputDir, "package.json"),
     JSON.stringify(packageJson, null, 2),
   );
 }
@@ -186,41 +186,41 @@ async function writeFiles(
 async function setupAndRunAgent(outputDir: string): Promise<void> {
   process.chdir(outputDir);
 
-  showLoadingMessage('Installing dependencies with npm install');
-  await execAsync('npm install --legacy-peer-deps');
+  showLoadingMessage("Installing dependencies with npm install");
+  await execAsync("npm install --legacy-peer-deps");
 
-  showLoadingMessage('Running server');
-  const serverProcess = spawn('npx', ['tsx', './index.ts']);
+  showLoadingMessage("Running server");
+  const serverProcess = spawn("npx", ["tsx", "./index.ts"]);
 
-  serverProcess.stdout.on('data', (data) => {
+  serverProcess.stdout.on("data", (data) => {
     console.log(`Server: ${data}`);
   });
 
-  serverProcess.stderr.on('data', (data) => {
+  serverProcess.stderr.on("data", (data) => {
     console.error(`Server error: ${data}`);
   });
 
   // Wait for the server to start
   await new Promise((resolve) => {
-    serverProcess.stdout.on('data', (data) => {
-      if (data.toString().includes('Server is running')) {
+    serverProcess.stdout.on("data", (data) => {
+      if (data.toString().includes("Server is running")) {
         resolve(true);
       }
     });
   });
 
-  showLoadingMessage('Running agent');
-  const agentProcess = spawn('npx', ['make-agent', 'dev', '-p', '8080']);
+  showLoadingMessage("Running agent");
+  const agentProcess = spawn("npx", ["make-agent", "dev", "-p", "8080"]);
 
-  agentProcess.stdout.on('data', (data) => {
+  agentProcess.stdout.on("data", (data) => {
     console.log(`Agent: ${data}`);
   });
 
-  agentProcess.stderr.on('data', (data) => {
+  agentProcess.stderr.on("data", (data) => {
     console.error(`Agent error: ${data}`);
   });
 
-  agentProcess.on('close', (code) => {
+  agentProcess.on("close", (code) => {
     console.log(`make-agent process exited with code ${code}`);
     serverProcess.kill();
   });
