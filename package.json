@@ -40,7 +40,7 @@
     "ajv-draft-04": "^1.0.0",
     "borsh": "^2.0.0",
     "commander": "^14",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "inquirer": "^12.9.4",
     "is-port-reachable": "^4.0.0",
